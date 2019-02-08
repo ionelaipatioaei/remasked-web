@@ -1,0 +1,24 @@
+{
+  "name": "remasked-web",
+  "version": "1.0.0",
+  "description": "The source code for the remasked.com website.",
+  "main": "index.js",
+  "scripts": {
+    "dev": "osascript -e 'tell application \"Terminal\" to do script \"cd ~/Documents/Remasked/web && npm run dev-server \"' && osascript -e 'tell application \"Terminal\" to do script \"cd ~/Documents/Remasked/web && npm run dev-sass \"'",
+    "dev-server": "nodemon index.js",
+    "dev-sass": "sass --watch styles-source:static/styles --style=compressed --no-source-map"
+  },
+  "author": "Ionel Aipatioaei",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt": "^3.0.4",
+    "body-parser": "^1.18.3",
+    "express": "^4.16.4",
+    "express-session": "^1.15.6",
+    "mongoose": "^5.4.10",
+    "pug": "^2.0.3"
+  },
+  "devDependencies": {
+    "nodemon": "^1.18.9"
+  }
+}
