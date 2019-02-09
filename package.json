@@ -4,9 +4,10 @@
   "description": "The source code for the remasked.com website.",
   "main": "index.js",
   "scripts": {
-    "dev": "osascript -e 'tell application \"Terminal\" to do script \"cd ~/Documents/Remasked/web && npm run dev-server \"' && osascript -e 'tell application \"Terminal\" to do script \"cd ~/Documents/Remasked/web && npm run dev-sass \"'",
+    "dev": "osascript -e 'tell application \"Terminal\" to do script \"cd ~/Documents/Remasked/web && npm run dev-server \"' && osascript -e 'tell application \"Terminal\" to do script \"cd ~/Documents/Remasked/web && npm run dev-sass \"' && osascript -e 'tell application \"Terminal\" to do script \"cd ~/Documents/Remasked/web && npm run dev-babel \"'",
     "dev-server": "nodemon index.js",
-    "dev-sass": "sass --watch styles-source:static/styles --style=compressed --no-source-map"
+    "dev-sass": "sass --watch sources/styles/style.scss static/styles/style.css --style=compressed --no-source-map",
+    "dev-babel": "npx babel sources/scripts --watch --out-file static/scripts/app.js"
   },
   "author": "Ionel Aipatioaei",
   "license": "ISC",
@@ -19,6 +20,10 @@
     "pug": "^2.0.3"
   },
   "devDependencies": {
+    "@babel/cli": "^7.2.3",
+    "@babel/core": "^7.2.2",
+    "@babel/preset-env": "^7.3.1",
+    "babel-preset-minify": "^0.5.0",
     "nodemon": "^1.18.9"
   }
 }

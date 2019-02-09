@@ -1,6 +1,14 @@
-html
-  head
-    title Welcome
+extends layout/layout.pug
 
-  body
-    h1 Message: #{val.toUpperCase()}!
+include components/button.pug
+include components/link.pug
+
+block title
+  title remasked
+
+block content
+  h1 This is cool
+  +Button("hey", "test")
+
+  h2 This is a link
+  +Link("go", "https://google.com")
