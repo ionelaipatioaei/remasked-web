@@ -1,0 +1,9 @@
+.icon {
+  margin-left: 8px;
+  transition: all 0.25s ease-out;
+}
+
+.icon:hover {
+  transform: scale(0.85);
+  transition: all 0.25s ease-in;
+}

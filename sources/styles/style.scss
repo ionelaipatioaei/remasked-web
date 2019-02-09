@@ -1,5 +1,12 @@
+// Components style
 @import "components/button.scss";
-@import "hey.scss";
+@import "components/icon.scss";
+
+// Layout style
+@import "layout/navbar.scss";
+@import "layout/footer.scss";
+
+// Page style
 
 html, body {
   font-family: "Source Sans Pro", sans-serif;

@@ -1,2 +1,7 @@
-mixin Link(title, href)
-  a.btn(href=`${href}`)= title
+mixin Link(href, title)
+  if title
+    a(href=`${href}`)= title
+  else
+    if block
+      a(href=`${href}`)
+        block

@@ -10,7 +10,14 @@ app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json({ type: '*/*' }));
 app.set("view engine", "pug");
 
+const auth = require("./routes/auth");
+app.use(auth);
+
 app.get("/", (req, res) => {
+  res.render("index", {val: "hey there"});
+});
+
+app.get("/test", (req, res) => {
   res.render("index", {val: "hey there"});
 });
 

@@ -1,1 +1,31 @@
-p Hey header
+include ../components/link.pug
+include ../components/icon.pug
+
+nav
+  div.nav-container
+    +Link("/", "remasked")
+
+    ul.nav-items
+      li.nav-item
+        +Link("/profile")
+          +Icon("/static/assets/icons/user.svg", "profile")
+
+      li.nav-item
+        +Link("/communities")
+          +Icon("/static/assets/icons/list.svg", "communities")
+
+      li.nav-item
+        +Link("/messages")
+          +Icon("/static/assets/icons/mail.svg", "messages")
+
+      li.nav-item
+        +Link("/notifications")
+          +Icon("/static/assets/icons/bell.svg", "notifications")
+
+      li.nav-item
+        +Link("/settings")
+          +Icon("/static/assets/icons/settings.svg", "settings")
+
+      li.nav-item
+        +Link("/logout")
+          +Icon("/static/assets/icons/log-out.svg", "logout")

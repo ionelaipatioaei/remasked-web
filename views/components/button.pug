@@ -1,3 +1,3 @@
-mixin Button(st, action)
-  div.btn(onclick=`${action}()`)
-    p= st
+mixin Button(title, action)
+  div.btn(id=`${action}`)
+    p= title

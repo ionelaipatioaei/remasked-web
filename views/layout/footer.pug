@@ -1,1 +1,26 @@
-p Hey footer
+include ../components/button.pug
+include ../components/link.pug
+
+footer
+  div.footer-container
+    div.footer-items
+      +Link("/about")
+        +Button("about")
+
+      +Link("/contact")
+        +Button("contact")
+
+      +Link("/apps")
+        +Button("apps")
+
+    div.footer-info
+      div.footer-info-item 
+        p By using this website you agree to our&nbsp;
+        +Link("/terms-of-use", "Terms of Use")
+        p &nbsp;and&nbsp;
+        +Link("/privacy-policy", "Privacy Policy")
+        p .
+
+    div.footer-info
+      p.footer-info-item &copy; 2019 remasked.com All rights reserved.
+
