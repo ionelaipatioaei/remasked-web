@@ -1,0 +1,11 @@
+extends ../layout/layout.pug
+
+block title
+  //- TODO: if another profile change the title
+  if (you)
+    title Remasked | Your profile
+  else
+    title Remasked | #{name} profile
+
+block content
+  h1 This is #{you ? "your" : name} profile

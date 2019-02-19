@@ -1,11 +1,15 @@
 exports.login = (req, res) => {
-  res.render("login", {});
+  res.render("auth/login", {});
 }
 
 exports.register = (req, res) => {
-  res.render("register", {});
+  res.render("auth/register", {});
 }
 
 exports.recover = (req, res) => {
-  res.render("recover", {});
+  res.render("auth/recover", {});
+}
+
+exports.logout = (req, res) => {
+  res.redirect("/");
 }
