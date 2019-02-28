@@ -1,7 +1,19 @@
 extends ../../layout/layout.pug
 
+include ../../components/post.pug
+include ../../components/comment.pug
+
 block title
   title Remasked | #{title}
 
 block content
-  h1 #{title}
+  +Post(title, "ionel", "pretty_earth", "12.12.2012", 5, 12, 43, "https://i.ytimg.com/vi/tog3dRQxENs/maxresdefault.jpg")
+  +Post(title, "ionel3", "pretty_earth", "12.12.2012", 5, 123, 43, "https://i.ytimg.com/vi/tog3dRQxENs/maxresdefault.jpg")
+  +Comment("ionel2", "12.12.1212", "Hey there", 123, 32, [{title: "test", owner: "testowner"}, {title: "test2", owner: "testowner2"}])
+  //- +Comment("ionel2", "12.12.1212", "Hey there", 123, 32, [{title: "test00", owner: "testowner"}, {title: "test22", owner: "testowner2"}])
+
+  each comment in comments
+    div.btn
+      h2 #{comment.owner}
+      p #{comment.content}
+      h3 Expand

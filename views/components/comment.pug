@@ -1,0 +1,10 @@
+mixin Comment(owner, date, content, upvotes, downvotes, children)
+  div.comment-container
+    h1 #{owner} replied on #{date}
+    p.comment-content= content
+
+    if children
+      div.comment-children
+        each child in children
+          //- h3 #{child.title}
+          +Comment(`${child.owner}`, "123.43.43.2", `${child.title}`)

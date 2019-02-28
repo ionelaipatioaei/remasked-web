@@ -7,6 +7,9 @@ html
 
   body
     include header.pug
-    block content
+
+    div.global-container
+      block content
+      
     include footer.pug
     script(src="/static/scripts/app.js")

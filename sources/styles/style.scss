@@ -2,6 +2,9 @@
 @import "components/button.scss";
 @import "components/icon.scss";
 
+@import "components/post.scss";
+@import "components/comment.scss";
+
 // Layout style
 @import "layout/navbar.scss";
 @import "layout/footer.scss";
@@ -12,4 +15,9 @@ html, body {
   font-family: "Source Sans Pro", sans-serif;
   margin: 0;
   padding: 0;
+}
+
+.global-container {
+  width: 90%;
+  margin: 0 auto;
 }

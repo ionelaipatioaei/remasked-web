@@ -5,3 +5,7 @@ block title
 
 block content
   h1 This is #{name}
+  each post in posts
+    div.btn
+      h2 #{post.title}
+      p #{post.owner}

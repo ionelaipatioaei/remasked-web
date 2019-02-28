@@ -1,5 +1,23 @@
-"use strict";function _classCallCheck(a,b){if(!(a instanceof b))throw new TypeError("Cannot call a class as a function")}function _defineProperties(a,b){for(var c,d=0;d<b.length;d++)c=b[d],c.enumerable=c.enumerable||!1,c.configurable=!0,"value"in c&&(c.writable=!0),Object.defineProperty(a,c.key,c)}function _createClass(a,b,c){return b&&_defineProperties(a.prototype,b),c&&_defineProperties(a,c),a}var Button=/*#__PURE__*/function(){function a(b,c){_classCallCheck(this,a),this.el=document.getElementById(b),this.onClick(c||null),this.onMouseOver(),console.log(this.el)}return _createClass(a,[{key:"onClick",value:function b(a){this.el.addEventListener("click",a)}},{key:"onMouseOver",value:function a(){this.el.addEventListener("mouseover",function(){console.log("hey there overrrr")})}}]),a}();
-"use strict";// CREATE ELEMENT - ALSO WITH ATTRIBUTES
-var createElement=function(a,b,c,d){var e;e=b?b.appendChild(document.createElement(a)):document.body.appendChild(document.createElement(a)),e.innerHTML=d,c&&e.setAttribute("class",c)},updateElement=function(){},deleteElement=function(a,b){// delete all children elements
-if(a.parentNode&&a.parentNode.removeChild(a),b)for(;a.firstChild;)a.removeChild(a.firstChild)};// UPDATE ELEMENT
-createElement("p");var sel=document.querySelectorAll("p")[0];createElement("div",sel);var button1=new Button("test1"),button2=new Button("test2");button1.onClick(function(){return createElement("h2",sel,"hey1","fuck")}),button2.onClick(function(){return deleteElement(document.querySelectorAll(".hey1")[0],sel)}),console.log("app.js");
+// class Button {
+//   constructor(_id, _onClickCallback) {
+//     this.el = document.getElementById(_id);
+//     this.onClick(_onClickCallback || null);
+//     this.onMouseOver();
+//     console.log(this.el);
+//   }
+//   onClick(callback) {
+//     this.el.addEventListener("click", callback);
+//   }
+//   onMouseOver() {
+//     this.el.addEventListener("mouseover", () => {
+//       console.log("hey there overrrr");
+//     });
+//   }
+// }
+// const createButton = () => {
+// }
+"use strict";
+"use strict";// DOM MANIPULATION
+// GET ELEMENT
+var getEl=function(a){var b=!(1<arguments.length&&arguments[1]!==void 0)||arguments[1];return b?document.querySelector(a):document.querySelectorAll(a)},addAttr=function(a,b,c){a.addAttribute(b,c)},deleteAttr=function(a,b){a.removeAttribute(b)},modifyInnerText=function(a,b){a.innerHTML=b},createEl=function(a,b,c,d){var e;e=b?b.appendChild(document.createElement(a)):document.body.appendChild(document.createElement(a)),c&&e.setAttribute("id",c),d&&e.setAttribute("class",d)},deleteEl=function(a,b){// delete all children elements
+if(a.parentNode&&a.parentNode.removeChild(a),b)for(;a.firstChild;)a.removeChild(a.firstChild)},cloneEl=function(a){return a.cloneNode(!0)},createButton=function(a,b){var c=getEl("#".concat(a));c.addEventListener("click",b)},postUpdateTextColor=function(){console.log(event.currentTarget.parentNode.querySelector("#post"))},postUpdateVoteStatus=function(a){"up"===a?(console.log(event.currentTarget.parentNode),console.log(event.currentTarget.parentNode.querySelector(".post-votes-amount")),event.currentTarget.parentNode.querySelector(".post-votes-amount").innerHTML+=1):"down"==a};// ADD ATTRIBUTE

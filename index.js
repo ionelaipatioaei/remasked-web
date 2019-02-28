@@ -3,7 +3,7 @@ const bodyParser = require("body-parser");
 const app = express();
 
 // NEEDS PRODUCTION CONFIGS
-const PORT = 8080;
+const PORT = 8081;
 
 // STATIC RESOURCES
 app.use("/static", express.static(__dirname + "/static"));

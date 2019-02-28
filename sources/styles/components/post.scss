@@ -1,0 +1,69 @@
+@import "../constants/index.scss";
+
+.post-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  // background-color: $main;
+  padding: 8px;
+  border: 1px solid black;
+}
+
+.post-main {
+  display: flex;
+  flex-direction: row;
+  background-color: $main;
+  align-items: center;
+}
+
+// post votes section
+.post-votes {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-items: center;
+}
+
+.post-votes-amount {
+  margin: 0;
+}
+
+// post preview section
+.post-small-preview {
+  display: block;
+}
+
+.post-small-preview-image {
+  height: 64px;
+}
+
+.post-large-preview {
+  display: none;
+}
+
+.post-large-preview-image {
+  height: 100%;
+  width: 100%;
+}
+
+// post info section
+.post-info {
+
+}
+
+.post-info-text-container {
+  display: flex;
+  flex-direction: row;
+}
+
+.post-info-text {
+  margin: 0;
+}
+
+.post-info-title {
+  margin: 0;
+}
+
+.post-save {
+  // align-items: flex-end;
+}
