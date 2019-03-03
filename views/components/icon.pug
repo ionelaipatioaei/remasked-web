@@ -1,2 +1,2 @@
-mixin Icon(source, alt, action)
-  img.icon(src=`${source}`, alt=`${alt}`, onclick=action)
+mixin Icon(source, alt, action, style, animate=true)
+  img(src=`${source}`, alt=`${alt}`, onclick=action, style=style, class=animate ? "icon" : null)

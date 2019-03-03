@@ -1,0 +1,9 @@
+@import "../constants/index.scss";
+
+.reply-container {
+  padding: 4px;
+  box-shadow: $light;
+  margin: 10px 6px;
+  border-radius: $r-normal;
+  transition: all 0.15s ease-out;
+}

@@ -4,12 +4,13 @@ html
     block title
     link(rel="stylesheet", href="/static/styles/style.css")
     link(rel="stylesheet", href="https://fonts.googleapis.com/css?family=Source+Sans+Pro")
+    style
 
   body
     include header.pug
 
     div.global-container
       block content
-      
+
     include footer.pug
     script(src="/static/scripts/app.js")

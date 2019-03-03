@@ -1,41 +1,94 @@
 include icon.pug
 include link.pug
 
-mixin Post(title, owner, community, date, commentsAmount, upvotes, downvotes, source)
+//- type can be: photo(includes gifs btw), video, text
+mixin Post(postData, options={type: "photo", view: "min", community: true})
   div.post-container
     div.post-main
       //- votes handling
-      div.post-votes(vote="down")
-        +Icon("/static/assets/icons/up.svg", "upvote post", `postUpdateVoteStatus("up")`)
-        p.post-votes-amount #{upvotes - downvotes}
+      div.post-votes(vote="down", style=`margin: ${options.view === "max" ? "0 0 auto" : "0"}`)
+        +Icon("/static/assets/icons/up.svg", "upvote post", `postUpdateVoteState("up")`)
+        p.post-votes-amount #{postData.upvotes - postData.downvotes}
         +Icon("/static/assets/icons/down.svg", "downvote post")
 
       //- small preview
-      div.post-small-preview
-        img.post-small-preview-image(src=`${source}`, alt="post small preview")
+      if options.type == "photo" && !options.flag
+        div.post-small-preview(style=`display: ${options.view === "max" ? "none" : "flex"}`)
+          img.post-small-preview-image(src=`${postData.source}`, alt="post small preview")
 
+      else if options.type == "video" && !options.flag
+        div.post-small-preview(style=`display: ${options.view === "max" ? "none" : "flex"}`)
+          img.post-small-preview-image(src=`/static/assets/icons/video.svg`, alt="post small preview", style="width: 48px; height: 48px;")
+
+      else if options.type == "text" && !options.flag
+        div.post-small-preview(style=`display: ${options.view === "max" ? "none" : "flex"}`)
+          img.post-small-preview-image(src=`/static/assets/icons/text.svg`, alt="post small preview", style="width: 48px; height: 48px;")
+
+      else if options.type == "link" && !options.flag
+        div.post-small-preview(style=`display: ${options.view === "max" ? "none" : "flex"}`)
+          img.post-small-preview-image(src=`/static/assets/icons/link.svg`, alt="post small preview", style="width: 48px; height: 48px;")
+
+      else if options.flag
+        div.post-small-preview(style=`display: ${options.view === "max" ? "none" : "flex"}`)
+          img.post-small-preview-image(src=`/static/assets/icons/warning.svg`, alt="post small preview", style="width: 48px; height: 48px;")
+      
       //- info about the post - title, owner, etc
       div.post-info
-        h1.post-info-title= title
+        if options.type == "link" && !options.flag
+          +Link(`${postData.source}`)
+            h1.post-info-title.post-info-link= postData.title
+        else if options.type == "link" && options.flag
+          +Link(`${postData.source}`)
+            h1.post-info-title.post-info-link.post-warning #{postData.title} (#{options.flag})
+
+        else if options.flag
+          h1.post-info-title.post-warning #{postData.title} (#{options.flag})
+        else
+          h1.post-info-title= postData.title
+          
         div.post-info-text-container
           p.post-info-text Submitted by&nbsp;
-          +Link("/hey", `${owner}`)
-          p.post-info-text &nbsp;in&nbsp;
-          +Link("/hey2", `${community}`)
-          p.post-info-text &nbsp;on&nbsp;
-          +Link("/hey3", `${date}`)
-        //- p#post(style=`color: ${sel ? "red" : "blue"}`) Hey
+          +Link("/hey")
+            p.post-info-text-goto= postData.owner
+
+          if options.community
+            p.post-info-text &nbsp;in&nbsp;
+            +Link("/hey2")
+              p.post-info-text-goto= postData.community
+          
+          p.post-info-text &nbsp; #{postData.date} ago
         
-        div.post-info-text-container
-          +Icon("/static/assets/icons/maximize.svg")
-          +Link(`/c/${community}/post/fgds76`, `comments (${commentsAmount})`)
-          p.post-info-text &nbsp;hide&nbsp;
-          p.post-info-text &nbsp;report&nbsp;
+        div.post-info-actions-container
+          if options.type != "link"
+            +Icon("/static/assets/icons/maximize.svg", "min or max post", "postMinMax()", "width: 20px; height: 20px; margin-right: 8px;")
+
+          +Icon("/static/assets/icons/reply.svg", "comments", null, "width: 16px; height: 16px", false)
+          +Link(`/c/${postData.community}/post/fgds76`)
+            p.post-info-text-actions comments (#{postData.commentsAmount})
+
+          +Icon("/static/assets/icons/x.svg", "comments", null, "width: 16px; height: 16px", false)
+          p.post-info-text-actions.post-hide(onclick="postHide()") hide&nbsp;
+
+          +Icon("/static/assets/icons/flag.svg", "comments", null, "width: 16px; height: 16px", false)
+          +Link("/report")
+            p.post-info-text-actions report
 
         //- large preview
-        div.post-large-preview
-          img.post-large-preview-image(src=`${source}`, alt="post large preview")
+        if options.type == "photo"
+          div.post-large-preview(style=`display: ${options.view === "max" ? "block" : "none"}`)
+            img.post-large-preview-image(src=`${postData.source}`, alt="post large preview")
+
+        else if options.type == "video"
+          div.post-large-preview(style=`display: ${options.view === "max" ? "block" : "none"}`)
+            video.post-large-preview-video(width="100%", height="auto", style="margin-top: 4px;", controls)
+              source(src=`${postData.source}`, type="video/mp4")
+
+        else if options.type == "text"
+          div.post-large-preview(style=`display: ${options.view === "max" ? "block" : "none"}`)
+            p= postData.source
+
+        //- NO NEED TO PREVIEW A LINK
 
     //- save icon
-    div.post-save
-      +Icon("/static/assets/icons/star.svg", "save post")
+    div.post-save(saved="false")
+      +Icon("/static/assets/icons/star.svg", "save post", "postUpdateSaveState()")

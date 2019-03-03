@@ -1,11 +1,29 @@
 extends ../../layout/layout.pug
 
+include ../../components/post.pug
+include ../../components/meta.pug
+
 block title
   title Remasked | #{name}
 
 block content
-  h1 This is #{name}
-  each post in posts
-    div.btn
-      h2 #{post.title}
-      p #{post.owner}
+  div.c-container
+    +Meta(`${name}`, "Hey there do you like this thingsey there do here this thingsey there do hee this thingsey there do hee this thingsey there do hee this thingsey there do hee this thingsey there do hee this thingsey there do hee this thingsey there do hee this thingsey there do hee this thingsey there do hee do you like this things?Hey there do you like this things?")
+    each post in posts
+      //- +Post(`${post.title}`, `${post.owner}`, `${name}`, "2.2.2222", 12, 432, 322, "https://i.ytimg.com/vi/tog3dRQxENs/maxresdefault.jpg")
+      +Post({title: post.title, owner: post.owner, community: name, date: "2.2.2019", commentsAmount: 10, upvotes: 123, downvotes: 56, source: post.source}, {type: post.type, flag: post.flag, view: "min", community: true})
+    
+  div.test
+    p Load more
+
+  script.
+    var meta = document.getElementById("meta-container");
+    var posts = document.getElementsByClassName("post-container");
+    var fitPosts = Math.ceil(meta.clientHeight / 76);
+
+    meta.style.gridRow = "1/".concat(fitPosts + 1);
+    for (var i = 0; i < posts.length; i++) {
+      if (i >= fitPosts) {
+        posts[i].style.gridColumn = "1/3";
+      }
+    }

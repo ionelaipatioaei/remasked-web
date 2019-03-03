@@ -1,10 +1,43 @@
-mixin Comment(owner, date, content, upvotes, downvotes, children)
-  div.comment-container
-    h1 #{owner} replied on #{date}
-    p.comment-content= content
+include icon.pug
+include link.pug
+include button.pug
 
-    if children
-      div.comment-children
-        each child in children
-          //- h3 #{child.title}
-          +Comment(`${child.owner}`, "123.43.43.2", `${child.title}`)
+mixin Comment(commentData)
+  - const time = "6 days"
+  div.comment-container
+    div.comment-content
+
+      div.comment-votes(vote="down")
+        +Icon("/static/assets/icons/up.svg", "upvote comment", `commentUpdateVoteState("up")`)
+        p.comment-votes-amount #{234 - 123}
+        +Icon("/static/assets/icons/down.svg", "downvote comment")
+
+      div.comment-main
+        div.comment-info
+          +Icon("/static/assets/icons/minus.svg", "min/max comment", null, "width: 16px; height: 16px; margin-right: 6px;") 
+          div.comment-info-text-container
+            +Link("/hey")
+              p.comment-info-text-goto= commentData.owner
+            p.comment-info-text &nbsp;replied #{time} ago
+        
+        p.comment-text= commentData.content
+
+        div.comment-info-actions-container
+          +Icon("/static/assets/icons/star.svg", "comments", null, "width: 16px; height: 16px", false)
+          p.comment-info-text-actions(onclick="commentUpdateSaveState()") save&nbsp;
+
+          +Icon("/static/assets/icons/flag.svg", "comments", null, "width: 16px; height: 16px", false)
+          p.comment-info-text-actions(onclick="commentReport()") report&nbsp;
+
+          +Icon("/static/assets/icons/reply.svg", "comments", null, "width: 16px; height: 16px", false)
+          p.comment-info-text-actions(onclick="commentMinMax()") reply&nbsp;
+
+        div.comment-reply
+          textarea.comment-textarea(rows="8" cols="64" placeholder="Type your reply here...")
+          div.comment-textarea-buttons-container
+            +Button("Reply", "commentReply()")
+            +Button("Cancel", "commentMinMax()")
+
+    if commentData.children
+      each child in commentData.children
+        +Comment(child)

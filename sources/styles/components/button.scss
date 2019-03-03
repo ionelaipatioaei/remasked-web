@@ -1,9 +1,10 @@
+@import "../constants/index.scss";
+
 .btn {
   display: flex;
   align-items: center;
   justify-content: center;
   margin: 8px;
-  margin-bottom: 16px;
   margin-left: 0;
   padding: 0.2em 0.8em;
   border: none;
@@ -11,7 +12,7 @@
   background: #fff;
   cursor: pointer;
   font-size: 0.9em;
-  box-shadow: 8px 8px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: $light;
   transition: all 0.25s ease-in;
 }
 

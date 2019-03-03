@@ -1,0 +1,10 @@
+include icon.pug
+include button.pug
+
+mixin Reply()
+  div.reply-container
+    div(style="margin-top: 8px;")
+      textarea(class="replyText" rows="8" cols="64" placeholder="Type your reply here...")
+      div(style="display: flex; flex-direction: row;")
+        +Button("Reply")
+        +Button("Cancel")
