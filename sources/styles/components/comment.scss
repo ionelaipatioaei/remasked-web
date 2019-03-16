@@ -3,15 +3,15 @@
 .comment-container {
   background-color: #fff;
   padding: 4px;
-  box-shadow: $light;
-  margin: 10px 6px;
+  margin: 6px;
   border-radius: $r-normal;
   transition: all 0.15s ease-out;
   padding-left: 24px;
+  box-shadow: $light;
 }
 
 .comment-container:hover {
-  background-color: rgba(255, 132, 235, 0.05) !important;
+  background-color: rgba(84, 216, 235, 0.05) !important;
   transition: all 0.15s ease-in;
 }
 
@@ -19,6 +19,10 @@
   display: flex;
   flex-direction: row;
   align-items: center;
+}
+
+.reply-container ~ .comment-container {
+  margin: 16px 6px;
 }
 
 .comment-votes {
@@ -64,7 +68,7 @@
 }
 
 .comment-text {
-  margin: 0;
+  margin: 4px;
 }
 
 .comment-info-actions-container {
@@ -89,7 +93,7 @@
 }
 
 .comment-textarea {
-
+  font-size: 1em;
 }
 
 .comment-textarea-buttons-container {

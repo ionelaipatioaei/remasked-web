@@ -3,12 +3,16 @@ extends ../../layout/layout.pug
 include ../../components/post.pug
 include ../../components/reply.pug
 include ../../components/comment.pug
+include ../../layout/header.pug
+
+block header
+  +Header(logged)
 
 block title
-  title Remasked | #{title}
+  title #{title} | remasked
 
 block content
-  +Post({title: title, owner: "ionel", community: "pretty_earth", date: "2.2.2019", commentsAmount: 10, upvotes: 123, downvotes: 56, source: "https://i.ytimg.com/vi/tog3dRQxENs/maxresdefault.jpg"}, {type: "photo", flag: null, view: "max", community: false})
-  +Reply()
+  +Post({title: title, owner: owner, community: community, ref: ref, created: created, commentsAmount: commentsAmount, link: link, content: content, votes: votes, voted: voted}, {type: type, flag: flag, view: "max", community: true})
+  +Reply(ref)
   each comment in comments
     +Comment(comment)

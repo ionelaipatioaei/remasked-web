@@ -3,18 +3,21 @@ include link.pug
 
 //- type can be: photo(includes gifs btw), video, text
 mixin Post(postData, options={type: "photo", view: "min", community: true})
+  -const calculateTime = (created) => {
+  -  return `on ${created[8]}${created[9]}-${created[5]}${created[6]}-${created[2]}${created[3]} at ${created[11]}${created[12]}:${created[14]}${created[15]}`;
+  -}
   div.post-container
     div.post-main
-      //- votes handling
-      div.post-votes(vote="down", style=`margin: ${options.view === "max" ? "0 0 auto" : "0"}`)
-        +Icon("/static/assets/icons/up.svg", "upvote post", `postUpdateVoteState("up")`)
-        p.post-votes-amount #{postData.upvotes - postData.downvotes}
-        +Icon("/static/assets/icons/down.svg", "downvote post")
+      //- vote handling
+      div.post-votes(vote="", style=`margin: ${options.view === "max" ? "0 0 auto" : "0"}`)
+        +Icon("/static/assets/icons/up.svg", "upvote post", `postUpdateVoteState("up", ${postData.voted})`)
+        p.post-votes-amount #{postData.votes}
+        +Icon("/static/assets/icons/down.svg", "downvote post", `postUpdateVoteState("down", ${postData.voted})`)
 
       //- small preview
       if options.type == "photo" && !options.flag
         div.post-small-preview(style=`display: ${options.view === "max" ? "none" : "flex"}`)
-          img.post-small-preview-image(src=`${postData.source}`, alt="post small preview")
+          img.post-small-preview-image(src=`${postData.link}`, alt="post small preview")
 
       else if options.type == "video" && !options.flag
         div.post-small-preview(style=`display: ${options.view === "max" ? "none" : "flex"}`)
@@ -35,10 +38,10 @@ mixin Post(postData, options={type: "photo", view: "min", community: true})
       //- info about the post - title, owner, etc
       div.post-info
         if options.type == "link" && !options.flag
-          +Link(`${postData.source}`)
+          +Link(`${postData.link}`)
             h1.post-info-title.post-info-link= postData.title
         else if options.type == "link" && options.flag
-          +Link(`${postData.source}`)
+          +Link(`${postData.link}`)
             h1.post-info-title.post-info-link.post-warning #{postData.title} (#{options.flag})
 
         else if options.flag
@@ -48,22 +51,22 @@ mixin Post(postData, options={type: "photo", view: "min", community: true})
           
         div.post-info-text-container
           p.post-info-text Submitted by&nbsp;
-          +Link("/hey")
+          +Link(`/profile/${postData.owner}`)
             p.post-info-text-goto= postData.owner
 
           if options.community
             p.post-info-text &nbsp;in&nbsp;
-            +Link("/hey2")
+            +Link(`/c/${postData.community}`)
               p.post-info-text-goto= postData.community
           
-          p.post-info-text &nbsp; #{postData.date} ago
+          p.post-info-text &nbsp; #{calculateTime(postData.created)}
         
         div.post-info-actions-container
           if options.type != "link"
             +Icon("/static/assets/icons/maximize.svg", "min or max post", "postMinMax()", "width: 20px; height: 20px; margin-right: 8px;")
 
           +Icon("/static/assets/icons/reply.svg", "comments", null, "width: 16px; height: 16px", false)
-          +Link(`/c/${postData.community}/post/fgds76`)
+          +Link(`/c/${postData.community}/post/${postData.ref}`)
             p.post-info-text-actions comments (#{postData.commentsAmount})
 
           +Icon("/static/assets/icons/x.svg", "comments", null, "width: 16px; height: 16px", false)
@@ -76,16 +79,16 @@ mixin Post(postData, options={type: "photo", view: "min", community: true})
         //- large preview
         if options.type == "photo"
           div.post-large-preview(style=`display: ${options.view === "max" ? "block" : "none"}`)
-            img.post-large-preview-image(src=`${postData.source}`, alt="post large preview")
+            img.post-large-preview-image(src=`${postData.link}`, alt="post large preview")
 
         else if options.type == "video"
           div.post-large-preview(style=`display: ${options.view === "max" ? "block" : "none"}`)
             video.post-large-preview-video(width="100%", height="auto", style="margin-top: 4px;", controls)
-              source(src=`${postData.source}`, type="video/mp4")
+              source(src=`${postData.link}`, type="video/mp4")
 
         else if options.type == "text"
           div.post-large-preview(style=`display: ${options.view === "max" ? "block" : "none"}`)
-            p= postData.source
+            p= postData.content
 
         //- NO NEED TO PREVIEW A LINK
 

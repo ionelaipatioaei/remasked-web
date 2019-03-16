@@ -1,7 +1,29 @@
 extends ../layout/layout.pug
 
+include ../components/button.pug
+include ../components/link.pug
+include ../layout/header.pug
+
+block header
+  +Header(logged)
+
 block title
   title Remasked | Login
 
 block content
-  h1 This is the login router
+  div.auth-top
+    h1 Sign in
+    div.auth-container
+      div.auth-input-container
+        p.input-text Username
+        input#username.auth-input(type="text", name="username")
+        p.input-text Password
+        input#password.auth-input(type="password", name="password")
+      +Link("/recover")
+        p Forgot password?
+
+      div.auth-actions
+        +Button("Login", "authLogin()")
+
+        +Link("/register")
+          +Button("Create account")

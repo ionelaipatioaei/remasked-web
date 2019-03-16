@@ -1,10 +1,8 @@
 include icon.pug
 include button.pug
 
-mixin Reply()
+mixin Reply(ref)
   div.reply-container
-    div(style="margin-top: 8px;")
-      textarea(class="replyText" rows="8" cols="64" placeholder="Type your reply here...")
-      div(style="display: flex; flex-direction: row;")
-        +Button("Reply")
-        +Button("Cancel")
+    textarea.reply-textarea(rows="8" cols="80" placeholder="Type your reply here...")
+    div.reply-textarea-buttons-container
+      +Button("Reply", `commentReplyMain('${ref}')`)

@@ -1,7 +1,27 @@
 extends ../layout/layout.pug
 
+include ../components/button.pug
+include ../components/link.pug
+include ../layout/header.pug
+
+block header
+  +Header(logged)
+
 block title
   title Remasked | Recover
 
 block content
-  h1 This is the recover password route
+  div.auth-top
+    h1 Recover your account
+    div.auth-container
+      div.auth-input-container
+        p.input-text Your account email
+        input.auth-input(type="email", name="email")
+
+      div.auth-actions
+        +Button("Send recover email", "authRecover()")
+
+        +Link("/register")
+          +Button("Create new account?")
+
+      p(style="font-style: italic") Note: You can recover your account only if you have an email associated with it.

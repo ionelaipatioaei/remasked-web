@@ -1,5 +1,10 @@
 extends ../layout/layout.pug
 
+include ../layout/header.pug
+
+block header
+  +Header(logged)
+
 block title
   title Remasked | Apps
 

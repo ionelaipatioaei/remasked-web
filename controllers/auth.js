@@ -1,13 +1,13 @@
 exports.login = (req, res) => {
-  res.render("auth/login", {});
+  res.render("auth/login", {logged: req.session.userId !== undefined});
 }
 
 exports.register = (req, res) => {
-  res.render("auth/register", {});
+  res.render("auth/register", {logged: req.session.userId !== undefined});
 }
 
 exports.recover = (req, res) => {
-  res.render("auth/recover", {});
+  res.render("auth/recover", {logged: req.session.userId !== undefined});
 }
 
 exports.logout = (req, res) => {

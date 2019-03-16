@@ -1,0 +1,37 @@
+@import "../constants/index.scss";
+
+.auth-top {
+  width: 400px;
+  margin: 32px auto;
+}
+
+.auth-container {
+  background-color: #fff;
+  padding: 10px;
+  margin: 6px;
+  border-radius: $r-normal;
+  box-shadow: $light;
+}
+
+.auth-input-container {
+  display: flex;
+  flex-direction: column;
+}
+.auth-input {
+  margin: 8px 0;
+  padding: 2px;
+  box-shadow: $light;
+  border-radius: $r-normal;
+  height: 42px;
+  border: none;
+  font-size: 1.6em;
+}
+
+.auth-input:focus {
+  outline: none;
+  background-color: #fafafa;
+}
+
+.auth-actions {
+  margin-top: 32px;
+}

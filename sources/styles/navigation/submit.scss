@@ -1,0 +1,13 @@
+@import "../constants/index.scss";
+
+.submit-top {
+  margin: 32px auto;
+}
+
+.submit-container {
+  background-color: #fff;
+  padding: 10px;
+  margin: 6px;
+  border-radius: $r-normal;
+  box-shadow: $light;
+}

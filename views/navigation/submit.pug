@@ -1,0 +1,25 @@
+extends ../layout/layout.pug
+
+include ../components/button.pug
+include ../layout/header.pug
+
+block header
+  +Header(logged)
+
+block title
+  title Remasked | Submit
+
+block content
+  div.submit-top
+    h1 Submit a post in #{community}
+    div.submit-container
+      p.input-text Title
+      input.auth-input(type="text", name="title")
+
+      p.input-text Link
+      input.auth-input(type="text", name="link")
+
+      p.input-text Text
+      textarea.auth-input
+
+      +Button("Submit")

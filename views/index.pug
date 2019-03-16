@@ -3,6 +3,10 @@ extends layout/layout.pug
 include components/button.pug
 include components/link.pug
 include components/icon.pug
+include layout/header.pug
+
+block header
+  +Header(logged)
 
 block title
   title Remasked

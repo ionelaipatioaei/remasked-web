@@ -11,6 +11,12 @@
 @import "layout/navbar.scss";
 @import "layout/footer.scss";
 
+// Auth style
+@import "auth/index.scss";
+
+// Navigation styke
+@import "navigation/submit.scss";
+
 // Page style - global
 html, body {
   font-family: "Source Sans Pro", sans-serif;

@@ -1,4 +1,9 @@
+include button.pug
+include link.pug
+
 mixin Meta(community, description)
   div#meta-container
     h1= community
+    +Link(`/submit/${community}`)
+      +Button("Submit new post")
     p.meta-text= description
