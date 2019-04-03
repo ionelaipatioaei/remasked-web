@@ -1,21 +1,24 @@
-// Components style
+// shared
+@import "shared/constants.scss";
+@import "shared/auth.scss";
+
+// components
 @import "components/button.scss";
 @import "components/icon.scss";
+@import "components/input-text.scss";
 
 @import "components/post.scss";
 @import "components/comment.scss";
-@import "components/reply.scss";
 @import "components/meta.scss";
 
-// Layout style
+// layout
 @import "layout/navbar.scss";
 @import "layout/footer.scss";
 
-// Auth style
-@import "auth/index.scss";
+// misc
+@import "misc/submit.scss";
+@import "misc/reply.scss";
 
-// Navigation styke
-@import "navigation/submit.scss";
 
 // Page style - global
 html, body {
@@ -44,6 +47,25 @@ p {
   margin: 0;
 }
 
+h1 {
+  margin: 8px 0;
+}
+
+h2 {
+  margin: 4px 0;
+}
+
+h3, h4, h5, h6 {
+  margin: 2px 0;
+}
+
+blockquote {
+  border-left: 3px solid #999;
+  margin: 8px 0;
+  padding: 0 4px;
+  font-style: italic;
+}
+
 .test {
   // width: 100%;
   display: flex;
@@ -56,4 +78,52 @@ p {
   box-shadow: $light;
   margin: 6px;
   border-radius: $r-normal;
+}
+
+@media all and (min-width:1200px){
+  .global-container {
+    width: 90%;
+  }
+}
+
+@media all and (min-width: 960px) and (max-width: 1199px) {
+  .global-container {
+    width: 90%;
+  }
+}
+
+@media all and (min-width: 768px) and (max-width: 959px) {
+  .global-container {
+    width: 90%;
+  }
+}
+
+@media all and (min-width: 480px) and (max-width: 767px){
+  .global-container {
+    width: 95%;
+  }
+
+  .c-container {
+    display: block;
+  }
+}
+
+@media all and (max-width: 599px) {
+  .global-container {
+    width: 95%;
+  }
+
+  .c-container {
+    display: block;
+  }
+}
+
+@media all and (max-width: 479px) {
+  .global-container {
+    width: 98%;
+  }
+
+  .c-container {
+    display: block;
+  }
 }

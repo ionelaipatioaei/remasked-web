@@ -43,6 +43,9 @@ app.use("/api/user", apiUser);
 const apiNavigation = require("./api/routes/navigation");
 app.use("/api", apiNavigation);
 
+const apiInteraction = require("./api/routes/interaction");
+app.use("/api", apiInteraction);
+
 // FRONT-END ROUTES
 const auth = require("./routes/auth");
 app.use(auth);

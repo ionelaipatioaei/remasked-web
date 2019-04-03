@@ -2,6 +2,7 @@
 const authLogin = () => {
   const username = document.querySelector("#username").value;
   const password = document.querySelector("#password").value;
+  const warning = document.querySelector(".auth-warning");
 
   fetch("/api/auth/login", {
     method: "POST",
@@ -12,6 +13,7 @@ const authLogin = () => {
     console.log(data);
     if (data.error) {
       document.querySelector("#password").value = "";
+      warning.innerHTML = data.error;
     } else if (data.success) {
       window.location.href = "/";
     }
@@ -24,6 +26,7 @@ const authRegister = () => {
   const email = document.querySelector("#email").value;
   const password = document.querySelector("#password").value;
   const confirmPassword = document.querySelector("#confirm-password").value;
+  const warning = document.querySelector(".auth-warning");
 
   fetch("/api/auth/register", {
     method: "POST",
@@ -34,9 +37,19 @@ const authRegister = () => {
     console.log(data);
     if (data.success) {
       window.location.href = "/login";
+    } else if(data.error) {
+      warning.innerHTML = data.error;
     }
   })
   .catch(error => console.log(error));
+}
+
+const authRecover = () => {
+  const email = document.querySelector("#email").value;
+  const success = document.querySelector(".auth-success");
+
+  success.innerHTML = "If the email is in the database we'll send a recover email!"
+  setTimeout(() => window.location.href = "/login", 1500);
 }
 
 const authLogout = () => {

@@ -4,11 +4,8 @@ const commentMinMax = () => {
   const reply = elementWithTextarea.querySelector(".comment-reply");
   if (reply.style.display === "none" || !reply.style.display) {
     reply.style.display = "block";
-    reply.querySelector(".comment-textarea").focus();
-    elementWithTextarea.querySelector(".comment-votes").style.margin = "0 0 auto -24px";
+    reply.querySelector(".input-textarea").focus();
   } else {
-    const votes = event.currentTarget.parentNode.parentNode.parentNode.parentNode;
-    votes.querySelector(".comment-votes").style.margin = "0 0 0 -24px";
     reply.style.display = "none";
   }
 }
@@ -62,11 +59,11 @@ const commentReply = (refPost, refComment) => {
     .catch(error => console.log(error));
 
   const append = event.currentTarget.parentNode.parentNode.parentNode.parentNode;
-  append.insertAdjacentHTML("afterend", createCommentText(text.value));
+  // append.insertAdjacentHTML("afterend", createCommentText(text.value));
   text.value = "";
   const reply = append.querySelector(".comment-reply");
   reply.style.display = "none";
-  append.querySelector(".comment-votes").style.margin = "0 0 0 -24px";
+  window.location.reload();
 }
 
 const commentUpdateSaveState = () => {
@@ -94,10 +91,12 @@ const commentUpdateVoteState = (vote, ref) => {
     })
   }).then(res => res.json())
     .then(data => {
-      if (data.remove) {
+      if (data.remove && data.success) {
         votes.innerHTML = parseInt(votes.innerHTML) - vote;
-      } else {
+        votes.style.color = "black";
+      } else if (data.success) {
         votes.innerHTML = parseInt(votes.innerHTML) + vote;
+        votes.style.color = vote === 1 ? "green" : "red";
       }
       console.log(data);
     })
@@ -108,53 +107,9 @@ const commentReport = () => {
   console.log("haha");
 }
 
-const createCommentText = (text) => {
-  const findUrl = (text) => {
-    var urlRegex = /(https?:\/\/[^\s]+)/g;
-    return text.replace(urlRegex, function(url) {
-      return '<a target="_blank" href="' + url + '">' + url + '</a>';
-    });
-  }
-
-  function escapeHtml(unsafe) {
-    return unsafe
-      .replace(/&/g, "&amp;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;")
-      .replace(/"/g, "&quot;")
-      .replace(/'/g, "&#039;");
-  }
-
-  let values = text;
-  let txt = "<p class='comment-text'>"
-  for(let i = 0; i < values.length; i++) {
-    if(values[i] == "\n" && values[i + 1] == "\n") {
-      txt += "</p><p class='comment-text'>";
-      i += 1;
-    } else if(values[i] == "\n") {
-      txt += "<br/>";
-    } else {
-      txt += escapeHtml(values[i]);
-    }
-  }
-  return `
-    <div class="comment-container">
-      <div class="comment-content">
-        <div class="comment-main">
-          <div class="comment-info">
-            <p class="comment-info-text" style="font-style: italic">You replied:</p>
-          </div>
-          <div class="comment-text-container">
-            ${findUrl(txt)}
-          </div>
-        </div>
-      </div>
-    </div>
-  `;
-}
-
 const commentReplyMain = (refPost) => {
   const text = event.currentTarget.parentNode.parentNode.querySelector("textarea");
+  console.log(text.value);
   fetch("http://localhost:8081/api/comment", {
     method: "POST",
     body: JSON.stringify({
@@ -165,7 +120,78 @@ const commentReplyMain = (refPost) => {
   }).then(res => res.json())
     .then(data => console.log(data))
     .catch(error => console.log(error));
-  const append = document.querySelector(".reply-container");  
-  append.insertAdjacentHTML("afterend", createCommentText(text.value));
+  // const append = document.querySelector(".reply-container");
+  // append.insertAdjacentHTML("afterend", createCommentText(text.value));
   text.value = "";
+  // THIS IS STUPID
+  window.location.reload();
+}
+
+const commentEdit = () => {
+  const main = event.currentTarget.parentNode.parentNode;
+  const content = main.querySelector(".comment-text-container");
+  const edit = main.querySelector(".comment-edit");
+
+  content.style.display = "none";
+  edit.style.display = "block";
+}
+
+const commentCancelEdit = () => {
+  const main = event.currentTarget.parentNode.parentNode.parentNode;
+  const content = main.querySelector(".comment-text-container");
+  const edit = main.querySelector(".comment-edit");
+
+  content.style.display = "block";
+  edit.style.display = "none";
+}
+
+const commentSaveEdit = (refComment) => {
+  const main = event.currentTarget.parentNode.parentNode;
+  const editedText = main.querySelector("textarea").value;
+  fetch("http://localhost:8081/api/comment", {
+    method: "PUT",
+    body: JSON.stringify({
+      refComment: refComment,
+      editedText: editedText     
+    })
+  }).then(res => res.json())
+    .then(data => {
+      if (data.success) {
+        window.location.reload();
+      } else {
+        console.log(data);
+      }
+    })
+    .catch(error => console.log(error));
+}
+
+const commentDelete = () => {
+  const main = event.currentTarget.parentNode;
+  main.querySelector("#delete").style.display = "none";
+  main.querySelector("#delete-confirm").style.display = "block";
+  main.querySelector("#delete-cancel").style.display = "block";
+}
+
+const commentDeleteConfirm = (refComment) => {
+  fetch("http://localhost:8081/api/comment", {
+    method: "DELETE",
+    body: JSON.stringify({
+      refComment: refComment
+    })
+  }).then(res => res.json())
+    .then(data => {
+      if (data.success) {
+        window.location.reload();
+      } else {
+        console.log(data);
+      }
+    })
+    .catch(error => console.log(error));
+}
+
+const commentDeleteCancel = () => {
+  const main = event.currentTarget.parentNode;
+  main.querySelector("#delete").style.display = "block";
+  main.querySelector("#delete-confirm").style.display = "none";
+  main.querySelector("#delete-cancel").style.display = "none";
 }

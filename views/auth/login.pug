@@ -2,6 +2,7 @@ extends ../layout/layout.pug
 
 include ../components/button.pug
 include ../components/link.pug
+include ../components/inputText.pug
 include ../layout/header.pug
 
 block header
@@ -11,19 +12,20 @@ block title
   title Remasked | Login
 
 block content
-  div.auth-top
-    h1 Sign in
-    div.auth-container
-      div.auth-input-container
-        p.input-text Username
-        input#username.auth-input(type="text", name="username")
-        p.input-text Password
-        input#password.auth-input(type="password", name="password")
+  div.auth-container
+    h1.auth-title Sign in
+
+    div.auth-inputs
+      p.auth-warning
+
+      +InputText("Username", "username", "text", "username")
+      +InputText("Password", "password", "password", "password")
+
       +Link("/recover")
-        p Forgot password?
+        p.auth-text Forgot password?
 
       div.auth-actions
-        +Button("Login", "authLogin()")
+        +Button("Login", "authLogin()", "ok")
 
         +Link("/register")
           +Button("Create account")

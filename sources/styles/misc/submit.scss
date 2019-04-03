@@ -1,0 +1,32 @@
+@import "../constants/index.scss";
+
+.submit-container {
+  min-height: 70vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.submit-title {
+  align-self: flex-start;
+}
+
+.submit-box {
+  background-color: #fff;
+  padding: 10px;
+  margin: 6px;
+  border-radius: $r-normal;
+  box-shadow: $light;
+  width: 100%;
+}
+
+.submit-type-buttons-container {
+  display: flex;
+  align-content: center;
+  margin-left: -8px;
+}
+
+.submit-textarea-buttons-container {
+  display: flex;
+}

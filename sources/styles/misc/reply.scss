@@ -1,0 +1,17 @@
+.reply-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  // background-color: $main;
+  padding: 0 6px 6px 6px;
+  // border: 1px solid black;
+  grid-column: 1/2;
+  box-shadow: $light;
+  margin: 6px;
+  border-radius: $r-normal;
+}
+
+.reply-textarea-buttons-container {
+  display: flex;
+  margin: -8px -6px;
+}

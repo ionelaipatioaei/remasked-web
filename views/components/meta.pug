@@ -1,9 +1,13 @@
 include button.pug
 include link.pug
 
-mixin Meta(community, description)
+mixin Meta(community, subscribers, created, createdby, description)
   div#meta-container
     h1= community
+    p.meta-text #{subscribers} subscribers
+    div
+      +Button("Subscribe")
     +Link(`/submit/${community}`)
       +Button("Submit new post")
-    p.meta-text= description
+    div.meta-description!= meta
+    p!= `Created by <a href="/profile/${createdby}">${createdby}</a> on ${created}`

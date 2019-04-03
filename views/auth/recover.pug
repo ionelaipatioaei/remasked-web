@@ -2,6 +2,7 @@ extends ../layout/layout.pug
 
 include ../components/button.pug
 include ../components/link.pug
+include ../components/inputText.pug
 include ../layout/header.pug
 
 block header
@@ -11,12 +12,12 @@ block title
   title Remasked | Recover
 
 block content
-  div.auth-top
-    h1 Recover your account
-    div.auth-container
-      div.auth-input-container
-        p.input-text Your account email
-        input.auth-input(type="email", name="email")
+  div.auth-container
+    h1.auth-title Recover your account
+    div.auth-inputs
+      p.auth-success
+      
+      +InputText("Your email", "email", "email", "email")
 
       div.auth-actions
         +Button("Send recover email", "authRecover()")
@@ -24,4 +25,4 @@ block content
         +Link("/register")
           +Button("Create new account?")
 
-      p(style="font-style: italic") Note: You can recover your account only if you have an email associated with it.
+      p.auth-note Note: You can recover your account only if you have an email associated with it.

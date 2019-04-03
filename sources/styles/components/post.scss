@@ -68,7 +68,16 @@
   margin-left: 4px;
 }
 
+.post-deleted {
+
+}
+
+.post-edited {
+  font-style: italic;
+}
+
 .post-info-text-actions {
+  cursor: pointer;
   display: inline;
   margin: 0;
   color: #000;
@@ -99,10 +108,6 @@
   color: #000;
 }
 
-.post-hide {
-  cursor: pointer;
-}
-
 .post-info-title {
   margin: 0;
   font-size: 1.2em;
@@ -124,4 +129,17 @@
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.post-textarea-buttons-container {
+  display: flex;
+  flex-direction: row;
+  margin: -8px -6px;
+}
+
+@media all and (max-width: 599px) {
+  .post-small-preview-image {
+    max-width: 64px;
+    max-height: 44px;
+  }
 }

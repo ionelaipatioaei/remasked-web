@@ -16,18 +16,28 @@ const postMinMax = () => {
   }
 }
 
-const postUpdateVoteState = (action, voted) => {
+const postUpdateVoteState = (vote, ref) => {
   // stupid way to do things!
   const votes = event.currentTarget.parentNode.querySelector(".post-votes-amount");
-  if (action === "up" && parseInt(voted) === 0) {
-    votes.innerHTML = parseInt(votes.innerHTML) + 1;
-  } else if (action === "down" && parseInt(voted) === 0) {
-    votes.innerHTML = parseInt(votes.innerHTML) - 1;
-  } else if (action === "up" && parseInt(voted) === -1) {
-    votes.innerHTML = parseInt(votes.innerHTML) + 2;
-  } else if (action === "down" && parseInt(voted) === 1) {
-    votes.innerHTML = parseInt(votes.innerHTML) - 2;
-  }
+  console.log(vote, ref);
+  fetch("http://localhost:8081/api/vote", {
+    method: "POST",
+    body: JSON.stringify({
+      refPost: ref,
+      vote: vote
+    })
+  }).then(res => res.json())
+    .then(data => {
+      if (data.remove && data.success) {
+        votes.innerHTML = parseInt(votes.innerHTML) - vote;
+        votes.style.color = "black";
+      } else if (data.success) {
+        votes.innerHTML = parseInt(votes.innerHTML) + vote;
+        votes.style.color = vote === 1 ? "green" : "red";
+      }
+      console.log(data);
+    })
+    .catch(error => console.log(error));
 }
 
 const postUpdateSaveState = () => {
@@ -45,4 +55,75 @@ const postHide = () => {
   const post = event.currentTarget.parentNode.parentNode.parentNode.parentNode;
   post.style.display = "none";
   console.log(post);
+}
+
+const postEdit = () => {
+  postMinMax();
+  const main = event.currentTarget.parentNode.parentNode;
+  const content = main.querySelector(".post-large-preview");
+  const edit = main.querySelector(".post-edit");
+
+  content.style.display = "none";
+  edit.style.display = "block";
+  console.log(main);
+}
+
+const postCancelEdit = () => {
+  const main = event.currentTarget.parentNode.parentNode.parentNode;
+  const content = main.querySelector(".post-large-preview");
+  const edit = main.querySelector(".post-edit");
+
+  content.style.display = "block";
+  edit.style.display = "none";
+}
+
+const postSaveEdit = (refPost) => {
+  const main = event.currentTarget.parentNode.parentNode;
+  const editedText = main.querySelector("textarea").value;
+  fetch("http://localhost:8081/api/post", {
+    method: "PUT",
+    body: JSON.stringify({
+      refPost: refPost,
+      editedText: editedText     
+    })
+  }).then(res => res.json())
+    .then(data => {
+      if (data.success) {
+        window.location.reload();
+      } else {
+        console.log(data);
+      }
+    })
+    .catch(error => console.log(error));
+}
+
+const postDelete = () => {
+  const main = event.currentTarget.parentNode;
+  main.querySelector("#delete").style.display = "none";
+  main.querySelector("#delete-confirm").style.display = "block";
+  main.querySelector("#delete-cancel").style.display = "block";
+}
+
+const postDeleteConfirm = (refPost) => {
+  fetch("http://localhost:8081/api/post", {
+    method: "DELETE",
+    body: JSON.stringify({
+      refPost: refPost
+    })
+  }).then(res => res.json())
+    .then(data => {
+      if (data.success) {
+        window.location.reload();
+      } else {
+        console.log(data);
+      }
+    })
+    .catch(error => console.log(error));
+}
+
+const postDeleteCancel = () => {
+  const main = event.currentTarget.parentNode;
+  main.querySelector("#delete").style.display = "block";
+  main.querySelector("#delete-confirm").style.display = "none";
+  main.querySelector("#delete-cancel").style.display = "none";
 }

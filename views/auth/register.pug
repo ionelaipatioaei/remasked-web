@@ -2,6 +2,7 @@ extends ../layout/layout.pug
 
 include ../components/button.pug
 include ../components/link.pug
+include ../components/inputText.pug
 include ../layout/header.pug
 
 block header
@@ -11,19 +12,17 @@ block title
   title Remasked | Register
 
 block content
-  div.auth-top
-    h1 Register
-    div.auth-container
-      div.auth-input-container
-        p.input-text Username
-        input#username.auth-input(type="text", name="username")
-        p.input-text Email(optional)
-        input#email.auth-input(type="email", name="email")
-        p.input-text Password
-        input#password.auth-input(type="password", name="password")
-        p.input-text Confirm password
-        input#confirm-password.auth-input(type="password", name="confirmPassword")
+  div.auth-container
+    h1.auth-title Register
 
+    div.auth-inputs
+      p.auth-warning
+      
+      +InputText("Username", "username", "text", "username")
+      +InputText("Email(optional)", "email", "email", "email")
+      +InputText("Password", "password", "password", "password")
+      +InputText("Confirm Password", "confirm-password", "password", "confirmPassword")
+    
       div.auth-actions
         +Button("Register", "authRegister()")
 

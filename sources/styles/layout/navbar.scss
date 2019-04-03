@@ -19,10 +19,38 @@ nav {
   display: flex;
   list-style-type: none;
   margin: 0;
+  padding-inline-start: 10px;
 }
 
 .nav-item {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.nav-new-container {
+  display: flex;
+  background: white;
+  width: 16px;
+  height: 16px;
+  border-radius: 8px;
+  position: absolute;
+  position: relative;
+  left: 40px;
+  top: -9px;
+  align-items: center;
+  justify-content: center;
+  z-index: 3;
+  
+}
+
+.nav-new-text {
+  font-size: 0.7em;
+  color: #FF7E38;
+}
+
+@media all and (max-width: 479px) {
+  .nav-container {
+      justify-content: space-around;
+    }
 }

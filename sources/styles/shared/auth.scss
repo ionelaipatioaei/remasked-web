@@ -1,0 +1,83 @@
+@import "../constants/index.scss";
+
+.auth-container {
+  min-height: 70vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.auth-title {
+  font-size: 3em;
+}
+
+.auth-inputs {
+  background-color: #fff;
+  padding: 10px;
+  margin: 6px;
+  border-radius: $r-normal;
+  box-shadow: $light;
+  width: 50%;
+}
+
+.auth-warning {
+  color: red;
+  font-weight: bold;
+  text-align: center;
+}
+
+.auth-success {
+  color: green;
+  font-weight: bold;
+  text-align: center;
+}
+
+.auth-text {
+  margin: 4px 0;
+}
+
+.auth-actions {
+
+}
+
+.auth-note {
+  font-style: italic;
+  font-size: 0.9em;
+}
+
+@media all and (min-width:1200px){
+  .auth-inputs {
+    width: 25%;
+  }
+}
+
+@media all and (min-width: 960px) and (max-width: 1199px) {
+  .auth-inputs {
+    width: 35%;
+  }
+}
+
+@media all and (min-width: 768px) and (max-width: 959px) {
+  .auth-inputs {
+    width: 45%;
+  }
+}
+
+@media all and (min-width: 480px) and (max-width: 767px){
+  .auth-inputs {
+    width: 50%;
+  }
+}
+
+@media all and (max-width: 599px) {
+  .auth-inputs {
+    width: 70%;
+  }
+}
+
+@media all and (max-width: 479px) {
+  .auth-inputs {
+    width: 90%;
+  }
+}

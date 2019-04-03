@@ -12,10 +12,10 @@ block title
 
 block content
   div.c-container
-    +Meta(`${name}`, "Hey there do you like this thingsey there do here this thingsey there do hee this thingsey there do hee this thingsey there do hee this thingsey there do hee this thingsey there do hee this thingsey there do hee this thingsey there do hee this thingsey there do hee this thingsey there do hee do you like this things?Hey there do you like this things?")
+    +Meta(name, subscribers, created, createdby, meta)
     each post in posts
       //- +Post(`${post.title}`, `${post.owner}`, `${name}`, "2.2.2222", 12, 432, 322, "https://i.ytimg.com/vi/tog3dRQxENs/maxresdefault.jpg")
-      +Post({community: name, ref: post.ref, title: post.title, owner: post.owner, commentsAmount: post.commentsAmount, created: post.created, link: post.link, content: post.content, votes: post.votes, voted: post.voted}, {type: post.type, flag: post.flag, view: "min", community: true})
+      +Post({community: name, ref: post.ref, title: post.title, owner: post.owner, owns: post.owns, commentsAmount: post.commentsAmount, created: post.created, link: post.link, contentRaw: post.contentRaw, content: post.content, votes: post.votes, voted: post.voted}, {type: post.type, flag: post.flag, view: "min", community: true})
     
   div.test
     p Load more

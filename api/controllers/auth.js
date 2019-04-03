@@ -6,7 +6,7 @@ exports.login = (req, res) => {
   const {username, password} = req.body;
 
   if (username && password) {
-    db.query("SELECT id, password FROM users WHERE username=$1", [username], (error, result) => {
+    db.query(`SELECT id, password FROM users WHERE username=$1`, [username], (error, result) => {
       if (!error && result.rows.length) {
         bcrypt.compare(password, result.rows[0].password, (passwordError, passwordIsMatching) => {
           if (!passwordError && passwordIsMatching) {
@@ -37,7 +37,7 @@ exports.register = (req, res) => {
     if (username) {
       bcrypt.hash(password, 10, (hashError, hash) => {
         if (!hashError) {
-          db.query("INSERT INTO users (username, password, email) VALUES ($1, $2, $3)", [username, hash, email], (error, result) => {
+          db.query(`INSERT INTO users (username, password, email) VALUES ($1, $2, $3)`, [username, hash, email], (error, result) => {
             if (!error) {
               res.json({success: "Your account was registered successfully!"});
             } else {

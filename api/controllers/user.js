@@ -4,7 +4,7 @@ const db = new Pool();
 exports.view = (req, res) => {
   const username = req.params.username;
 
-  db.query("SELECT username, created FROM users WHERE username=$1", [username], (error, result) => {
+  db.query(`SELECT username, created FROM users WHERE username=$1`, [username], (error, result) => {
     if (!error) {
       if (result.rows.length) {
         res.json(result.rows);

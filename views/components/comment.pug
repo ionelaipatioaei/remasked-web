@@ -3,40 +3,57 @@ include link.pug
 include button.pug
 
 mixin Comment(commentData)
-  -const calculateTime = (created) => {
-  -  return `on ${created[8]}${created[9]}-${created[5]}${created[6]}-${created[2]}${created[3]} at ${created[11]}${created[12]}:${created[14]}${created[15]}`;
-  -}
   div.comment-container
     div.comment-content
 
-      div.comment-votes
-        +Icon("/static/assets/icons/up.svg", "upvote comment", `commentUpdateVoteState(1, '${commentData.ref}')`)
-        p.comment-votes-amount(style=`color: ${commentData.voted}`) #{commentData.votes} | #{commentData.voted}
-        +Icon("/static/assets/icons/down.svg", "downvote comment", `commentUpdateVoteState(-1, '${commentData.ref}')`)
+      if !commentData.deleted
+        div.comment-votes
+          +Icon("/static/assets/icons/up.svg", "upvote comment", `commentUpdateVoteState(1, '${commentData.ref}')`)
+          p.comment-votes-amount(style=`color: ${commentData.voted === 1 ? "green" : commentData.voted === -1 ? "red" : "black"}`) #{commentData.votes}
+          +Icon("/static/assets/icons/down.svg", "downvote comment", `commentUpdateVoteState(-1, '${commentData.ref}')`)
 
       div.comment-main
-        div.comment-info
-          +Icon("/static/assets/icons/minus.svg", "min/max comment", "commentCollapse()", "width: 16px; height: 16px; margin-right: 6px;") 
-          div.comment-info-text-container
-            +Link("/hey")
-              p.comment-info-text-goto= commentData.owner
-            p.comment-info-text &nbsp;replied #{calculateTime(commentData.created)}
+        if !commentData.deleted
+          div.comment-info
+            +Icon("/static/assets/icons/minus.svg", "min/max comment", "commentCollapse()", "width: 16px; height: 16px; margin-right: 6px;") 
+            div.comment-info-text-container
+              +Link("/hey")
+                p.comment-info-text-goto= commentData.owner
+              p.comment-info-text &nbsp;replied on #{commentData.created}
+                if commentData.edited
+                  span.comment-edited &nbsp;(edited on #{commentData.edited})
+        else
+          p.comment-deleted This comment was deleted.
 
-        div.comment-text-container
-          p.comment-text= commentData.content
+        div.comment-text-container!= commentData.content
+        div.comment-edit(style="display: none;")
+          textarea.input-textarea(rows="6", cols="64")= commentData.contentRaw
+          div.comment-textarea-buttons-container
+            +Button("Save", `commentSaveEdit('${commentData.ref}')`)
+            +Button("Cancel", "commentCancelEdit()")
 
         div.comment-info-actions-container
-          +Icon("/static/assets/icons/star.svg", "comments", null, "width: 16px; height: 16px", false)
-          p.comment-info-text-actions(saved="false", onclick="commentUpdateSaveState()") save&nbsp;
+          if !commentData.deleted
+            +Icon("/static/assets/icons/star.svg", "comments", null, "width: 16px; height: 16px", false)
+            p.comment-info-text-actions(saved="false", onclick="commentUpdateSaveState()") save&nbsp;
 
-          +Icon("/static/assets/icons/flag.svg", "comments", null, "width: 16px; height: 16px", false)
-          p.comment-info-text-actions(onclick="commentReport()") report&nbsp;
+            +Icon("/static/assets/icons/flag.svg", "comments", null, "width: 16px; height: 16px", false)
+            p.comment-info-text-actions(onclick="commentReport()") report&nbsp;
 
-          +Icon("/static/assets/icons/reply.svg", "comments", null, "width: 16px; height: 16px", false)
-          p.comment-info-text-actions(onclick="commentMinMax()") reply&nbsp;
+            +Icon("/static/assets/icons/reply.svg", "comments", null, "width: 16px; height: 16px", false)
+            p.comment-info-text-actions(onclick="commentMinMax()") reply&nbsp;
+
+          if commentData.owns
+            +Icon("/static/assets/icons/edit.svg", "comments", null, "width: 16px; height: 16px", false)
+            p.comment-info-text-actions(onclick="commentEdit()") edit&nbsp;
+
+            +Icon("/static/assets/icons/delete.svg", "comments", null, "width: 16px; height: 16px", false)
+            p#delete.comment-info-text-actions(onclick="commentDelete()") delete&nbsp;
+            p#delete-confirm.comment-info-text-actions(style="display: none;", onclick=`commentDeleteConfirm('${commentData.ref}')`) confirm&nbsp;
+            p#delete-cancel.comment-info-text-actions(style="display: none;", onclick="commentDeleteCancel()") &nbsp;cancel
 
         div.comment-reply
-          textarea.comment-textarea(rows="6" cols="64" placeholder="Type your reply here...")
+          textarea.input-textarea(rows="6" cols="64" placeholder="Type your reply here...")
           div.comment-textarea-buttons-container
             +Button("Reply", `commentReply('${commentData.refPost}', '${commentData.ref}')`)
             +Button("Cancel", "commentMinMax()")

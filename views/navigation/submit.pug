@@ -1,6 +1,7 @@
 extends ../layout/layout.pug
 
 include ../components/button.pug
+include ../components/inputText.pug
 include ../layout/header.pug
 
 block header
@@ -10,16 +11,26 @@ block title
   title Remasked | Submit
 
 block content
-  div.submit-top
-    h1 Submit a post in #{community}
-    div.submit-container
-      p.input-text Title
-      input.auth-input(type="text", name="title")
+  div.submit-container
+    h1.submit-title Submit a post in #{community}
 
-      p.input-text Link
-      input.auth-input(type="text", name="link")
+    div.submit-box
+      p.submit-warning 
+      
+      +InputText("Title", "title", "text", "title")
+      
+      p Post type
+      div.submit-type-buttons-container
+        +Button("Link", "changeToLink()", null, "link-button")
+        +Button("Text", "changeToText()", null, "text-button")
 
-      p.input-text Text
-      textarea.auth-input
+      div(style="width: 128px;")
+        +InputText("Flag", "flag", "text", "flag")
 
-      +Button("Submit")
+      +InputText("Link", "link", "text", "link")
+
+      p.input-text-label Text
+      textarea#content.input-textarea(placeholder="Your text here...", disabled="disabled")
+
+      div.submit-textarea-buttons-container
+        +Button("Submit", `submitPost('${community}')`)
