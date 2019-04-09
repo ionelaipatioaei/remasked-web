@@ -4,9 +4,12 @@ const router = express.Router();
 const interactionController = require("../controllers/interaction");
 const interactionCommentController = require("../controllers/interactionComment");
 const interactionPostController = require("../controllers/interactionPost");
+const interactionCommunityController = require("../controllers/interactionCommunity");
 
 // GENERAL
 router.post("/vote", interactionController.vote);
+router.post("/subscribe", interactionController.subscribe);
+router.post("/save", interactionController.save);
 
 // COMMENT
 router.post("/comment", interactionCommentController.commentAdd);
@@ -19,5 +22,7 @@ router.put("/post", interactionPostController.postEdit);
 router.delete("/post", interactionPostController.postDelete);
 
 // COMMUNITY
+router.post("/community", interactionCommunityController.communityAdd);
+router.put("/community", interactionCommunityController.communityEdit);
 
 module.exports = router;

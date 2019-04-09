@@ -73,16 +73,17 @@ exports.postDelete = (req, res) => {
   const {refPost} = req.body;
 
   if (req.session.userId) {
-    const query = `UPDATE comment SET owner=NULL, created=NULL, title=NULL, link=NULL, content=NULL, edited=NULL, deleted=TRUE 
+    const query = `UPDATE post SET owner=NULL, created=NULL, title=NULL, link=NULL, content=NULL, 
+      type='text', flag=NULL, edited=NULL, deleted=TRUE 
       WHERE ref_string=$1 AND owner=$2`;
 
-    const queryParams = [refPost, queryParams];
+    const queryParams = [refPost, req.session.userId];
 
     db.query(query, queryParams, (error, result) => {
       if (!error) {
         res.json({success: "Your post was deleted!"});
       } else {
-        res.json({error: "Something went wrong or this isn't your post!"});
+        res.json({error: "Somethin went wrong or this isn't your post!"});
       }
     });
   } else {

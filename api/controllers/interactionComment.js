@@ -6,7 +6,7 @@ exports.commentAdd = (req, res) => {
   // console.log(refPost, refComment, content);
   if (req.session.userId) {
     const query = refComment ?
-      // comment has a parent
+      // comment to a parent
       `INSERT INTO comment (owner, content, post_parent, comment_parent) 
         VALUES ($1, $2, (SELECT id FROM post WHERE ref_string=$3), (SELECT id FROM comment WHERE ref_string=$4))` 
       :
