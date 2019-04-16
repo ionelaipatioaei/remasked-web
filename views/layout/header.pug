@@ -16,19 +16,28 @@ mixin Header(logged, newMessages, newNotifications)
           +Link("/communities")
             +Icon("/static/assets/icons/list.svg", "communities", null, "margin-left: 8px")
 
-        li.nav-item(style=`margin-left: ${newMessages ? "-16px" : 0}`)
-          if newMessages
-            div.nav-new-container
-              div.nav-new-text= newMessages
-          +Link("/messages")
-            +Icon("/static/assets/icons/mail.svg", "messages", null, "margin-left: 8px")
+        li.nav-item
+          +Link("#")
+            +Icon("/static/assets/icons/mail.svg", "messages", null, "margin-left: 8px; cursor: not-allowed;", false)
 
-        li.nav-item(style=`margin-left: ${newNotifications ? "-16px" : 0}`)
-          if newNotifications
-            div.nav-new-container
-                div.nav-new-text= newNotifications
-          +Link("/notifications")
-            +Icon("/static/assets/icons/bell.svg", "notifications", null, "margin-left: 8px")
+        li.nav-item
+          +Link("#")
+            +Icon("/static/assets/icons/bell.svg", "notifications", null, "margin-left: 8px; cursor: not-allowed;", false)
+        
+        //- GOOD SYSTEM!
+        //- li.nav-item(style=`margin-left: ${newMessages ? "-16px" : 0}`)
+        //-   if newMessages
+        //-     div.nav-new-container
+        //-       div.nav-new-text= newMessages
+        //-   +Link("/messages")
+        //-     +Icon("/static/assets/icons/mail.svg", "messages", null, "margin-left: 8px")
+
+        //- li.nav-item(style=`margin-left: ${newNotifications ? "-16px" : 0}`)
+        //-   if newNotifications
+        //-     div.nav-new-container
+        //-         div.nav-new-text= newNotifications
+        //-   +Link("/notifications")
+        //-     +Icon("/static/assets/icons/bell.svg", "notifications", null, "margin-left: 8px")
 
         li.nav-item
           +Link("/settings")

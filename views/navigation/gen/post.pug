@@ -12,7 +12,10 @@ block title
   title #{title} | remasked
 
 block content
-  +Post({title: title, owner: owner, owns: owns, community: community, ref: ref, created: created, commentsAmount: commentsAmount, link: link, contentRaw: contentRaw, content: content, votes: votes, voted: voted}, {type: type, flag: flag, view: "max", community: true})
+  //- this one works ok
+  //- TITLE, OWNER OWNS, SAVED, COMMUNITY, REF, CREATED, EDITED, DELETED, C_AMOUNT, LINK, C_RAW, CONTENT, VOTES, VOTED
+  +Post({title, owner, owns, saved, community, ref, created, edited, deleted, commentsAmount, link, contentRaw, content, votes, voted}, {type: type, flag: flag, view: "max", community: true})
+
   +Reply(ref)
   each comment in comments
     +Comment(comment)

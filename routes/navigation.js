@@ -1,16 +1,20 @@
 const express = require("express");
 const router = express.Router();
 
-const navigationControllerApi = require("../api/controllers/navigation");
+const apiC = require("../api/controllers/navigation/c");
+const apiPost = require("../api/controllers/navigation/post");
+const apiProfile = require("../api/controllers/navigation/profile");
+const apiCommunities = require("../api/controllers/navigation/communities");
 
 const navigationController = require("../controllers/navigation");
 
-router.get("/profile/:name*?", navigationController.profile);
-router.get("/c/:name", navigationControllerApi.c("render"));
-router.get("/c/:name/post/:id", navigationControllerApi.post("render"));
-router.get("/submit/:c", navigationController.submit);
+router.get("/profile/:name*?", apiProfile("render"));
+router.get("/c/:name", apiC("render"));
+router.get("/c/:name/post/:id", apiPost("render"));
+router.get("/communities", apiCommunities("render"));
 
-router.get("/communities", navigationController.communities);
+router.get("/submit/:c", navigationController.submit);
+router.get("/create", navigationController.create);
 router.get("/messages", navigationController.messages);
 router.get("/notifications", navigationController.notifications);
 router.get("/settings", navigationController.settings);

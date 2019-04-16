@@ -1,6 +1,8 @@
 extends ../layout/layout.pug
 
 include ../layout/header.pug
+include ../components/post.pug
+include ../components/comment.pug
 
 block header
   +Header(logged)
@@ -13,4 +15,46 @@ block title
     title Remasked | #{name} profile
 
 block content
-  h1 This is #{you ? "your" : name} profile
+  if (!logged && own)
+    h1 You need to login in order to view your profile!
+  else
+    div.submit-box
+      h1.submit-title #{username}'s profile
+      h3 Member since #{created}.
+      h3 Post points: #{postPoints}
+      h3 Comment points: #{commentPoints}
+      h3 Total points: #{postPoints + commentPoints}
+      h3 Total posts: #{postsAmount}
+      h3 Total comments: #{commentsAmount}
+
+    div.profile-buttons
+      +Link(`/profile/${username}?type=posts`)
+        +Button("Posts")
+      +Link(`/profile/${username}?type=comments`)
+        +Button("Comments")
+
+      if (own)
+        +Link(`/profile/${username}?type=saved-posts`)
+          +Button("Saved posts")
+        +Link(`/profile/${username}?type=saved-comments`)
+          +Button("Saved comments")
+    
+    if error
+      h1 #{error}
+
+    if posts
+      each post in posts
+        +Post(post, {type: post.type, flag: post.flag, view: "min", community: true})
+
+    if savedPosts
+      each post in savedPosts
+        +Post(post, {type: post.type, flag: post.flag, view: "min", community: true})
+
+    if comments
+      each comment in comments
+        +Comment(comment)
+
+    if savedComments
+      each comment in savedComments
+        +Comment(comment)
+    

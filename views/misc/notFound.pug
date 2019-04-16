@@ -1,0 +1,12 @@
+extends ../layout/layout.pug
+
+include ../layout/header.pug
+
+block header
+  +Header(logged)
+
+block title
+  title Remasked | Not found
+
+block content
+  h1 We couldn't find what you are searching for.

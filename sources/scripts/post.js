@@ -19,7 +19,7 @@ const postMinMax = () => {
 const postUpdateVoteState = (vote, ref) => {
   // stupid way to do things!
   const votes = event.currentTarget.parentNode.querySelector(".post-votes-amount");
-  console.log(vote, ref);
+
   fetch("http://localhost:8081/api/vote", {
     method: "POST",
     body: JSON.stringify({
@@ -40,15 +40,27 @@ const postUpdateVoteState = (vote, ref) => {
     .catch(error => console.log(error));
 }
 
-const postUpdateSaveState = () => {
+const postUpdateSaveState = (refPost) => {
   const postSave = event.currentTarget;
-  if (postSave.saved === "true") {
-    postSave.src = "/static/assets/icons/star.svg";
-    postSave.saved = "false";
-  } else {
-    postSave.src = "/static/assets/icons/starFill.svg";
-    postSave.saved = "true";
-  }
+
+  fetch("http://localhost:8081/api/save", {
+    method: "POST",
+    body: JSON.stringify({
+      refPost: refPost
+    })
+  }).then(res => res.json())
+    .then(data => {
+      if (data.success) {
+        if (data.remove) {
+          postSave.src = "/static/assets/icons/star.svg";
+        } else {
+          postSave.src = "/static/assets/icons/starFill.svg";
+        }
+      } else {
+        console.log("Something went wrong");
+      }
+    })
+    .catch(error => console.log(error));
 }
 
 const postHide = () => {

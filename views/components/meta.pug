@@ -1,13 +1,25 @@
 include button.pug
 include link.pug
 
-mixin Meta(community, subscribers, created, createdby, description)
+mixin Meta(community, subscribers, created, createdby, owns, subscribed, metaRaw, description)
   div#meta-container
     h1= community
     p.meta-text #{subscribers} subscribers
     div
-      +Button("Subscribe")
+      if subscribed
+        +Button("Unsubscribe", `communitySubscribe('${community}')`)
+      else
+        +Button("Subscribe", `communitySubscribe('${community}')`)
+
     +Link(`/submit/${community}`)
       +Button("Submit new post")
+    if owns
+      +Button("Edit description", "communityEdit()")
     div.meta-description!= meta
+    div.meta-edit(style="display: none;")
+      textarea.input-textarea(style="height: 256px;")= metaRaw
+      div.meta-textarea-buttons-container
+        +Button("Save", `communitySaveEdit('${community}')`)
+        +Button("Cancel", "communityCancelEdit()")
+
     p!= `Created by <a href="/profile/${createdby}">${createdby}</a> on ${created}`

@@ -1,28 +1,31 @@
 const express = require("express");
 const router = express.Router();
 
-const interactionController = require("../controllers/interaction");
-const interactionCommentController = require("../controllers/interactionComment");
-const interactionPostController = require("../controllers/interactionPost");
-const interactionCommunityController = require("../controllers/interactionCommunity");
+const vote = require("../controllers/interaction/vote");
+const subscribe = require("../controllers/interaction/subscribe");
+const save = require("../controllers/interaction/save");
+
+const comment = require("../controllers/interaction/comment");
+const post = require("../controllers/interaction/post");
+const community = require("../controllers/interaction/community");
 
 // GENERAL
-router.post("/vote", interactionController.vote);
-router.post("/subscribe", interactionController.subscribe);
-router.post("/save", interactionController.save);
+router.post("/vote", vote);
+router.post("/subscribe", subscribe);
+router.post("/save", save);
 
 // COMMENT
-router.post("/comment", interactionCommentController.commentAdd);
-router.put("/comment", interactionCommentController.commentEdit);
-router.delete("/comment", interactionCommentController.commentDelete);
+router.post("/comment", comment.add);
+router.put("/comment", comment.edit);
+router.delete("/comment", comment.delete);
 
 // POST
-router.post("/post", interactionPostController.postAdd);
-router.put("/post", interactionPostController.postEdit);
-router.delete("/post", interactionPostController.postDelete);
+router.post("/post", post.add);
+router.put("/post", post.edit);
+router.delete("/post", post.delete);
 
 // COMMUNITY
-router.post("/community", interactionCommunityController.communityAdd);
-router.put("/community", interactionCommunityController.communityEdit);
+router.post("/community", community.add);
+router.put("/community", community.edit);
 
 module.exports = router;

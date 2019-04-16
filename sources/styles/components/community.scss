@@ -1,0 +1,31 @@
+@import "../constants/index.scss";
+
+.community-container {
+  background-color: #fff;
+  padding: 10px;
+  margin: 12px 6px;
+  border-radius: $r-normal;
+  box-shadow: $light;
+  cursor: pointer;
+}
+
+.community-container:hover {
+  background-color: rgba(84, 216, 235, 0.1) !important;
+  transition: all 0.15s ease-in;
+}
+
+.community-title {
+  color: #000;
+}
+
+.community-details {
+  color: #000;
+}
+
+.community-meta > h1 {
+  display: none;
+}
+
+.community-meta > h2 {
+  display: none;
+}

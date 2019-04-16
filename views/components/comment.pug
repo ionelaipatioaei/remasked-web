@@ -34,8 +34,8 @@ mixin Comment(commentData)
 
         div.comment-info-actions-container
           if !commentData.deleted
-            +Icon("/static/assets/icons/star.svg", "comments", null, "width: 16px; height: 16px", false)
-            p.comment-info-text-actions(saved="false", onclick="commentUpdateSaveState()") save&nbsp;
+            +Icon(commentData.saved ? "/static/assets/icons/starFill.svg" : "/static/assets/icons/star.svg", "comments", null, "width: 16px; height: 16px", false)
+            p.comment-info-text-actions(onclick=`commentUpdateSaveState('${commentData.ref}')`) #{commentData.saved ? 'unsave' : 'save'}&nbsp;
 
             +Icon("/static/assets/icons/flag.svg", "comments", null, "width: 16px; height: 16px", false)
             p.comment-info-text-actions(onclick="commentReport()") report&nbsp;

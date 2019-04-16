@@ -12,51 +12,61 @@ mixin Post(postData, options={type: "photo", view: "min", community: true})
         +Icon("/static/assets/icons/down.svg", "downvote post", `postUpdateVoteState(-1, '${postData.ref}')`)
 
       //- small preview
-      if options.type == "photo" && !options.flag
-        div.post-small-preview(style=`display: ${options.view === "max" ? "none" : "flex"}`)
-          img.post-small-preview-image(src=`${postData.link}`, alt="post small preview")
+      if !postData.deleted
+        if options.type == "photo" && !options.flag
+          div.post-small-preview(style=`display: ${options.view === "max" ? "none" : "flex"}`)
+            img.post-small-preview-image(src=`${postData.link}`, alt="post small preview")
 
-      else if options.type == "video" && !options.flag
-        div.post-small-preview(style=`display: ${options.view === "max" ? "none" : "flex"}`)
-          img.post-small-preview-image(src=`/static/assets/icons/video.svg`, alt="post small preview", style="width: 48px; height: 48px;")
+        else if options.type == "video" && !options.flag
+          div.post-small-preview(style=`display: ${options.view === "max" ? "none" : "flex"}`)
+            img.post-small-preview-image(src=`/static/assets/icons/video.svg`, alt="post small preview", style="width: 48px; height: 48px;")
 
-      else if options.type == "text" && !options.flag
-        div.post-small-preview(style=`display: ${options.view === "max" ? "none" : "flex"}`)
-          img.post-small-preview-image(src=`/static/assets/icons/text.svg`, alt="post small preview", style="width: 48px; height: 48px;")
+        else if options.type == "text" && !options.flag
+          div.post-small-preview(style=`display: ${options.view === "max" ? "none" : "flex"}`)
+            img.post-small-preview-image(src=`/static/assets/icons/text.svg`, alt="post small preview", style="width: 48px; height: 48px;")
 
-      else if options.type == "link" && !options.flag
-        div.post-small-preview(style=`display: ${options.view === "max" ? "none" : "flex"}`)
-          img.post-small-preview-image(src=`/static/assets/icons/link.svg`, alt="post small preview", style="width: 48px; height: 48px;")
-
-      else if options.flag
-        div.post-small-preview(style=`display: ${options.view === "max" ? "none" : "flex"}`)
-          img.post-small-preview-image(src=`/static/assets/icons/warning.svg`, alt="post small preview", style="width: 48px; height: 48px;")
-      
-      //- info about the post - title, owner, etc
-      div.post-info
-        if options.type == "link" && !options.flag
-          +Link(`${postData.link}`)
-            h1.post-info-title.post-info-link= postData.title
-        else if options.type == "link" && options.flag
-          +Link(`${postData.link}`)
-            h1.post-info-title.post-info-link.post-warning #{postData.title} (#{options.flag})
+        else if options.type == "link" && !options.flag
+          div.post-small-preview(style=`display: ${options.view === "max" ? "none" : "flex"}`)
+            img.post-small-preview-image(src=`/static/assets/icons/link.svg`, alt="post small preview", style="width: 48px; height: 48px;")
 
         else if options.flag
-          h1.post-info-title.post-warning #{postData.title} (#{options.flag})
+          div.post-small-preview(style=`display: ${options.view === "max" ? "none" : "flex"}`)
+            img.post-small-preview-image(src=`/static/assets/icons/warning.svg`, alt="post small preview", style="width: 48px; height: 48px;")
+      else
+        div.post-small-preview(style=`display: ${options.view === "max" ? "none" : "flex"}`)
+          img.post-small-preview-image(src=`/static/assets/icons/deleted.svg`, alt="post small preview", style="width: 48px; height: 48px;")
+
+      //- info about the post - title, owner, etc
+      div.post-info
+        if !postData.deleted
+          if options.type == "link" && !options.flag
+            +Link(`${postData.link}`)
+              h1.post-info-title.post-info-link= postData.title
+          else if options.type == "link" && options.flag
+            +Link(`${postData.link}`)
+              h1.post-info-title.post-info-link.post-warning #{postData.title} (#{options.flag})
+
+          else if options.flag
+            h1.post-info-title.post-warning #{postData.title} (#{options.flag})
+          else
+            h1.post-info-title= postData.title
         else
-          h1.post-info-title= postData.title
+          h1.post-info-title.post-deleted This post was deleted.
           
         div.post-info-text-container
-          p.post-info-text Submitted by&nbsp;
-          +Link(`/profile/${postData.owner}`)
-            p.post-info-text-goto= postData.owner
+          if !postData.deleted
+            p.post-info-text Submitted by&nbsp;
+            +Link(`/profile/${postData.owner}`)
+              p.post-info-text-goto= postData.owner
 
-          if options.community
-            p.post-info-text &nbsp;in&nbsp;
-            +Link(`/c/${postData.community}`)
-              p.post-info-text-goto= postData.community
-          
-          p.post-info-text &nbsp; on #{postData.created}
+            if options.community
+              p.post-info-text &nbsp;in&nbsp;
+              +Link(`/c/${postData.community}`)
+                p.post-info-text-goto= postData.community
+            
+            p.post-info-text &nbsp; on #{postData.created}
+              if postData.edited
+                span.post-edited &nbsp;(edited on #{postData.edited})
         
         div.post-info-actions-container
           if options.type != "link"
@@ -84,25 +94,27 @@ mixin Post(postData, options={type: "photo", view: "min", community: true})
             p#delete-cancel.post-info-text-actions(style="display: none;", onclick="postDeleteCancel()") &nbsp;cancel
 
         //- large preview
-        if options.type == "photo"
-          div.post-large-preview(style=`display: ${options.view === "max" ? "block" : "none"}`)
-            img.post-large-preview-image(src=`${postData.link}`, alt="post large preview")
+        if !postData.deleted
+          if options.type == "photo"
+            div.post-large-preview(style=`display: ${options.view === "max" ? "block" : "none"}`)
+              img.post-large-preview-image(src=`${postData.link}`, alt="post large preview")
 
-        else if options.type == "video"
-          div.post-large-preview(style=`display: ${options.view === "max" ? "block" : "none"}`)
-            video.post-large-preview-video(width="100%", height="auto", style="margin-top: 4px;", controls)
-              source(src=`${postData.link}`, type="video/mp4")
+          else if options.type == "video"
+            div.post-large-preview(style=`display: ${options.view === "max" ? "block" : "none"}`)
+              video.post-large-preview-video(width="100%", height="auto", style="margin-top: 4px;", controls)
+                source(src=`${postData.link}`, type="video/mp4")
 
-        else if options.type == "text"
-          div.post-large-preview(style=`display: ${options.view === "max" ? "block" : "none"}`)!= postData.content
-          div.post-edit(style="display: none;")
-            textarea.input-textarea(rows="6", cols="64")= postData.contentRaw
-            div.post-textarea-buttons-container
-              +Button("Save", `postSaveEdit('${postData.ref}')`)
-              +Button("Cancel", "postCancelEdit()")
-
+          else if options.type == "text"
+            div.post-large-preview(style=`display: ${options.view === "max" ? "block" : "none"}`)!= postData.content
+            div.post-edit(style="display: none;")
+              textarea.input-textarea(rows="6", cols="64")= postData.contentRaw
+              div.post-textarea-buttons-container
+                +Button("Save", `postSaveEdit('${postData.ref}')`)
+                +Button("Cancel", "postCancelEdit()")
+        else
+          div.post-large-preview.post-deleted(style=`display: ${options.view === "max" ? "block" : "none"}`) The post content was deleted.
         //- NO NEED TO PREVIEW A LINK
 
     //- save icon
-    div.post-save(saved="false")
-      +Icon("/static/assets/icons/star.svg", "save post", "postUpdateSaveState()")
+    div.post-save
+      +Icon(postData.saved ? "/static/assets/icons/starFill.svg" : "/static/assets/icons/star.svg", "save post", `postUpdateSaveState('${postData.ref}')`)

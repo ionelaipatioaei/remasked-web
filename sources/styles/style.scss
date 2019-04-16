@@ -10,6 +10,7 @@
 @import "components/post.scss";
 @import "components/comment.scss";
 @import "components/meta.scss";
+@import "components/community.scss";
 
 // layout
 @import "layout/navbar.scss";
@@ -18,6 +19,7 @@
 // misc
 @import "misc/submit.scss";
 @import "misc/reply.scss";
+@import "misc/profile.scss";
 
 
 // Page style - global
@@ -39,8 +41,16 @@ html, body {
   grid-template-columns: 3fr 1.5fr;
 }
 
+.index-create-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
 a {
   text-decoration: none;
+  color: #000;
 }
 
 p {

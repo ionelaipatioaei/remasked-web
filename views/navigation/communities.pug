@@ -1,6 +1,7 @@
 extends ../layout/layout.pug
 
 include ../layout/header.pug
+include ../components/community.pug
 
 block header
   +Header(logged)
@@ -9,4 +10,10 @@ block title
   title Remasked | Your communities
 
 block content
-  h1 These are your communities
+  h1 Your communities
+  if communities
+    each community in communities
+      +Community(community)
+
+  if (error)
+    h1 #{error}

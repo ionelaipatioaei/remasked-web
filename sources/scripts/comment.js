@@ -66,18 +66,30 @@ const commentReply = (refPost, refComment) => {
   window.location.reload();
 }
 
-const commentUpdateSaveState = () => {
+const commentUpdateSaveState = (refComment) => {
   const commentSave = event.currentTarget;
   const star = commentSave.parentNode.querySelector("img");
-  if (commentSave.saved === "true") {
-    star.src = "/static/assets/icons/star.svg";
-    commentSave.saved = "false";
-    commentSave.innerHTML = "save";
-  } else {
-    star.src = "/static/assets/icons/starFill.svg";
-    commentSave.saved = "true";
-    commentSave.innerHTML = "unsave";
-  }
+
+  fetch("http://localhost:8081/api/save", {
+    method: "POST",
+    body: JSON.stringify({
+      refComment: refComment
+    })
+  }).then(res => res.json())
+    .then(data => {
+      if (data.success) {
+        if (data.remove) {
+          star.src = "/static/assets/icons/star.svg";
+          commentSave.innerHTML = "save";
+        } else {
+          star.src = "/static/assets/icons/starFill.svg";
+          commentSave.innerHTML = "unsave";
+        }
+      } else {
+        console.log("Something went wrong");
+      }
+    })
+    .catch(error => console.log(error));
 }
 
 const commentUpdateVoteState = (vote, ref) => {

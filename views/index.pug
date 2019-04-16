@@ -2,7 +2,8 @@ extends layout/layout.pug
 
 include components/button.pug
 include components/link.pug
-include components/icon.pug
+include components/post.pug
+include components/community.pug
 include layout/header.pug
 
 block header
@@ -12,15 +13,45 @@ block title
   title Remasked
 
 block content
-  h1 This is cool
-  +Button("add", "hey")
-  +Button("add2", "hey1")
-  //- +Button("delete", "test2")
+  div.profile-buttons
+    +Link(`/profile/${username}?type=comments`)
+      +Button("Popular")
+    +Link(`/profile/${username}?type=posts`)
+      +Button("Top")
+    +Link(`/profile/${username}?type=posts`)
+      +Button("Newest")
+    +Link(`/profile/${username}?type=comments`)
+      +Button("Oldest")
+    +Link(`/profile/${username}?type=posts`)
+      +Button("Most upvoted")
+    +Link(`/profile/${username}?type=comments`)
+      +Button("Most downvoted")
 
-  //- h2 This is a link
-  //- +Link("https://google.com", "text link")
+  if posts
+    each post in posts
+      +Post(post, {type: post.type, flag: post.flag, view: "min", community: true})
 
-  //- h2 This is an icon
-  //- +Icon("/static/assets/icons/bell.svg", "bell")
-  //- +Link("https://google.com")
-  //-   +Icon("/static/assets/icons/bell.svg", "bell")
+  h1 Explore new communities
+  div.profile-buttons
+    +Link(`/profile/${username}?type=comments`)
+      +Button("Popular")
+    +Link(`/profile/${username}?type=posts`)
+      +Button("Top")
+    +Link(`/profile/${username}?type=posts`)
+      +Button("Newest")
+    +Link(`/profile/${username}?type=comments`)
+      +Button("Oldest")
+    +Link(`/profile/${username}?type=posts`)
+      +Button("Most subscribed")
+    +Link(`/profile/${username}?type=comments`)
+      +Button("Most posts")
+
+  if communities
+    each community in communities
+      +Community(community)
+
+  div.index-create-container
+    h1 Something is missing?
+    div(style="max-width: 312px;")
+      +Link(`/create`)
+        +Button("Create your own community")

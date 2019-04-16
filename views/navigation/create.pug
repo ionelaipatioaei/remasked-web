@@ -1,0 +1,27 @@
+extends ../layout/layout.pug
+
+include ../components/button.pug
+include ../components/inputText.pug
+include ../layout/header.pug
+
+block header
+  +Header(logged)
+
+block title
+  title Remasked | Create a community
+
+block content
+  div.submit-container
+    h1.submit-title Create a new community
+
+    div.submit-box
+      p.submit-warning 
+      
+      div(style="max-width: 400px;")
+        +InputText("Name", "name", "text", "name")
+
+      p.input-text-label Description
+      textarea#description.input-textarea(style="height: 30vh;", placeholder="Your text here...")
+
+      div.submit-textarea-buttons-container
+        +Button("Create", "communityCreate()")

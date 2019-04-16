@@ -37,9 +37,6 @@ app.use((req, res, next) => {
 const apiAuth = require("./api/routes/auth");
 app.use("/api/auth", apiAuth);
 
-const apiUser = require("./api/routes/user");
-app.use("/api/user", apiUser);
-
 const apiNavigation = require("./api/routes/navigation");
 app.use("/api", apiNavigation);
 
@@ -57,12 +54,11 @@ const misc = require("./routes/misc");
 app.use(misc);
 
 // MISC ROUTES
-app.get("/", (req, res) => {
-  res.render("index", {logged: req.session.userId !== undefined});
-});
+const apiExplore = require("./api/controllers/navigation/explore");
+app.get("/", apiExplore("render"));
 
 app.get("*", (req, res) => {
-  res.send("Looks like you are lost!");
+  res.render("misc/notFound", {logged: req.session.userId !== undefined});
 });
 
 app.listen(PORT, () => console.log(`Server started on port ${PORT}...`));

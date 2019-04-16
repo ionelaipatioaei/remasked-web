@@ -1,15 +1,9 @@
-exports.profile = (req, res) => {
-  const name = req.params.name;
-  if (!name) {
-    res.render("navigation/profile", {logged: req.session.userId !== undefined, you: true});
-  } else {
-    // res.send(`profile: ${req.params.name}`);
-    res.render("navigation/profile", {logged: req.session.userId !== undefined, you: false, name: name});
-  }
-}
-
 exports.submit = (req, res) => {
   res.render("navigation/submit", {logged: req.session.userId !== undefined, community: req.params.c});
+}
+
+exports.create = (req, res) => {
+  res.render("navigation/create", {logged: req.session.userId !== undefined});
 }
 
 exports.communities = (req, res) => {
