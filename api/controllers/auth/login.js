@@ -5,7 +5,13 @@ module.exports = (req, res) => {
   const {username, password} = req.body;
 
   if (username && password) {
-    db.query(`SELECT id, password FROM users WHERE username=$1`, [username], (error, result) => {
+    const query = `SELECT id, password 
+                    FROM users 
+                    WHERE username=$1`;
+
+    const queryParams = [username];
+
+    db.query(query, queryParams, (error, result) => {
       if (!error && result.rows.length) {
         bcrypt.compare(password, result.rows[0].password, (passwordError, passwordIsMatching) => {
           if (!passwordError && passwordIsMatching) {

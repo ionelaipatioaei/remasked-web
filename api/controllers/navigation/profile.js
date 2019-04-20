@@ -233,7 +233,8 @@ module.exports = (mode) => {
             data.savedComments = pcData;
             break;
 
-          // because dataType is internal there can only be 4 cases, in case the user enters a wrong type it's caught before it reaches this switch
+          // because dataType is internal there can only be 4 cases, 
+          // in case the user enters a wrong type it's caught before it reaches this switch
         }
         next();
       });

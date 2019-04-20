@@ -15,22 +15,26 @@ module.exports = (mode) => {
 
     const getRelevantPosts = async (next) => {
       const query = req.session.userId ?
-        `SELECT id, ref_string, (SELECT COUNT(*) FROM comment WHERE post_parent=post.id) AS comments_amount, 
-          (SELECT SUM(vote) FROM vote_post WHERE post_id=id) AS votes,
-          (CASE WHEN owner=$1 THEN true ELSE false END) AS owns, 
-          (SELECT EXISTS(SELECT 1 FROM save_post WHERE user_id=$1 AND post_id=post.id)) AS saved,
-          (SELECT vote FROM vote_post WHERE user_id=$1 AND post_id=post.id) as voted, 
-          (SELECT username FROM users WHERE id=post.owner) as owner,
-          TO_CHAR(created, 'DD/MM/YY at HH24:MI') AS created, TO_CHAR(edited, 'DD/MM/YY at HH24:MI') AS edited,
-          deleted, title, link, content, type, flag 
-          FROM post ORDER BY id DESC LIMIT 32`
+        `SELECT id, ref_string, title, link, content, type, flag, deleted, 
+            (CASE WHEN owner=$1 THEN true ELSE false END) AS owns, 
+            (SELECT vote FROM vote_post WHERE user_id=$1 AND post_id=post.id) as voted, 
+            (SELECT EXISTS(SELECT 1 FROM save_post WHERE user_id=$1 AND post_id=post.id)) AS saved,
+            (SELECT COUNT(*) FROM comment WHERE post_parent=post.id) AS comments_amount, 
+            (SELECT username FROM users WHERE id=post.owner) as owner,
+            (SELECT SUM(vote) FROM vote_post WHERE post_id=id) AS votes,
+            TO_CHAR(created, 'DD/MM/YY at HH24:MI') AS created, 
+            TO_CHAR(edited, 'DD/MM/YY at HH24:MI') AS edited
+          FROM post 
+          ORDER BY id DESC LIMIT 32`
         :
-        `SELECT id, ref_string, (SELECT COUNT(*) FROM comment WHERE post_parent=post.id) AS comments_amount, 
-          (SELECT SUM(vote) FROM vote_post WHERE post_id=id) AS votes, 
-          (SELECT username FROM users WHERE id=post.owner) as owner, 
-          TO_CHAR(created, 'DD/MM/YY at HH24:MI') AS created, TO_CHAR(edited, 'DD/MM/YY at HH24:MI') AS edited,
-          deleted, title, link, content, type, flag 
-          FROM post ORDER BY id ${"ASC"} OFFSET $1 LIMIT $2`;
+        `SELECT id, ref_string, title, link, content, type, flag, deleted, 
+            (SELECT COUNT(*) FROM comment WHERE post_parent=post.id) AS comments_amount, 
+            (SELECT username FROM users WHERE id=post.owner) as owner, 
+            (SELECT SUM(vote) FROM vote_post WHERE post_id=id) AS votes, 
+            TO_CHAR(created, 'DD/MM/YY at HH24:MI') AS created, 
+            TO_CHAR(edited, 'DD/MM/YY at HH24:MI') AS edited
+          FROM post 
+          ORDER BY id ASC OFFSET $1 LIMIT $2`;
 
       const queryParams = req.session.userId ? [req.session.userId] : [1, 3];
 

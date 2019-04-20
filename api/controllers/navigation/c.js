@@ -1,4 +1,5 @@
 const db = require("../../database/query");
+const pageSort = require("../../shared/pageSort");
 const marked = require("marked");
 marked.setOptions({
   breaks: true,
@@ -8,22 +9,31 @@ marked.setOptions({
 module.exports = (mode) => {
   return (req, res) => {
     const name = req.params.name;
+    const page = parseInt(req.query.page);
+    const sort = req.query.sort ? req.query.sort.toLowerCase() : "";
     let data = {};
 
     const getCommunityInfo = async (name, next) => {
-      // id, created, createdby, owns, subscribed, meta
+      // the way I select subscribers is stupid
       const query = req.session.userId ? 
-        `SELECT id, TO_CHAR(created, 'DD/MM/YY at HH24:MI') AS created,
-          (SELECT COUNT(*) FROM subscription WHERE community_id=(SELECT id FROM community WHERE name=$1)) AS subscribers, 
-          (SELECT username FROM users WHERE id=createdby) AS createdby, (CASE WHEN createdby=$2 THEN true ELSE false END) AS owns, 
-          (SELECT EXISTS(SELECT 1 FROM subscription WHERE user_id=$2 AND community_id=id)) AS subscribed, meta 
-          FROM community WHERE name=$1`
+        `SELECT 
+            id, 
+            TO_CHAR(created, 'DD/MM/YY at HH24:MI') AS created,
+            (SELECT COUNT(*) FROM subscription WHERE community_id=(SELECT id FROM community WHERE name=$1)) AS subscribers, 
+            (SELECT username FROM users WHERE id=createdby) AS createdby, 
+            (CASE WHEN createdby=$2 THEN true ELSE false END) AS owns, 
+            (SELECT EXISTS(SELECT 1 FROM subscription WHERE user_id=$2 AND community_id=id)) AS subscribed, 
+            meta 
+          FROM community 
+          WHERE name=$1`
         :
-        // id, created, createdby, -, -, meta
-        `SELECT id, TO_CHAR(created, 'DD/MM/YY at HH24:MI') AS created,
-          (SELECT COUNT(*) FROM subscription WHERE community_id=(SELECT id FROM community WHERE name=$1)) AS subscribers, 
-          (SELECT username FROM users WHERE id=createdby) AS createdby, meta 
-          FROM community WHERE name=$1`;
+        `SELECT 
+            id, TO_CHAR(created, 'DD/MM/YY at HH24:MI') AS created,
+            (SELECT COUNT(*) FROM subscription WHERE community_id=(SELECT id FROM community WHERE name=$1)) AS subscribers, 
+            (SELECT username FROM users WHERE id=createdby) AS createdby, 
+            meta 
+          FROM community 
+          WHERE name=$1`;
 
       const queryParams = req.session.userId ? [name, req.session.userId] : [name];
 
@@ -56,27 +66,33 @@ module.exports = (mode) => {
     }
 
     const getCommunityPosts = async (communityId, next) => {
-      const query = req.session.userId ?
-        // id, ref, c_amount, votes, owns, saved, voted, owner, created, edited, deleted, title, link, content, type, flag
-        `SELECT id, ref_string, (SELECT COUNT(*) FROM comment WHERE post_parent=post.id) AS comments_amount, 
-          (SELECT SUM(vote) FROM vote_post WHERE post_id=id) AS votes,
-          (CASE WHEN owner=$1 THEN true ELSE false END) AS owns, 
-          (SELECT EXISTS(SELECT 1 FROM save_post WHERE user_id=$1 AND post_id=post.id)) AS saved,
-          (SELECT vote FROM vote_post WHERE user_id=$1 AND post_id=post.id) as voted, 
-          (SELECT username FROM users WHERE id=post.owner) as owner,
-          TO_CHAR(created, 'DD/MM/YY at HH24:MI') AS created, TO_CHAR(edited, 'DD/MM/YY at HH24:MI') AS edited,
-          deleted, title, link, content, type, flag 
-          FROM post WHERE community=$2 ORDER BY id LIMIT 32`
-        :
-        // id, ref, c_amount, votes, -, -, -, owner, created, edited, deleted, title, link, content, type, flag
-        `SELECT id, ref_string, (SELECT COUNT(*) FROM comment WHERE post_parent=post.id) AS comments_amount, 
-          (SELECT SUM(vote) FROM vote_post WHERE post_id=id) AS votes, 
-          (SELECT username FROM users WHERE id=post.owner) as owner, 
-          TO_CHAR(created, 'DD/MM/YY at HH24:MI') AS created, TO_CHAR(edited, 'DD/MM/YY at HH24:MI') AS edited,
-          deleted, title, link, content, type, flag 
-          FROM post WHERE community=$1 ORDER BY id LIMIT 32`;
+      const ps = pageSort(page, sort);
 
-      const queryParams = req.session.userId ? [req.session.userId, communityId] : [communityId];
+      const query = req.session.userId ?
+        `SELECT id, ref_string, title, link, content, type, flag, deleted, 
+            (CASE WHEN owner=$1 THEN true ELSE false END) AS owns, 
+            (SELECT vote FROM vote_post WHERE user_id=$1 AND post_id=post.id) as voted, 
+            (SELECT EXISTS(SELECT 1 FROM save_post WHERE user_id=$1 AND post_id=post.id)) AS saved,
+            (SELECT COUNT(*) FROM comment WHERE post_parent=post.id) AS comments_amount, 
+            (SELECT username FROM users WHERE id=post.owner) as owner,
+            (SELECT SUM(vote) FROM vote_post WHERE post_id=id) AS votes,
+            TO_CHAR(created, 'DD/MM/YY at HH24:MI') AS created, 
+            TO_CHAR(edited, 'DD/MM/YY at HH24:MI') AS edited
+          FROM post 
+          WHERE community=$2 
+          ORDER BY id LIMIT 32`
+        :
+        `SELECT id, ref_string, title, link, content, type, flag, deleted,
+            (SELECT COUNT(*) FROM comment WHERE post_parent=post.id) AS comments_amount, 
+            (SELECT username FROM users WHERE id=post.owner) as owner, 
+            (SELECT SUM(vote) FROM vote_post WHERE post_id=id) AS votes, 
+            TO_CHAR(created, 'DD/MM/YY at HH24:MI') AS created, 
+            TO_CHAR(edited, 'DD/MM/YY at HH24:MI') AS edited
+          FROM post 
+          WHERE community=$1 
+          ORDER BY ${ps.sort} OFFSET $2 LIMIT $3`;
+
+      const queryParams = req.session.userId ? [req.session.userId, communityId] : [communityId, ps.limits[0], ps.limits[1]];
 
       await db.query(query, queryParams, (error, result) => {
         if (!error) {

@@ -5,7 +5,10 @@ exports.add = (req, res) => {
 
   if (req.session.userId) {
     const query = `INSERT INTO post (community, owner, title, link, content, type, flag) 
-      VALUES ((SELECT id FROM community WHERE name=$1), $2, $3, $4, $5, $6, $7)`;
+                    VALUES (
+                      (SELECT id FROM community WHERE name=$1), 
+                      $2, $3, $4, $5, $6, $7
+                    )`;
 
     // define the type of the post based on user input and link
     const defineType = (link, type) => {
@@ -52,7 +55,9 @@ exports.edit = (req, res) => {
   const {refPost, editedText} = req.body;
 
   if (req.session.userId) {
-    const query = `UPDATE post SET content=$1, edited=NOW() WHERE ref_string=$2 AND owner=$3`;
+    const query = `UPDATE post 
+                    SET content=$1, edited=NOW() 
+                    WHERE ref_string=$2 AND owner=$3`;
 
     const queryParams = [editedText, refPost, req.session.userId];
 
@@ -72,9 +77,11 @@ exports.delete = (req, res) => {
   const {refPost} = req.body;
 
   if (req.session.userId) {
-    const query = `UPDATE post SET owner=NULL, created=NULL, title=NULL, link=NULL, content=NULL, 
-      type='text', flag=NULL, edited=NULL, deleted=TRUE 
-      WHERE ref_string=$1 AND owner=$2`;
+    const query = `UPDATE post 
+                    SET owner=NULL, created=NULL, title=NULL, link=NULL, content=NULL, 
+                      flag=NULL, edited=NULL, 
+                      deleted=TRUE, type='text' 
+                    WHERE ref_string=$1 AND owner=$2`;
 
     const queryParams = [refPost, req.session.userId];
 

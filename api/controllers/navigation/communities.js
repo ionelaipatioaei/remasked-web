@@ -9,9 +9,13 @@ module.exports = (mode) => {
   return async (req, res) => {
     if (req.session.userId) {
 
-      const query = `SELECT community_id, (SELECT name FROM community WHERE id=community_id) AS name, 
-        (SELECT meta FROM community WHERE id=community_id) AS meta, TO_CHAR(subscribed, 'DD/MM/YY') AS subscribed 
-        FROM subscription WHERE user_id=$1 ORDER BY name`;
+      const query = `SELECT 
+                        community_id, 
+                        (SELECT name FROM community WHERE id=community_id) AS name, 
+                        (SELECT meta FROM community WHERE id=community_id) AS meta, 
+                        TO_CHAR(subscribed, 'DD/MM/YY') AS subscribed 
+                      FROM subscription 
+                      WHERE user_id=$1 ORDER BY name`;
 
       const queryParams = [req.session.userId];
 

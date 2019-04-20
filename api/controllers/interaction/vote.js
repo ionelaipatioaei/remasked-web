@@ -6,12 +6,14 @@ module.exports = (req,res) => {
   const checkVoteAndModify = async (refPost, refComment, vote, id) => {
     const query = refComment ?
       // comment
-      `SELECT vote FROM vote_comment WHERE comment_id=(SELECT id FROM comment WHERE ref_string=$1) 
-        AND user_id=$2` 
+      `SELECT vote FROM vote_comment 
+        WHERE comment_id=(SELECT id FROM comment WHERE ref_string=$1) 
+          AND user_id=$2` 
       :
       // post
-      `SELECT vote FROM vote_post WHERE post_id=(SELECT id FROM post WHERE ref_string=$1) 
-        AND user_id=$2`;
+      `SELECT vote FROM vote_post 
+        WHERE post_id=(SELECT id FROM post WHERE ref_string=$1) 
+          AND user_id=$2`;
 
     const queryParams = refComment ? [refComment, id] : [refPost, id];
 
@@ -49,11 +51,19 @@ module.exports = (req,res) => {
     const query = refComment ?
       // comment
       `INSERT INTO vote_comment (user_id, comment_id, vote) 
-        VALUES ($1, (SELECT id FROM comment WHERE ref_string=$2), $3)` 
+        VALUES (
+          $1, 
+          (SELECT id FROM comment WHERE ref_string=$2), 
+          $3
+        )` 
       :
       // post
       `INSERT INTO vote_post (user_id, post_id, vote) 
-        VALUES ($1, (SELECT id FROM post WHERE ref_string=$2), $3)`;
+        VALUES (
+          $1, 
+          (SELECT id FROM post WHERE ref_string=$2), 
+          $3
+        )`;
 
     const queryParams = refComment ? [id, refComment, vote] : [id, refPost, vote];
 
@@ -69,12 +79,16 @@ module.exports = (req,res) => {
   const updateVote = async (refPost, refComment, vote, id) => {
     const query = refComment ?
       // comment
-      `UPDATE vote_comment SET vote=$1 WHERE comment_id=(SELECT id FROM comment WHERE ref_string=$2) 
-        AND user_id=$3` 
+      `UPDATE vote_comment 
+        SET vote=$1 
+        WHERE comment_id=(SELECT id FROM comment WHERE ref_string=$2) 
+          AND user_id=$3` 
       :
       // post
-      `UPDATE vote_post SET vote=$1 WHERE post_id=(SELECT id FROM post WHERE ref_string=$2) 
-        AND user_id=$3`;
+      `UPDATE vote_post 
+        SET vote=$1 
+        WHERE post_id=(SELECT id FROM post WHERE ref_string=$2) 
+          AND user_id=$3`;
 
     const queryParams = refComment ? [vote, refComment, id] : [vote, refPost, id];
 
@@ -90,12 +104,14 @@ module.exports = (req,res) => {
   const removeVote = async (refPost, refComment, id) => {
     const query = refComment ?
       // comment
-      `DELETE FROM vote_comment WHERE user_id=$1 
-        AND comment_id=(SELECT id FROM comment WHERE ref_string=$2)` 
+      `DELETE FROM vote_comment 
+        WHERE user_id=$1 
+          AND comment_id=(SELECT id FROM comment WHERE ref_string=$2)` 
       :
       // post
-      `DELETE FROM vote_post WHERE user_id=$1 
-        AND post_id=(SELECT id FROM post WHERE ref_string=$2)`;
+      `DELETE FROM vote_post 
+        WHERE user_id=$1 
+          AND post_id=(SELECT id FROM post WHERE ref_string=$2)`;
 
     const queryParams = refComment ? [id, refComment] : [id, refPost];
 

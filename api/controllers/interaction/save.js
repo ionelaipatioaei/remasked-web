@@ -5,11 +5,17 @@ module.exports = (req, res) => {
 
   const updateSavedPostsAndComments = async (refPost, refComment, id) => {
     const query = refComment ?
-      `SELECT EXISTS(SELECT 1 FROM save_comment WHERE user_id=$1 AND 
-        comment_id=(SELECT id FROM comment WHERE ref_string=$2))`
+      `SELECT EXISTS(
+        SELECT 1 FROM save_comment 
+          WHERE user_id=$1 
+          AND comment_id=(SELECT id FROM comment WHERE ref_string=$2)
+        )`
       :
-      `SELECT EXISTS(SELECT 1 FROM save_post WHERE user_id=$1 AND 
-        post_id=(SELECT id FROM post WHERE ref_string=$2))`;
+      `SELECT EXISTS(
+        SELECT 1 FROM save_post 
+        WHERE user_id=$1 
+          AND post_id=(SELECT id FROM post WHERE ref_string=$2)
+        )`;
 
     const queryParams = refComment ? [id, refComment] : [id, refPost];
 
@@ -30,11 +36,17 @@ module.exports = (req, res) => {
     const query = refComment ?
       // comment
       `INSERT INTO save_comment (user_id, comment_id) 
-        VALUES ($1, (SELECT id FROM comment WHERE ref_string=$2))` 
+        VALUES (
+          $1, 
+          (SELECT id FROM comment WHERE ref_string=$2)
+        )` 
       :
       // post
       `INSERT INTO save_post (user_id, post_id) 
-        VALUES ($1, (SELECT id FROM post WHERE ref_string=$2))`;
+        VALUES (
+          $1, 
+          (SELECT id FROM post WHERE ref_string=$2)
+        )`;
 
     const queryParams = refComment ? [id, refComment] : [id, refPost];
 
@@ -50,11 +62,13 @@ module.exports = (req, res) => {
   const removeSave = async (refPost, refComment, id) => {
     const query = refComment ?
       // comment
-      `DELETE FROM save_comment WHERE user_id=$1 
+      `DELETE FROM save_comment 
+        WHERE user_id=$1 
         AND comment_id=(SELECT id FROM comment WHERE ref_string=$2)` 
       :
       // post
-      `DELETE FROM save_post WHERE user_id=$1 
+      `DELETE FROM save_post 
+        WHERE user_id=$1 
         AND post_id=(SELECT id FROM post WHERE ref_string=$2)`;
 
     const queryParams = refComment ? [id, refComment] : [id, refPost];

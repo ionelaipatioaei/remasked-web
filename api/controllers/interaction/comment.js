@@ -7,11 +7,19 @@ exports.add = (req, res) => {
     const query = refComment ?
       // comment to a parent
       `INSERT INTO comment (owner, content, post_parent, comment_parent) 
-        VALUES ($1, $2, (SELECT id FROM post WHERE ref_string=$3), (SELECT id FROM comment WHERE ref_string=$4))` 
+        VALUES (
+          $1, $2, 
+          (SELECT id FROM post WHERE ref_string=$3), 
+          (SELECT id FROM comment WHERE ref_string=$4)
+        )`
       :
       // comment to a post
       `INSERT INTO comment (owner, content, post_parent, comment_parent) 
-        VALUES ($1, $2, (SELECT id FROM post WHERE ref_string=$3), NULL)`;
+        VALUES (
+          $1, $2, 
+          (SELECT id FROM post WHERE ref_string=$3), 
+          NULL
+        )`;
 
     const queryParams = refComment ? [req.session.userId, content, refPost, refComment] : [req.session.userId, content, refPost];
 
@@ -29,7 +37,9 @@ exports.edit = (req, res) => {
   const {refComment, editedText} = req.body;
 
   if (req.session.userId) {
-    const query = `UPDATE comment SET content=$1, edited=NOW() WHERE ref_string=$2 AND owner=$3`;
+    const query = `UPDATE comment 
+                    SET content=$1, edited=NOW() 
+                    WHERE ref_string=$2 AND owner=$3`;
 
     const queryParams = [editedText, refComment, req.session.userId];
 
@@ -50,7 +60,9 @@ exports.delete = (req, res) => {
 
   const deleteVotes = async (refComment, id, next) => {
     const query = `DELETE FROM vote_comment 
-      WHERE comment_id=(SELECT id FROM comment WHERE ref_string=$1)`;
+                    WHERE comment_id=(
+                      SELECT id FROM comment WHERE ref_string=$1
+                    )`;
 
     const queryParams = [refComment];
 
@@ -64,8 +76,10 @@ exports.delete = (req, res) => {
   }
 
   const updateCommentToNull = async (refComment, id) => {
-    const query = `UPDATE comment SET owner=NULL, created=NULL, content=NULL, edited=NULL, deleted=TRUE 
-      WHERE ref_string=$1 AND owner=$2`;
+    const query = `UPDATE comment 
+                    SET owner=NULL, created=NULL, content=NULL, edited=NULL, 
+                      deleted=TRUE 
+                    WHERE ref_string=$1 AND owner=$2`;
 
     const queryParams = [refComment, id];
 

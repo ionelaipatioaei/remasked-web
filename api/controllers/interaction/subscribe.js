@@ -4,8 +4,11 @@ module.exports = (req, res) => {
   const {name} = req.body;
 
   const updateSubscriptionStatus = async (name, id) => {
-    const query = `SELECT EXISTS(SELECT 1 FROM subscription WHERE user_id=$1 AND 
-      community_id=(SELECT id FROM community WHERE name=$2))`;
+    const query = `SELECT EXISTS(
+                    SELECT 1 FROM subscription 
+                    WHERE user_id=$1 
+                      AND community_id=(SELECT id FROM community WHERE name=$2)
+                    )`;
 
     const queryParams = [id, name];
 
@@ -24,7 +27,10 @@ module.exports = (req, res) => {
 
   const addSubscription = async (name, id) => {
     const query = `INSERT INTO subscription (user_id, community_id) 
-      VALUES ($1, (SELECT id FROM community WHERE name=$2))`;
+                    VALUES (
+                      $1, 
+                      (SELECT id FROM community WHERE name=$2)
+                    )`;
 
     const queryParams = [id, name];
 
@@ -38,8 +44,9 @@ module.exports = (req, res) => {
   }
 
   const removeSubscription = async (name, id) => {
-    const query = `DELETE FROM subscription WHERE user_id=$1 AND 
-      community_id=(SELECT id FROM community WHERE name=$2)`;
+    const query = `DELETE FROM subscription 
+                    WHERE user_id=$1 
+                      AND community_id=(SELECT id FROM community WHERE name=$2)`;
 
     const queryParams = [id, name];
 

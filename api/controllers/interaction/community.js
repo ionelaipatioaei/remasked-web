@@ -4,7 +4,8 @@ exports.add = (req, res) => {
   const {name, description} = req.body;
 
   if (req.session.userId) {
-    const query = `INSERT INTO community (createdby, name, meta) VALUES ($1, $2, $3)`;
+    const query = `INSERT INTO community (createdby, name, meta) 
+                    VALUES ($1, $2, $3)`;
 
     const queryParams = [req.session.userId, name, description];
 
@@ -24,7 +25,9 @@ exports.edit = (req, res) => {
   const {name, editedText} = req.body;
 
   if (req.session.userId) {
-    const query = `UPDATE community SET meta=$1 WHERE name=$2 AND createdby=$3`;
+    const query = `UPDATE community 
+                    SET meta=$1 
+                    WHERE name=$2 AND createdby=$3`;
 
     const queryParams = [editedText, name, req.session.userId];
 

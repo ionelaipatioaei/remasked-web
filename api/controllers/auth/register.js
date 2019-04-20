@@ -12,7 +12,12 @@ module.exports = (req, res) => {
     if (username) {
       bcrypt.hash(password, 10, (hashError, hash) => {
         if (!hashError) {
-          db.query(`INSERT INTO users (username, password, email) VALUES ($1, $2, $3)`, [username, hash, email], (error, result) => {
+          const query = `INSERT INTO users (username, password, email) 
+                          VALUES ($1, $2, $3)`;
+
+          const queryParams = [username, hash, email];
+
+          db.query(query, queryParams, (error, result) => {
             if (!error) {
               res.json({success: "Your account was registered successfully!"});
             } else {
