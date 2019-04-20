@@ -10,6 +10,7 @@ exports.recover = (req, res) => {
   res.render("auth/recover", {logged: req.session.userId !== undefined});
 }
 
+// this doesn't fucking make any sense because it somehow works
 exports.logout = (req, res) => {
   res.redirect("/");
 }
