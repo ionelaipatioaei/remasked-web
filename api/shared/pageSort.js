@@ -1,4 +1,4 @@
-module.exports = (page, sortby, perPage = 8) => {
+module.exports = (page, sortby, perPage = 16) => {
   let limits, sort;
   if ((typeof page === "number" && (page % 1) === 0) && page > 0) {
     limits = [page * perPage, perPage];

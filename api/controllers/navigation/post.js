@@ -61,7 +61,7 @@ module.exports = (mode) => {
 
           // this next is basically getPostComments
           if (mode === "render") {
-            next(ref, () => res.render("navigation/gen/post", {logged: req.session.userId !== undefined, name: req.params.name, ...data}));
+            next(ref, () => res.render("navigation/gen/post", {logged: req.session.userId !== undefined, ...data}));
           } else {
             next(ref, () => res.json(data));
           }
@@ -87,20 +87,20 @@ module.exports = (mode) => {
           (SELECT EXISTS(SELECT 1 FROM save_comment WHERE user_id=$1 AND comment_id=comment.id)) AS saved,
           (SELECT vote FROM vote_comment WHERE user_id=$1 AND comment_id=id) as voted, 
           TO_CHAR(created, 'DD/MM/YY at HH24:MI') AS created, TO_CHAR(edited, 'DD/MM/YY at HH24:MI') AS edited, 
-          deleted, content, comment_parent AS parent 
+          deleted, content, comment_parent AS parent, throwaway, hidden
           FROM comment WHERE post_parent=(SELECT id FROM post WHERE ref_string=$2) ORDER BY id DESC` 
         :
         // id, ref, owner, votes, -, -, created, edited, deleted, content, parent
         `SELECT id, ref_string, (SELECT username FROM users WHERE id=owner) AS owner, 
           (SELECT SUM(vote) FROM vote_comment WHERE comment_id=id) AS votes, 
           TO_CHAR(created, 'DD/MM/YY at HH24:MI') AS created, TO_CHAR(edited, 'DD/MM/YY at HH24:MI') AS edited,
-          deleted, content, comment_parent AS parent 
+          deleted, content, comment_parent AS parent, throwaway, hidden
           FROM comment WHERE post_parent=(SELECT id FROM post WHERE ref_string=$1) ORDER BY id DESC`;
 
       const queryParams = req.session.userId ? [req.session.userId, ref] : [ref];
 
       await db.query(query, queryParams, (error, result) => {
-        if (!error && result.rows.length) {
+        if (!error) {
           result.rows.map(comment => {
             if (!comment.parent) {
 
@@ -109,7 +109,8 @@ module.exports = (mode) => {
                 result.rows.map(com => {
                   if (com.parent === id) {
                     childrenComments.push({
-                      owner: com.owner,
+                      owner: com.throwaway ? "" : com.owner,
+                      throwaway: com.throwaway,
                       owns: com.owns ? com.owns : false,
                       saved: com.saved ? com.saved : false,
                       created: com.created,
@@ -129,7 +130,8 @@ module.exports = (mode) => {
               }
 
               comments.push({
-                owner: comment.owner,
+                owner: comment.throwaway ? "" : comment.owner,
+                throwaway: comment.throwaway,
                 owns: comment.owns ? comment.owns : false,
                 saved: comment.saved ? comment.saved : false,
                 created: comment.created,

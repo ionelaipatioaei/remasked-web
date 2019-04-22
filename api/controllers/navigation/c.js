@@ -82,7 +82,7 @@ module.exports = (mode) => {
           WHERE community=$2 
           ORDER BY id LIMIT 32`
         :
-        `SELECT id, ref_string, title, link, content, type, flag, deleted,
+        `SELECT id, ref_string, title, link, content, type, flag, deleted, throwaway,
             (SELECT COUNT(*) FROM comment WHERE post_parent=post.id) AS comments_amount, 
             (SELECT username FROM users WHERE id=post.owner) as owner, 
             (SELECT SUM(vote) FROM vote_post WHERE post_id=id) AS votes, 
@@ -100,7 +100,9 @@ module.exports = (mode) => {
           result.rows.map(post => {
             if (!post.deleted) {
               posts.push({
-                owner: post.owner,
+                community: name,
+                owner: post.throwaway ? "" : post.owner,
+                throwaway: post.throwaway,
                 created: post.created,
                 edited: post.edited,
                 deleted: post.deleted,

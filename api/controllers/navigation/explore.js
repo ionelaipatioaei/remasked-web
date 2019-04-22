@@ -23,7 +23,8 @@ module.exports = (mode) => {
             (SELECT username FROM users WHERE id=post.owner) as owner,
             (SELECT SUM(vote) FROM vote_post WHERE post_id=id) AS votes,
             TO_CHAR(created, 'DD/MM/YY at HH24:MI') AS created, 
-            TO_CHAR(edited, 'DD/MM/YY at HH24:MI') AS edited
+            TO_CHAR(edited, 'DD/MM/YY at HH24:MI') AS edited,
+            (SELECT name FROM community WHERE id=community) AS community
           FROM post 
           ORDER BY id DESC LIMIT 32`
         :
@@ -32,7 +33,8 @@ module.exports = (mode) => {
             (SELECT username FROM users WHERE id=post.owner) as owner, 
             (SELECT SUM(vote) FROM vote_post WHERE post_id=id) AS votes, 
             TO_CHAR(created, 'DD/MM/YY at HH24:MI') AS created, 
-            TO_CHAR(edited, 'DD/MM/YY at HH24:MI') AS edited
+            TO_CHAR(edited, 'DD/MM/YY at HH24:MI') AS edited,
+            (SELECT name FROM community WHERE id=community) AS community
           FROM post 
           ORDER BY id ASC OFFSET $1 LIMIT $2`;
 
@@ -43,6 +45,7 @@ module.exports = (mode) => {
           result.rows.map(post => {
             if (!post.deleted) {
               data.posts.push({
+                community: post.community,
                 owner: post.owner,
                 created: post.created,
                 edited: post.edited,
