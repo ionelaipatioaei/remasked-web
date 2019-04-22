@@ -43,6 +43,7 @@ module.exports = (mode) => {
             subscribers: result.rows[0].subscribers,
             created: result.rows[0].created,
             createdby: result.rows[0].createdby,
+            noFounder: result.rows[0].createdby ? false : true,
             owns: result.rows[0].owns ? result.rows[0].owns : false,
             subscribed: result.rows[0].subscribed ? result.rows[0].subscribed : false,
             metaRaw: result.rows[0].meta,
