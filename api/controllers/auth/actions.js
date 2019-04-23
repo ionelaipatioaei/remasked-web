@@ -108,7 +108,14 @@ exports.delete = (req, res) => {
 
       await db.query(query, [req.session.userId], (error, result) => {
         if (!error) {
-          res.json({success: "Your account was deleted!"});
+          // logout the user
+          req.session.destroy(error => {
+            if (error) {
+              res.json({error: "Something went wrong!"});
+            }
+            res.clearCookie("sid");
+            res.json({success: "Your account was deleted!"});
+          });
         } else {
           res.json({error: "Something went wrong!"});
         }

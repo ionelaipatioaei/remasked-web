@@ -70,7 +70,7 @@ module.exports = (mode) => {
       const ps = pageSort(page, sort);
 
       const query = req.session.userId ?
-        `SELECT id, ref_string, title, link, content, type, flag, deleted, 
+        `SELECT id, ref_string, title, link, content, type, flag, deleted, throwaway,
             (CASE WHEN owner=$1 THEN true ELSE false END) AS owns, 
             (SELECT vote FROM vote_post WHERE user_id=$1 AND post_id=post.id) as voted, 
             (SELECT EXISTS(SELECT 1 FROM save_post WHERE user_id=$1 AND post_id=post.id)) AS saved,

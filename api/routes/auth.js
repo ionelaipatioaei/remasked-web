@@ -15,4 +15,14 @@ router.post("/recover", recover);
 
 router.post("/delete", actions.delete);
 
+router.post("/test", (req, res) => {
+  const {keepUsername} = req.body;
+
+  if (keepUsername) {
+    res.json({error: true});
+  } else {
+    res.json({error: false});
+  }
+});
+
 module.exports = router;
