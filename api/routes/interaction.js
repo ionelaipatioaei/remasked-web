@@ -8,11 +8,13 @@ const save = require("../controllers/interaction/save");
 const comment = require("../controllers/interaction/comment");
 const post = require("../controllers/interaction/post");
 const community = require("../controllers/interaction/community");
+const throwaway = require("../controllers/interaction/throwaway");
 
 // GENERAL
 router.post("/vote", vote);
 router.post("/subscribe", subscribe);
 router.post("/save", save);
+router.post("/throwaway", throwaway);
 
 // COMMENT
 router.post("/comment", comment.add);

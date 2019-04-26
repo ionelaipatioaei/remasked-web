@@ -1,3 +1,3 @@
 module.exports = (req, res) => {
-  res.json({error: "This function isn't implemented at the moment!"});
+  res.status(202).json({error: "This function isn't implemented at the moment!"});
 }

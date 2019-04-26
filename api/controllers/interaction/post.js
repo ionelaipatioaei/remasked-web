@@ -40,14 +40,14 @@ exports.add = (req, res) => {
     const queryParams = [community, req.session.userId, title, link, content, defineType(link, type), flag];
 
     db.query(query, queryParams, (error, result) => {
-      if (!error) {
-        res.json({success: "Your post was registered!"});
+      if (!error && result.rowCount) {
+        res.status(200).json({success: "Your post was added!"});
       } else {
-        res.json({er: error, re: result});
+        res.status(502).json({error: "Something went wrong!"});
       }
     });
   } else {
-    res.json({error: "You need to have an account in order to post!"});
+    res.status(401).json({error: "You need to be authenticated in order to add a post!"});
   }
 }
 
@@ -63,13 +63,17 @@ exports.edit = (req, res) => {
 
     db.query(query, queryParams, (error, result) => {
       if (!error) {
-        res.json({success: "Your post was updated!"})
+        if (result.rowCount) {
+          res.status(200).json({success: "Your post was edited!"});
+        } else {
+          res.status(403).json({error: "Unauthorized to edit this post!"});
+        }
       } else {
-        res.json({error: "Something went wrong or this isn't your post!"});
+        res.status(502).json({error: "Something went wrong!"});
       }
     });
   } else {
-    res.json({error: "You need an account in order to edit a post!"});
+    res.status(401).json({error: "You need to be authenticated in order to edit a post!"});
   }
 }
 
@@ -87,12 +91,16 @@ exports.delete = (req, res) => {
 
     db.query(query, queryParams, (error, result) => {
       if (!error) {
-        res.json({success: "Your post was deleted!"});
+        if (result.rowCount) {
+          res.status(200).json({success: "Your post was deleted!"});
+        } else {
+          res.status(403).json({error: "Unauthorized to delete this post!"});
+        }
       } else {
-        res.json({error: "Somethin went wrong or this isn't your post!"});
+        res.status(502).json({error: "Somethin went wrong!"});
       }
     });
   } else {
-    res.json({error: "You need an account in order to edit a post!"});
+    res.status(401).json({error: "You need to be authenticated in order to delete a post!"});
   }
 }

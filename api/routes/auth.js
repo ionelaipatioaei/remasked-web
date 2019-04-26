@@ -13,16 +13,9 @@ router.post("/register", register);
 router.post("/logout", logout);
 router.post("/recover", recover);
 
+router.post("/add-email", actions.addEmail);
+router.post("/change-password", actions.changePassword);
+router.post("/change-email", actions.changeEmail);
 router.post("/delete", actions.delete);
-
-router.post("/test", (req, res) => {
-  const {keepUsername} = req.body;
-
-  if (keepUsername) {
-    res.json({error: true});
-  } else {
-    res.json({error: false});
-  }
-});
 
 module.exports = router;

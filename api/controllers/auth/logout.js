@@ -1,9 +1,10 @@
 module.exports = (req, res) => {
   req.session.destroy(error => {
-    if (error) {
-      res.json({error: "Something went wrong!"});
+    if (!error) {
+      res.clearCookie("sid");
+      res.status(200).json({success: "Cookie deleted"});
+    } else {
+      res.status(502).json({error: "Something went wrong!"});
     }
-    res.clearCookie("sid");
-    res.json({success: "Cookie deleted"});
   });
 }

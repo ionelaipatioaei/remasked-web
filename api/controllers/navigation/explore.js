@@ -67,17 +67,11 @@ module.exports = (mode) => {
           });
 
           // this next is basically getRelevantCommunities
-          if (mode === "render") {
-            next(() => res.render("index", {logged: req.session.userId !== undefined, ...data}));
-          } else {
-            next(() => res.json({...data}));
-          }
+          if (mode === "render") next(() => res.status(200).render("index", {logged: req.session.userId !== undefined, ...data}));
+          else next(() => res.status(200).json({...data}));
         } else {
-          if (mode === "render") {
-            return res.render("index", {logged: req.session.userId !== undefined, error: "Something went wrong!"});
-          } else {
-            return res.json({error: "Something went wrong!"});
-          }
+          if (mode === "render") return res.status(502).render("misc/error", {logged: req.session.userId !== undefined, error: 502});
+          else return res.status(502).json({error: "Something went wrong!"});
         }
       });
     }
@@ -102,7 +96,8 @@ module.exports = (mode) => {
 
           next();
         } else {
-
+          if (mode === "render") return res.status(502).render("misc/error", {logged: req.session.userId !== undefined, error: 502});
+          else return res.status(502).json({error: "Something went wrong!"});
         }
       });
     }

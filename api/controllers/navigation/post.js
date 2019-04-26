@@ -58,20 +58,20 @@ module.exports = (mode) => {
             voted: result.rows[0].voted ? result.rows[0].voted : 0,
             ref: ref
           };
+          
+          // this looks kinda bad I should do a refactor
+          if (result.rows.length) {
+            // this next is basically getPostComments
+            if (mode === "render") next(ref, () => res.status(200).render("navigation/gen/post", {logged: req.session.userId !== undefined, ...data}));
+            else next(ref, () => res.status(200).json(data));
 
-          // this next is basically getPostComments
-          if (mode === "render") {
-            next(ref, () => res.render("navigation/gen/post", {logged: req.session.userId !== undefined, ...data}));
           } else {
-            next(ref, () => res.json(data));
+            if (mode === "render") res.status(404).render("misc/error", {logged: req.session.userId !== undefined});
+            else res.status(404).json({error: "Something went wrong!"});
           }
-
         } else {
-          if (mode === "render") {
-            res.render("misc/notFound", {logged: req.session.userId !== undefined});
-          } else {
-            res.json({error: "Something went wrong!"});
-          }
+          if (mode === "render") res.status(502).render("misc/error", {logged: req.session.userId !== undefined, error: 502});
+          else res.status(502).json({error: "Something went wrong!"});
         }
       });
     }
@@ -80,22 +80,28 @@ module.exports = (mode) => {
       let comments = [];
 
       const query = req.session.userId ?
-        // id, ref, owner, votes, owns, saved, voted, created, edited, deleted, content, parent
-        `SELECT id, ref_string, (SELECT username FROM users WHERE id=owner) AS owner, 
-          (SELECT SUM(vote) FROM vote_comment WHERE comment_id=id) AS votes, 
-          (CASE WHEN owner=$1 THEN true ELSE false END) AS owns,
-          (SELECT EXISTS(SELECT 1 FROM save_comment WHERE user_id=$1 AND comment_id=comment.id)) AS saved,
-          (SELECT vote FROM vote_comment WHERE user_id=$1 AND comment_id=id) as voted, 
-          TO_CHAR(created, 'DD/MM/YY at HH24:MI') AS created, TO_CHAR(edited, 'DD/MM/YY at HH24:MI') AS edited, 
-          deleted, content, comment_parent AS parent, throwaway, hidden
-          FROM comment WHERE post_parent=(SELECT id FROM post WHERE ref_string=$2) ORDER BY id DESC` 
+        `SELECT id, ref_string, content, deleted, throwaway, hidden,
+            (CASE WHEN owner=$1 THEN true ELSE false END) AS owns,
+            (SELECT vote FROM vote_comment WHERE user_id=$1 AND comment_id=id) as voted, 
+            (SELECT EXISTS(SELECT 1 FROM save_comment WHERE user_id=$1 AND comment_id=comment.id)) AS saved,
+            (SELECT username FROM users WHERE id=owner) AS owner, 
+            (SELECT SUM(vote) FROM vote_comment WHERE comment_id=id) AS votes, 
+            TO_CHAR(created, 'DD/MM/YY at HH24:MI') AS created, 
+            TO_CHAR(edited, 'DD/MM/YY at HH24:MI') AS edited, 
+            comment_parent AS parent
+          FROM comment 
+          WHERE post_parent=(SELECT id FROM post WHERE ref_string=$2) 
+          ORDER BY id DESC` 
         :
-        // id, ref, owner, votes, -, -, created, edited, deleted, content, parent
-        `SELECT id, ref_string, (SELECT username FROM users WHERE id=owner) AS owner, 
-          (SELECT SUM(vote) FROM vote_comment WHERE comment_id=id) AS votes, 
-          TO_CHAR(created, 'DD/MM/YY at HH24:MI') AS created, TO_CHAR(edited, 'DD/MM/YY at HH24:MI') AS edited,
-          deleted, content, comment_parent AS parent, throwaway, hidden
-          FROM comment WHERE post_parent=(SELECT id FROM post WHERE ref_string=$1) ORDER BY id DESC`;
+        `SELECT id, ref_string, content, deleted, throwaway, hidden,
+            (SELECT username FROM users WHERE id=owner) AS owner, 
+            (SELECT SUM(vote) FROM vote_comment WHERE comment_id=id) AS votes, 
+            TO_CHAR(created, 'DD/MM/YY at HH24:MI') AS created, 
+            TO_CHAR(edited, 'DD/MM/YY at HH24:MI') AS edited,
+            comment_parent AS parent
+          FROM comment 
+          WHERE post_parent=(SELECT id FROM post WHERE ref_string=$1) 
+          ORDER BY id DESC`;
 
       const queryParams = req.session.userId ? [req.session.userId, ref] : [ref];
 
@@ -148,11 +154,8 @@ module.exports = (mode) => {
             }
           });
         } else {
-          if (mode === "render") {
-            res.render("misc/notFound", {logged: req.session.userId !== undefined});
-          } else {
-            res.json({error: "Something went wrong!"});
-          }
+          if (mode === "render") res.status(502).render("misc/error", {logged: req.session.userId !== undefined, error: 502});
+          else res.status(502).json({error: "Something went wrong!"});
         }
         data.comments = comments;    
         next();

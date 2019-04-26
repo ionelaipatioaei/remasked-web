@@ -27,7 +27,7 @@ module.exports = (req, res) => {
           addSave(refPost, refComment, id);
         }
       } else {
-        res.json({error: "Something went wrong!"});
+        res.status(502).json({error: "Something went wrong!"});
       }
     });
   }
@@ -51,10 +51,10 @@ module.exports = (req, res) => {
     const queryParams = refComment ? [id, refComment] : [id, refPost];
 
     await db.query(query, queryParams, (error, result) => {
-      if (!error) {
-        res.json({success: "Your save was added!"});
+      if (!error && result.rowCount) {
+        res.status(200).json({success: "Your save was added!"});
       } else {
-        res.json({error: "Something went wrong!"});
+        res.status(502).json({error: "Something went wrong!"});
       }
     });
   }
@@ -74,21 +74,21 @@ module.exports = (req, res) => {
     const queryParams = refComment ? [id, refComment] : [id, refPost];
 
     await db.query(query, queryParams, (error, result) => {
-      if (!error) {
-        res.json({success: "Your save was removed!", remove: true});
+      if (!error && result.rowCount) {
+        res.status(200).json({success: "Your save was removed!", remove: true});
       } else {
-        res.json({error: "Something went wrong!"});
+        res.status(502).json({error: "Something went wrong!"});
       }
     });
   }
 
   if (req.session.userId) {
     if (refPost && refComment) {
-      res.json({error: "You can only update one item at a time!"});
+      res.status(400).json({error: "You can only update one item at a time!"});
     } else {
       updateSavedPostsAndComments(refPost, refComment, req.session.userId);
     }
   } else {
-    res.json({error: "You need an account in order to save a post/comment!"});
+    res.status(401).json({error: "You need to be authenticated in order to save a post/comment!"});
   }
 }

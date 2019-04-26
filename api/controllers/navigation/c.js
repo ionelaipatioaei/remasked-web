@@ -38,30 +38,30 @@ module.exports = (mode) => {
       const queryParams = req.session.userId ? [name, req.session.userId] : [name];
 
       await db.query(query, queryParams, (error, result) => {
-        if (!error && result.rows.length) {
-          data = {
-            subscribers: result.rows[0].subscribers,
-            created: result.rows[0].created,
-            createdby: result.rows[0].createdby,
-            noFounder: result.rows[0].createdby ? false : true,
-            owns: result.rows[0].owns ? result.rows[0].owns : false,
-            subscribed: result.rows[0].subscribed ? result.rows[0].subscribed : false,
-            metaRaw: result.rows[0].meta,
-            meta: marked(result.rows[0].meta),
+        if (!error) {
+          if (result.rows.length) {
+            data = {
+              subscribers: result.rows[0].subscribers,
+              created: result.rows[0].created,
+              createdby: result.rows[0].createdby,
+              noFounder: result.rows[0].createdby ? false : true,
+              owns: result.rows[0].owns ? result.rows[0].owns : false,
+              subscribed: result.rows[0].subscribed ? result.rows[0].subscribed : false,
+              metaRaw: result.rows[0].meta,
+              meta: marked(result.rows[0].meta),
+            }
+
+            // this next is basically getCommunityPosts
+            if (mode === "render") next(result.rows[0].id, () => res.status(200).render("navigation/gen/c", {logged: req.session.userId !== undefined, name: name, ...data}));
+            else next(result.rows[0].id, () => res.status(200).json(data));
+          } else {
+            if (mode === "render") res.status(404).render("misc/error", {logged: req.session.userId !== undefined});
+            else res.status(404).json({error: "We couldn't find what you are looking for!"});
           }
 
-          // this next is basically getCommunityPosts
-          if (mode === "render") {
-            next(result.rows[0].id, () => res.render("navigation/gen/c", {logged: req.session.userId !== undefined, name: name, ...data}));
-          } else {
-            next(result.rows[0].id, () => res.json(data));
-          }
         } else {
-          if (mode === "render") {
-            res.render("misc/notFound", {logged: req.session.userId !== undefined});
-          } else {
-            res.json({error: "Something went wrong!"});
-          }
+          if (mode === "render") res.status(502).render("misc/error", {logged: req.session.userId !== undefined, error: 502});
+          else res.status(502).json({error: "Something went wrong!"});
         }
       });
     }
@@ -70,7 +70,7 @@ module.exports = (mode) => {
       const ps = pageSort(page, sort);
 
       const query = req.session.userId ?
-        `SELECT id, ref_string, title, link, content, type, flag, deleted, throwaway,
+        `SELECT id, ref_string, title, link, content, type, flag, deleted, throwaway, hidden,
             (CASE WHEN owner=$1 THEN true ELSE false END) AS owns, 
             (SELECT vote FROM vote_post WHERE user_id=$1 AND post_id=post.id) as voted, 
             (SELECT EXISTS(SELECT 1 FROM save_post WHERE user_id=$1 AND post_id=post.id)) AS saved,
@@ -83,7 +83,7 @@ module.exports = (mode) => {
           WHERE community=$2 
           ORDER BY id LIMIT 32`
         :
-        `SELECT id, ref_string, title, link, content, type, flag, deleted, throwaway,
+        `SELECT id, ref_string, title, link, content, type, flag, deleted, throwaway, hidden,
             (SELECT COUNT(*) FROM comment WHERE post_parent=post.id) AS comments_amount, 
             (SELECT username FROM users WHERE id=post.owner) as owner, 
             (SELECT SUM(vote) FROM vote_post WHERE post_id=id) AS votes, 
@@ -125,11 +125,8 @@ module.exports = (mode) => {
           data.posts = posts;
           next();
         } else {
-          if (mode === "render") {
-            res.render("misc/notFound", {logged: req.session.userId !== undefined});
-          } else {
-            res.json({error: "Something went wrong!"});
-          }
+          if (mode === "render") res.status(502).render("misc/error", {logged: req.session.userId !== undefined, error: 502});
+          else res.status(502).json({error: "Something went wrong!"});
         }
       });
     }

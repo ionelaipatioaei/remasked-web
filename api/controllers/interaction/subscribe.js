@@ -20,7 +20,7 @@ module.exports = (req, res) => {
           addSubscription(name, id);
         }
       } else {
-        res.json({error: "Something went wrong!"});
+        res.status(502).json({error: "Something went wrong!"});
       }
     });
   }
@@ -35,10 +35,10 @@ module.exports = (req, res) => {
     const queryParams = [id, name];
 
     await db.query(query, queryParams, (error, result) => {
-      if (!error) {
-        res.json({success: `You subscribed to ${name}!`});
+      if (!error && result.rowCount) {
+        res.status(200).json({success: `You subscribed to ${name}!`});
       } else {
-        res.json({error: "Something went wrong!"});
+        res.status(502).json({error: "Something went wrong!"});
       }
     });
   }
@@ -51,10 +51,10 @@ module.exports = (req, res) => {
     const queryParams = [id, name];
 
     await db.query(query, queryParams, (error, result) => {
-      if (!error) {
-        res.json({success: `You unsubscribed from ${name}!`});
+      if (!error && result.rowCount) {
+        res.status(200).json({success: `You unsubscribed from ${name}!`});
       } else {
-        res.json({error: "Something went wrong!"});
+        res.status(502).json({error: "Something went wrong!"});
       }
     });
   }
@@ -63,9 +63,9 @@ module.exports = (req, res) => {
     if (name) {
       updateSubscriptionStatus(name, req.session.userId);
     } else {
-      res.json({error: "The community name invalid!"});
+      res.status(400).json({error: "The community name is invalid!"});
     }
   } else {
-    res.json({error: "You need an account in order to subscribe or unsubscribe!"});
+    res.status(401).json({error: "You need to be authenticated in order to (un)subscribe!"});
   }
 }

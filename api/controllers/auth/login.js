@@ -17,16 +17,16 @@ module.exports = (req, res) => {
           if (!passwordError && passwordIsMatching) {
             //set the session id
             req.session.userId = result.rows[0].id;
-            res.json({success: "Login successful!"});
+            res.status(200).json({success: "You are now authenticated!"});
           } else {
-            res.json({error: "Username and password don't match!"});
+            res.status(401).json({error: "Incorrect username or password!"});
           }
         });
       } else {
-        res.json({error: "Username and password don't match!"});
+        res.status(401).json({error: "Incorrect username or password!"});
       }
     });
   } else {
-    res.json({error: "Invalid credentials!"});
+    res.status(401).json({error: "Username and password fields can't be empty!"});
   }
 }

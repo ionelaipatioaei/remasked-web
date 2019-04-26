@@ -4,6 +4,7 @@ marked.setOptions({
   breaks: true,
   sanitize: true
 });
+const getProfileQuery = require("../../shared/getProfileQuery");
 
 module.exports = (mode) => {
   return (req, res) => {
@@ -13,46 +14,45 @@ module.exports = (mode) => {
 
     const getProfileInfo = async (ownProfile, username, type, next) => {
       const query = ownProfile ? 
-        // username, created, p_points, c_points, p_amount, c_amount
         `SELECT username, TO_CHAR(created, 'DD/MM/YY') AS created, 
-          (SELECT SUM(vote) FROM vote_post WHERE user_id=$1) AS post_points,
-          (SELECT SUM(vote) FROM vote_comment WHERE user_id=$1) AS comment_points,
-          (SELECT COUNT(*) FROM post WHERE owner=$1) AS posts_amount,
-          (SELECT COUNT(*) FROM comment WHERE owner=$1) AS comments_amount
+            (SELECT SUM(vote) FROM vote_post WHERE user_id=$1) AS post_points,
+            (SELECT SUM(vote) FROM vote_comment WHERE user_id=$1) AS comment_points,
+            (SELECT COUNT(*) FROM post WHERE owner=$1) AS posts_amount,
+            (SELECT COUNT(*) FROM comment WHERE owner=$1) AS comments_amount
           FROM users WHERE id=$1`
-          :
-        // username, created, p_points, c_points, p_amount, c_amount
-        `SELECT username, TO_CHAR(created, 'DD/MM/YY') AS created, (SELECT id FROM users WHERE username=$1) AS user_id, 
-          (SELECT SUM(vote) FROM vote_post WHERE user_id=(SELECT id FROM users WHERE username=$1)) AS post_points,
-          (SELECT SUM(vote) FROM vote_comment WHERE user_id=(SELECT id FROM users WHERE username=$1)) AS comment_points,
-          (SELECT COUNT(*) FROM post WHERE owner=(SELECT id FROM users WHERE username=$1)) AS posts_amount,
-          (SELECT COUNT(*) FROM comment WHERE owner=(SELECT id FROM users WHERE username=$1)) AS comments_amount
+        :
+        `SELECT username, TO_CHAR(created, 'DD/MM/YY') AS created, users.id AS user_id,
+            (SELECT SUM(vote) FROM vote_post WHERE user_id=users.id) AS post_points,
+            (SELECT SUM(vote) FROM vote_comment WHERE user_id=users.id) AS comment_points,
+            (SELECT COUNT(*) FROM post WHERE owner=users.id) AS posts_amount,
+            (SELECT COUNT(*) FROM comment WHERE owner=users.id) AS comments_amount
           FROM users WHERE id=(SELECT id FROM users WHERE username=$1)`;
 
       const queryParams = ownProfile ? [req.session.userId] : [username];
 
       await db.query(query, queryParams, (error, result) => {
-        if (!error && result.rows.length) {
-          data = {
-            username: result.rows[0].username,
-            created: result.rows[0].created,
-            postPoints: result.rows[0].post_points,
-            commentPoints: result.rows[0].comment_points,
-            postsAmount: result.rows[0].posts_amount,
-            commentsAmount: result.rows[0].comments_amount,
-          };
-          // this next is basically getProfileData
-          if (mode === "render") {
-            next(data.username, type, result.rows[0].user_id, () => res.render("navigation/profile", {logged: req.session.userId !== undefined, own: username ? (req.session.userId === result.rows[0].user_id) : ownProfile, ...data}));
+        if (!error) {
+          // we do this in order to differentiate between a 404 and a 502
+          // technically no difference if we combined it with the !error tho
+          if (result.rows.length) {
+            data = {
+              username: result.rows[0].username,
+              created: result.rows[0].created,
+              postPoints: result.rows[0].post_points,
+              commentPoints: result.rows[0].comment_points,
+              postsAmount: result.rows[0].posts_amount,
+              commentsAmount: result.rows[0].comments_amount,
+            };
+            // this next is basically getProfileData
+            if (mode === "render") next(data.username, type, result.rows[0].user_id, () => res.status(200).render("navigation/profile", {logged: req.session.userId !== undefined, own: username ? (req.session.userId === result.rows[0].user_id) : ownProfile, ...data}));
+            else next(data.username, type, result.rows[0].user_id, () => res.status(200).json(data));
           } else {
-            next(data.username, type, result.rows[0].user_id, () => res.json(data));
+            if (mode === "render") res.status(404).render("misc/error", {logged: req.session.userId !== undefined});
+            else res.status(404).json({error: "Something went wrong1"});
           }
         } else {
-          if (mode === "render") {
-            res.render("misc/notFound", {logged: req.session.userId !== undefined});
-          } else {
-            res.json({error: "Something went wrong1!"});
-          }
+          if (mode === "render") res.status(502).render("misc/error", {logged: req.session.userId !== undefined, error: 502});
+          else res.status(502).json({error: "Something went wrong!"});
         }
       });
     }
@@ -66,105 +66,52 @@ module.exports = (mode) => {
       // this is the default option
       let dataType = "posts";
 
+      // this is one of the worse things on this project
+      // I need to refactor this but it's 'ok' for now
       switch (type) {
         case "posts":
-          query = req.session.userId ?
-            // id, ref, c_amount, votes, owns, saved, voted, owner, created, edited, deleted, title, link, content, type, flag
-            `SELECT id, ref_string, (SELECT COUNT(*) FROM comment WHERE post_parent=post.id) AS comments_amount, 
-              (SELECT SUM(vote) FROM vote_post WHERE post_id=id) AS votes,
-              (CASE WHEN owner=(SELECT id FROM users WHERE username=$1) THEN true ELSE false END) AS owns, 
-              (SELECT EXISTS(SELECT 1 FROM save_post WHERE user_id=(SELECT id FROM users WHERE username=$1) AND post_id=post.id)) AS saved,
-              (SELECT vote FROM vote_post WHERE user_id=(SELECT id FROM users WHERE username=$1) AND post_id=post.id) as voted, 
-              (SELECT username FROM users WHERE id=post.owner) as owner,
-              TO_CHAR(created, 'DD/MM/YY at HH24:MI') AS created, TO_CHAR(edited, 'DD/MM/YY at HH24:MI') AS edited,
-              deleted, title, link, content, type, flag 
-              FROM post WHERE owner=(SELECT id FROM users WHERE username=$1) ORDER BY id DESC LIMIT 32`
-            :
-            // id, ref, c_amount, votes, -, -, -, owner, created, edited, deleted, title, link, content, type, flag
-            `SELECT id, ref_string, (SELECT name FROM community WHERE id=community) AS community, (SELECT COUNT(*) FROM comment WHERE post_parent=post.id) AS comments_amount, 
-              (SELECT SUM(vote) FROM vote_post WHERE post_id=id) AS votes, 
-              (SELECT username FROM users WHERE id=post.owner) as owner,
-              TO_CHAR(created, 'DD/MM/YY at HH24:MI') AS created, TO_CHAR(edited, 'DD/MM/YY at HH24:MI') AS edited,
-              deleted, title, link, content, type, flag 
-              FROM post WHERE owner=(SELECT id FROM users WHERE username=$1) ORDER BY id DESC LIMIT 32;`;
+          query = getProfileQuery("posts", req.session.userId);
           dataType = "posts";
           break;
 
         case "comments":
-          query = req.session.userId ?
-            `SELECT id, ref_string, (SELECT username FROM users WHERE id=owner) AS owner, 
-              (SELECT SUM(vote) FROM vote_comment WHERE comment_id=id) AS votes, 
-              (CASE WHEN owner=(SELECT id FROM users WHERE username=$1) THEN true ELSE false END) AS owns,
-              (SELECT EXISTS(SELECT 1 FROM save_comment WHERE user_id=(SELECT id FROM users WHERE username=$1) AND comment_id=comment.id)) AS saved,
-              (SELECT vote FROM vote_comment WHERE user_id=(SELECT id FROM users WHERE username=$1) AND comment_id=id) as voted, 
-              TO_CHAR(created, 'DD/MM/YY at HH24:MI') AS created, TO_CHAR(edited, 'DD/MM/YY at HH24:MI') AS edited, 
-              deleted, content, (SELECT ref_string FROM post WHERE id=post_parent) AS parent 
-              FROM comment WHERE owner=(SELECT id FROM users WHERE username=$1) ORDER BY id DESC`
-            :
-            `SELECT id, ref_string, (SELECT username FROM users WHERE id=owner) AS owner, 
-              (SELECT SUM(vote) FROM vote_comment WHERE comment_id=id) AS votes, 
-              TO_CHAR(created, 'DD/MM/YY at HH24:MI') AS created, TO_CHAR(edited, 'DD/MM/YY at HH24:MI') AS edited,
-              deleted, content, (SELECT ref_string FROM post WHERE id=post_parent) AS parent 
-              FROM comment WHERE owner=(SELECT id FROM users WHERE username=$1) ORDER BY id DESC`;
+          query = getProfileQuery("comments", req.session.userId);
           dataType = "comments";
           break;
 
         case "saved-posts":
-          if (req.session.userId === currentId) {
-            query = `SELECT id, ref_string, (SELECT COUNT(*) FROM comment WHERE post_parent=post.id) AS comments_amount, 
-              (SELECT SUM(vote) FROM vote_post WHERE post_id=id) AS votes,
-              (CASE WHEN owner=$1 THEN true ELSE false END) AS owns, 
-              (SELECT EXISTS(SELECT 1 FROM save_post WHERE user_id=$1 AND post_id=post.id)) AS saved,
-              (SELECT vote FROM vote_post WHERE user_id=$1 AND post_id=post.id) as voted, 
-              (SELECT username FROM users WHERE id=post.owner) as owner,
-              TO_CHAR(created, 'DD/MM/YY at HH24:MI') AS created, TO_CHAR(edited, 'DD/MM/YY at HH24:MI') AS edited,
-              deleted, title, link, content, type, flag 
-              FROM post WHERE id=(SELECT post_id FROM save_post WHERE user_id=$1 AND post_id=id) AND owner=$1 ORDER BY id DESC LIMIT 32`;
-            queryParams = [req.session.userId];
+          query = getProfileQuery("saved-posts", req.session.userId, currentId);
+          if (!query) {
+            if (mode === "render") return res.status(403).render("navigation/profile", {logged: req.session.userId !== undefined, ...data, error: 403});
+            else return res.status(403).json({...data, error: 403});
           } else {
-            if (mode === "render") {
-              return res.render("navigation/profile", {logged: req.session.userId !== undefined, ...data, error: "You can't view saved posts if you don't have an account!"});
-            } else {
-              return res.json({...data, error: "You can't view saved posts if you don't have an account!"});
-            }
+            queryParams = [req.session.userId];
           }
           dataType = "saved-posts";
           break;
 
         case "saved-comments":
-          if (req.session.userId === currentId) {
-            query = `SELECT id, ref_string, (SELECT username FROM users WHERE id=owner) AS owner, 
-              (SELECT SUM(vote) FROM vote_comment WHERE comment_id=id) AS votes, 
-              (CASE WHEN owner=$1 THEN true ELSE false END) AS owns,
-              (SELECT EXISTS(SELECT 1 FROM save_comment WHERE user_id=$1 AND comment_id=comment.id)) AS saved,
-              (SELECT vote FROM vote_comment WHERE user_id=$1 AND comment_id=id) as voted, 
-              TO_CHAR(created, 'DD/MM/YY at HH24:MI') AS created, TO_CHAR(edited, 'DD/MM/YY at HH24:MI') AS edited, 
-              deleted, content, (SELECT ref_string FROM post WHERE id=post_parent) AS parent 
-              FROM comment WHERE id=(SELECT comment_id FROM save_comment WHERE user_id=$1 AND comment_id=id) AND owner=$1 ORDER BY id DESC`;
-            queryParams = [req.session.userId];
+          query = getProfileQuery("saved-comments", req.session.userId, currentId);
+          if (!query) {
+            if (mode === "render") return res.status(403).render("navigation/profile", {logged: req.session.userId !== undefined, ...data, error: 403});
+            else return res.status(403).json({...data, error: 403});
           } else {
-            if (mode === "render") {
-              return res.render("navigation/profile", {logged: req.session.userId !== undefined, ...data, error: "You can't view saved comments if you don't have an account!"});
-            } else {
-              return res.json({...data, error: "You can't view saved comments if you don't have an account!"});
-            }
+            queryParams = [req.session.userId];
           }
           dataType = "saved-comments";
           break;
 
         // if query doesn't match the 4 types show not found page or api error
         default:
-          if (mode === "render") {
-            return res.render("misc/notFound", {logged: req.session.userId !== undefined});
-          } else {
-            return res.json({error: "Invalid type!"});
-          }
-        // no need for break; because of the above returns
+          if (mode === "render") return res.status(400).render("misc/error", {logged: req.session.userId !== undefined});
+          else return res.status(400).json({error: "Invalid request data!"});
+          // no need for break; because of the above returns
       }
 
       await db.query(query, queryParams, (error, result) => {
         if (!error) {
           // check to see if there are any results
+          // btw this is another piece of crap which should be refactored but oh well...
           if (result.rows.length) {
             if (dataType === "posts" || dataType === "saved-posts") {
               result.rows.map(post => {
@@ -210,32 +157,17 @@ module.exports = (mode) => {
             pcData = [];
           }
         } else {
-          if (mode === "render") {
-            res.render("misc/notFound", {logged: req.session.userId !== undefined});
-          } else {
-            res.json({error: "Something went wrong!"});
-          }
+          if (mode === "render") res.status(502).render("misc/error", {logged: req.session.userId !== undefined, error: 502});
+          else res.status(502).json({error: "Something went wrong!"});
         }
-        switch (dataType) {
-          case "posts":
-            data.posts = pcData;
-            break;
-
-          case "comments":
-            data.comments = pcData;
-            break;
-
-          case "saved-posts":
-            data.savedPosts = pcData;
-            break;
-
-          case "saved-comments":
-            data.savedComments = pcData;
-            break;
-
-          // because dataType is internal there can only be 4 cases, 
-          // in case the user enters a wrong type it's caught before it reaches this switch
-        }
+        
+        // kinda hacky but it does get the job done
+        if (dataType === "posts") data.posts = pcData;
+        else if (dataType === "comments") data.comments = pcData;
+        else if (dataType === "saved-posts") data.savedPosts = pcData;
+        else if (dataType === "saved-comments") data.savedComments = pcData;
+        // because dataType is internal there can only be 4 cases, 
+        // in case the user enters a wrong type it's caught before it reaches this
         next();
       });
     }
@@ -247,11 +179,8 @@ module.exports = (mode) => {
       getProfileInfo(false, name, !type ? "posts" : type, getProfileData);
     // the only case left is (!name)
     } else {
-      if (mode === "render") {
-        return res.render("navigation/profile", {logged: req.session.userId !== undefined, own: true, error: "You can't view posts/comments!"});
-      } else {
-        return res.json({own: true, error: "You can't view posts/comments"});
-      }
+      if (mode === "render") return res.status(401).render("navigation/profile", {logged: req.session.userId !== undefined, own: true, error: "You need to be authenticated in order to view you own profile!"});
+      else return res.status(401).json({error: "You need to be authenticated in order to view you own profile!"});
     }
   }
 }

@@ -1,5 +1,17 @@
 const db = require("../../database/query");
 
+exports.addEmail = (req, res) => {
+  res.status(202).json({error: "Work in progress!"});
+}
+
+exports.changePassword = (req, res) => {
+  res.status(202).json({error: "Work in progress!"});
+}
+
+exports.changeEmail = (req, res) => {
+  res.status(202).json({error: "Work in progress!"});
+}
+
 exports.delete = (req, res) => {
   const {keepUsername} = req.body;
 
@@ -9,7 +21,7 @@ exports.delete = (req, res) => {
         // this next is deleteCommentVotes
         next(deleteSavedPosts);
       } else {
-        res.json({error: "Something went wrong!"});
+        res.status(502).json({error: "Something went wrong!"});
       }
     });
   }
@@ -20,7 +32,7 @@ exports.delete = (req, res) => {
         // this next is deleteSavedPosts
         next(deleteSavedComments);
       } else {
-        res.json({error: "Something went wrong!"});
+        res.status(502).json({error: "Something went wrong!"});
       }
     });
   }
@@ -31,7 +43,7 @@ exports.delete = (req, res) => {
         // this next is deleteSavedComments
         next(deleteSubscriptions);
       } else {
-        res.json({error: "Something went wrong!"});
+        res.status(502).json({error: "Something went wrong!"});
       }
     });
   }
@@ -42,7 +54,7 @@ exports.delete = (req, res) => {
         // this next is deleteSubscriptions
         next(deletePosts);
       } else {
-        res.json({error: "Something went wrong!"});
+        res.status(502).json({error: "Something went wrong!"});
       }
     });
   }
@@ -53,7 +65,7 @@ exports.delete = (req, res) => {
         // this next is deletePosts
         next(deleteComments);
       } else {
-        res.json({error: "Something went wrong!"});
+        res.status(502).json({error: "Something went wrong!"});
       }
     });
   }
@@ -69,7 +81,7 @@ exports.delete = (req, res) => {
         // this next is deleteComments
         next(deleteCommunityFounder);
       } else {
-        res.json({error: "Something went wrong!"});
+        res.status(502).json({error: "Something went wrong!"});
       }
     });
   }
@@ -84,7 +96,7 @@ exports.delete = (req, res) => {
         // this next is deleteCommunityFounder
         next(deleteUser);
       } else {
-        res.json({error: "Something went wrong!"});
+        res.status(502).json({error: "Something went wrong!"});
       }
     });
   }
@@ -95,7 +107,7 @@ exports.delete = (req, res) => {
         // this next is deleteUser
         next();
       } else {
-        res.json({error: "Something went wrong!"});
+        res.status(502).json({error: "Something went wrong!"});
       }
     });
   }
@@ -111,13 +123,13 @@ exports.delete = (req, res) => {
           // logout the user
           req.session.destroy(error => {
             if (error) {
-              res.json({error: "Something went wrong!"});
+              res.status(502).json({error: "Something went wrong!"});
             }
             res.clearCookie("sid");
-            res.json({success: "Your account was deleted!"});
+            res.status(200).json({success: "Your account was deleted!"});
           });
         } else {
-          res.json({error: "Something went wrong!"});
+          res.status(502).json({error: "Something went wrong!"});
         }
       });
   }
@@ -125,6 +137,6 @@ exports.delete = (req, res) => {
   if (req.session.userId) {
     deletePostVotes(deleteCommentVotes);
   } else {
-    res.json({error: "You need to be logged into this account order to delete it!"});
+    res.status(401).json({error: "You need to be authenticated in order to delete an account!"});
   }
 }

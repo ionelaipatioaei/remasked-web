@@ -25,7 +25,7 @@ module.exports = (req,res) => {
           if (vote === 1 || vote === -1) {
             addVote(refPost, refComment, vote, id);
           } else {
-            res.json({error: "Wrong vote value!"});
+            res.status(400).json({error: "Wrong vote value!"});
           }
         } else {
           // based on the current vote and the vote which the user requested, remove or update
@@ -38,11 +38,11 @@ module.exports = (req,res) => {
           } else if (result.rows[0].vote === -1 && vote === -1) {
             removeVote(refPost, refComment, id);
           } else {
-            res.json({error: "Wrong vote value!"});
+            res.status(400).json({error: "Wrong vote value!"});
           }
         } 
       } else {
-        res.json({error: "Something went wrong!"});
+        res.status(502).json({error: "Something went wrong!"});
       }
     });
   }
@@ -68,10 +68,10 @@ module.exports = (req,res) => {
     const queryParams = refComment ? [id, refComment, vote] : [id, refPost, vote];
 
     await db.query(query, queryParams, (error, result) => {
-      if (!error) {
-        res.json({success: "Your vote was registered!"});
+      if (!error && result.rowCount) {
+        res.status(200).json({success: "Your vote was registered!"});
       } else {
-        res.json({error: "Something went wrong!"});
+        res.status(502).json({error: "Something went wrong!"});
       }
     });
   }
@@ -93,10 +93,10 @@ module.exports = (req,res) => {
     const queryParams = refComment ? [vote, refComment, id] : [vote, refPost, id];
 
     await db.query(query, queryParams, (error, result) => {
-      if (!error) {
-        res.json({success: "Your vote was registered!"});
+      if (!error && result.rowCount) {
+        res.status(200).json({success: "Your vote was registered!"});
       } else {
-        res.json({error: "Something went wrong!"});
+        res.status(502).json({error: "Something went wrong!"});
       }
     });
   }
@@ -116,21 +116,21 @@ module.exports = (req,res) => {
     const queryParams = refComment ? [id, refComment] : [id, refPost];
 
     await db.query(query, queryParams, (error, result) => {
-      if (!error) {
-        res.json({success: "Your vote was removed!", remove: true});
+      if (!error && result.rowCount) {
+        res.status(200).json({success: "Your vote was removed!", remove: true});
       } else {
-        res.json({error: "Something went wrong!"});
+        res.status(502).json({error: "Something went wrong!"});
       }
     });
   }
 
   if (req.session.userId) {
     if (refPost && refComment) {
-      res.json({error: "You can only update one item at a time!"});
+      res.status(400).json({error: "You can only update one item at a time!"});
     } else {
       checkVoteAndModify(refPost, refComment, parseInt(vote), req.session.userId);
     }
   } else {
-    res.json({error: "You need an account in order to vote!"});
+    res.status(401).json({error: "You need to be authenticated in order to vote!"});
   }
 }
