@@ -13,8 +13,10 @@ const authLogin = () => {
     console.log(data);
     if (data.error) {
       document.querySelector("#password").value = "";
-      warning.innerHTML = data.error;
+      // warning.innerHTML = data.error;
+      notificationShow("error", data.error, 10000);
     } else if (data.success) {
+      notificationShow("success", data.success, 10000);
       window.location.href = "/";
     }
   })
@@ -36,9 +38,10 @@ const authRegister = () => {
   .then(data => {
     console.log(data);
     if (data.success) {
+      notificationShow("success", data.success, 10000);
       window.location.href = "/login";
     } else if(data.error) {
-      warning.innerHTML = data.error;
+      notificationShow("warning", data.error, 10000);
     }
   })
   .catch(error => console.log(error));

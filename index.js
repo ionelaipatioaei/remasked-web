@@ -28,6 +28,15 @@ app.use(session({
   }
 }));
 
+app.use((error, req, res, next) => {
+  if (error) {
+    res.status(400).json({error: "Invalid request data!"});
+  } else {
+    next();
+  }
+});
+
+// this is for debug only
 app.use((req, res, next) => {
   console.log(req.session.userId);
   next();
@@ -57,8 +66,12 @@ app.use(misc);
 const apiExplore = require("./api/controllers/navigation/explore");
 app.get("/", apiExplore("render"));
 
-app.get("*", (req, res) => {
-  res.render("misc/notFound", {logged: req.session.userId !== undefined});
+app.all("/api/*", (req, res) => {
+  res.status(404).json({error: "We couldn't find what you are looking for!"});
+});
+
+app.all("*", (req, res) => {
+  res.status(404).render("misc/error", {logged: req.session.userId !== undefined});
 });
 
 app.listen(PORT, () => console.log(`Server started on port ${PORT}...`));

@@ -1,7 +1,7 @@
 include button.pug
 include link.pug
 
-mixin Meta(community, subscribers, created, createdby, owns, subscribed, metaRaw, description)
+mixin Meta(community, subscribers, created, createdby, noFounder, owns, subscribed, metaRaw, description)
   div#meta-container
     h1= community
     p.meta-text #{subscribers} subscribers
@@ -21,5 +21,8 @@ mixin Meta(community, subscribers, created, createdby, owns, subscribed, metaRaw
       div.meta-textarea-buttons-container
         +Button("Save", `communitySaveEdit('${community}')`)
         +Button("Cancel", "communityCancelEdit()")
-
-    p!= `Created by <a href="/profile/${createdby}">${createdby}</a> on ${created}`
+    
+    if !noFounder
+      p!= `Created by <a href="/profile/${createdby}">${createdby}</a> on ${created}.`
+    else
+      p!= `Created by (deleted user) on ${created}.`

@@ -11,9 +11,9 @@ block title
 
 block content
   h1 Your communities
-  if communities
-    each community in communities
-      +Community(community)
-
-  if (error)
-    h1 #{error}
+  div(style="display: grid; grid-template-columns: repeat(5, 20%);")
+    if communities
+      each community in communities
+        +Community(community)
+    else
+      h1 No communities

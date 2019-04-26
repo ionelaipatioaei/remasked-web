@@ -69,7 +69,7 @@ const communitySubscribe = (name) => {
       if (data.success) {
         window.location.reload();
       } else {
-        console.log(data);
+        notificationShow("error", data.error, 10000);
       }
     })
     .catch(error => console.log(error));

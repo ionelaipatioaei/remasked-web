@@ -10,6 +10,10 @@ exports.apps = (req, res) => {
   res.render("misc/apps", {logged: req.session.userId !== undefined});
 }
 
+exports.donate = (req, res) => {
+  res.render("misc/donate", {logged: req.session.userId !== undefined});
+}
+
 exports.termsOfUse = (req, res) => {
   res.render("misc/termsOfUse", {logged: req.session.userId !== undefined});
 }

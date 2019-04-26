@@ -2,8 +2,9 @@
 
 .community-container {
   background-color: #fff;
+  // width: 100%;
   padding: 10px;
-  margin: 12px 6px;
+  margin: 6px;
   border-radius: $r-normal;
   box-shadow: $light;
   cursor: pointer;
@@ -20,12 +21,4 @@
 
 .community-details {
   color: #000;
-}
-
-.community-meta > h1 {
-  display: none;
-}
-
-.community-meta > h2 {
-  display: none;
 }

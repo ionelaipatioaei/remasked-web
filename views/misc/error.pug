@@ -1,0 +1,26 @@
+extends ../layout/layout.pug
+
+include ../layout/header.pug
+
+include ../components/button.pug
+include ../components/link.pug
+
+block header
+  +Header(logged)
+
+block title
+  title Remasked | Not found
+
+block content
+  div(style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 75vh;")
+    if error == 502
+      h3 ERROR 502
+      h1 Something went wrong. Please try again later.
+    //- default to 404
+    else
+      h3 ERROR 404
+      h1 We couldn't find what you are looking for.
+
+    +Link("/")
+      +Button("Go home")
+    img(src="/static/assets/logo_wb.png", alt="logo on white and black")

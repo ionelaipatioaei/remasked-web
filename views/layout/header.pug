@@ -1,29 +1,39 @@
 include ../components/link.pug
 include ../components/icon.pug
 
-mixin Header(logged, newMessages, newNotifications)
+mixin Header(logged, newMessages, newNotifications, displayCommunity)
   nav
     div.nav-container
-      +Link("/")
-        img(src="/static/assets/logo13.png", alt="logo", style="height: 32px; width: 32px; margin: 8px;")
+      div(style="display: flex; align-items: center;")
+        +Link("/", null,  "display: flex;")
+          img(src="/static/assets/logo_small.png", alt="logo", style="height: 32px; width: 32px; margin: 8px;")
+        if displayCommunity
+          +Link(`/c/${displayCommunity}`, null,  "display: flex;")
+            p(style="font-size: 1.1em;") /c/#{displayCommunity}
 
       ul.nav-items
-        li.nav-item
-          +Link("/profile")
-            +Icon("/static/assets/icons/user.svg", "profile", null, "margin-left: 8px")
+        if logged
+          li.nav-item
+            +Link("/profile")
+              +Icon("/static/assets/icons/user.svg", "profile", null, "margin-left: 8px")
+
+          li.nav-item
+            +Link("/communities")
+              +Icon("/static/assets/icons/list.svg", "communities", null, "margin-left: 8px")
+
+          li.nav-item
+            +Link("#")
+              +Icon("/static/assets/icons/bell.svg", "notifications", null, "margin-left: 8px; cursor: not-allowed;", false)
+              
+          li.nav-item
+            +Link("#")
+              +Icon("/static/assets/icons/mail.svg", "messages", null, "margin-left: 8px; cursor: not-allowed;", false)
 
         li.nav-item
-          +Link("/communities")
-            +Icon("/static/assets/icons/list.svg", "communities", null, "margin-left: 8px")
+          //- whatever if this link is present the style is ok if not you see the icon lower
+          +Link("")
+            +Icon("/static/assets/icons/random.svg", "random", "getRandomCommunity()", "margin-left: 8px")
 
-        li.nav-item
-          +Link("#")
-            +Icon("/static/assets/icons/mail.svg", "messages", null, "margin-left: 8px; cursor: not-allowed;", false)
-
-        li.nav-item
-          +Link("#")
-            +Icon("/static/assets/icons/bell.svg", "notifications", null, "margin-left: 8px; cursor: not-allowed;", false)
-        
         //- GOOD SYSTEM!
         //- li.nav-item(style=`margin-left: ${newMessages ? "-16px" : 0}`)
         //-   if newMessages

@@ -7,9 +7,9 @@ mixin Post(postData, options={type: "photo", view: "min", community: true})
     div.post-main
       //- vote handling
       div.post-votes(vote="", style=`margin: ${options.view === "max" ? "0 0 auto" : "0"}`)
-        +Icon("/static/assets/icons/up.svg", "upvote post", `postUpdateVoteState(1, '${postData.ref}')`)
+        +Icon(postData.voted === 1 ? "/static/assets/icons/up-use.svg" : "/static/assets/icons/up.svg", "upvote post", `postUpdateVoteState(1, '${postData.ref}')`)
         p.post-votes-amount(style=`color: ${postData.voted === 1 ? "green" : postData.voted === -1 ? "red" : "black"}`) #{postData.votes}
-        +Icon("/static/assets/icons/down.svg", "downvote post", `postUpdateVoteState(-1, '${postData.ref}')`)
+        +Icon(postData.voted === -1 ? "/static/assets/icons/down-use.svg" : "/static/assets/icons/down.svg", "downvote post", `postUpdateVoteState(-1, '${postData.ref}')`)
 
       //- small preview
       if !postData.deleted
@@ -56,8 +56,11 @@ mixin Post(postData, options={type: "photo", view: "min", community: true})
         div.post-info-text-container
           if !postData.deleted
             p.post-info-text Submitted by&nbsp;
-            +Link(`/profile/${postData.owner}`)
-              p.post-info-text-goto= postData.owner
+            if !postData.throwaway
+              +Link(`/profile/${postData.owner}`)
+                p.post-info-text-goto= postData.owner
+            else
+              p.post-info-text-goto somebody 
 
             if options.community
               p.post-info-text &nbsp;in&nbsp;
@@ -86,6 +89,14 @@ mixin Post(postData, options={type: "photo", view: "min", community: true})
           if postData.owns && options.type == "text"
             +Icon("/static/assets/icons/edit.svg", "comments", null, "width: 16px; height: 16px", false)
             p.post-info-text-actions(onclick="postEdit()") edit&nbsp;
+
+          if postData.owns && postData.throwaway
+            +Icon("/static/assets/icons/reveal.svg", "comments", null, "width: 16px; height: 16px", false)
+            p.post-info-text-actions(onclick="postEdit()") reveal&nbsp;
+          
+          if postData.owns && !postData.throwaway
+            +Icon("/static/assets/icons/conceal.svg", "comments", null, "width: 16px; height: 16px", false)
+            p.post-info-text-actions(onclick="postEdit()") conceal&nbsp;
 
           if postData.owns
             +Icon("/static/assets/icons/delete.svg", "comments", null, "width: 16px; height: 16px", false)

@@ -17,8 +17,11 @@ mixin Comment(commentData)
           div.comment-info
             +Icon("/static/assets/icons/minus.svg", "min/max comment", "commentCollapse()", "width: 16px; height: 16px; margin-right: 6px;") 
             div.comment-info-text-container
-              +Link("/hey")
-                p.comment-info-text-goto= commentData.owner
+              if !commentData.throwaway
+                +Link(`/profile/${commentData.owner}`)
+                  p.comment-info-text-goto= commentData.owner
+              else
+                p.comment-info-text-goto somebody
               p.comment-info-text &nbsp;replied on #{commentData.created}
                 if commentData.edited
                   span.comment-edited &nbsp;(edited on #{commentData.edited})

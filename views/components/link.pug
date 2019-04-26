@@ -1,7 +1,7 @@
-mixin Link(href, title)
+mixin Link(href, title, style)
   if title
     a(href=`${href}`)= title
   else
     if block
-      a(href=`${href}`)
+      a(href=`${href}`, style=`${style}`)
         block
