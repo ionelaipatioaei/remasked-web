@@ -12,7 +12,7 @@ module.exports = (mode) => {
 
     const getPostInfo = async (ref, next) => {
       const query = req.session.userId ?
-        `SELECT id, ref_string, title, link, content, type, flag, deleted, 
+        `SELECT id, ref_string, title, link, content, type, flag, deleted, throwaway, hidden,
             (CASE WHEN owner=$1 THEN true ELSE false END) AS owns,
             (SELECT vote FROM vote_post WHERE user_id=$1 AND post_id=id) as voted, 
             (SELECT EXISTS(SELECT 1 FROM save_post WHERE user_id=$1 AND post_id=post.id)) AS saved,
@@ -25,7 +25,7 @@ module.exports = (mode) => {
           FROM post 
           WHERE ref_string=$2`
         :
-        `SELECT id, ref_string, title, link, content, type, flag, deleted, 
+        `SELECT id, ref_string, title, link, content, type, flag, deleted, throwaway, hidden,
             (SELECT COUNT(*) FROM comment WHERE post_parent=post.id) AS comments_amount, 
             (SELECT username FROM users WHERE id=owner) AS owner, 
             (SELECT SUM(vote) FROM vote_post WHERE post_id=id) AS votes, 
@@ -40,7 +40,8 @@ module.exports = (mode) => {
       await db.query(query, queryParams, (error, result) => {
         if (!error && result.rows.length) {
           data = {
-            owner: result.rows[0].owner,
+            owner: result.rows[0].throwaway ? "" : result.rows[0].owner,
+            throwaway: result.rows[0].throwaway,
             created: result.rows[0].created,
             edited: result.rows[0].edited,
             deleted: result.rows[0].deleted,

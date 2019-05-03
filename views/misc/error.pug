@@ -21,6 +21,10 @@ block content
       h3 ERROR 404
       h1 We couldn't find what you are looking for.
 
-    +Link("/")
-      +Button("Go home")
+    if error == 502
+      +Button("Refresh", "window.location.reload()")
+    else
+      +Link("/")
+        +Button("Go home")
+        
     img(src="/static/assets/logo_wb.png", alt="logo on white and black")

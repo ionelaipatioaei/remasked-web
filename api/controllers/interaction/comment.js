@@ -89,7 +89,7 @@ exports.delete = (req, res) => {
   const updateCommentToNull = async (refComment, id) => {
     const query = `UPDATE comment 
                     SET owner=NULL, created=NULL, content=NULL, edited=NULL, 
-                      deleted=TRUE 
+                      throwaway=NULL, hidden=NULL, deleted=TRUE 
                     WHERE ref_string=$1 AND owner=$2`;
 
     const queryParams = [refComment, id];

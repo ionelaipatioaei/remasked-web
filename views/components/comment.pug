@@ -50,6 +50,17 @@ mixin Comment(commentData)
             +Icon("/static/assets/icons/edit.svg", "comments", null, "width: 16px; height: 16px", false)
             p.comment-info-text-actions(onclick="commentEdit()") edit&nbsp;
 
+            if !commentData.throwaway
+              +Icon("/static/assets/icons/conceal.svg", "comments", null, "width: 16px; height: 16px", false)
+              p#throwaway.comment-info-text-actions(onclick="commentThrowaway()") conceal&nbsp;
+              p#throwaway-confirm.comment-info-text-actions(style="display: none;", onclick=`commentThrowawayConfirm('${commentData.ref}')`) confirm&nbsp;
+              p#throwaway-cancel.comment-info-text-actions(style="display: none;", onclick="commentThrowawayCancel()") &nbsp;cancel
+            else
+              +Icon("/static/assets/icons/reveal.svg", "comments", null, "width: 16px; height: 16px", false)
+              p#throwaway.comment-info-text-actions(onclick="commentThrowaway()") reveal&nbsp;
+              p#throwaway-confirm.comment-info-text-actions(style="display: none;", onclick=`commentThrowawayConfirm('${commentData.ref}')`) confirm&nbsp;
+              p#throwaway-cancel.comment-info-text-actions(style="display: none;", onclick="commentThrowawayCancel()") &nbsp;cancel
+
             +Icon("/static/assets/icons/delete.svg", "comments", null, "width: 16px; height: 16px", false)
             p#delete.comment-info-text-actions(onclick="commentDelete()") delete&nbsp;
             p#delete-confirm.comment-info-text-actions(style="display: none;", onclick=`commentDeleteConfirm('${commentData.ref}')`) confirm&nbsp;

@@ -15,7 +15,7 @@ module.exports = (mode) => {
 
     const getRelevantPosts = async (next) => {
       const query = req.session.userId ?
-        `SELECT id, ref_string, title, link, content, type, flag, deleted, 
+        `SELECT id, ref_string, title, link, content, type, flag, deleted, throwaway, hidden,
             (CASE WHEN owner=$1 THEN true ELSE false END) AS owns, 
             (SELECT vote FROM vote_post WHERE user_id=$1 AND post_id=post.id) as voted, 
             (SELECT EXISTS(SELECT 1 FROM save_post WHERE user_id=$1 AND post_id=post.id)) AS saved,
@@ -28,7 +28,7 @@ module.exports = (mode) => {
           FROM post 
           ORDER BY id DESC LIMIT 32`
         :
-        `SELECT id, ref_string, title, link, content, type, flag, deleted, 
+        `SELECT id, ref_string, title, link, content, type, flag, deleted, throwaway, hidden,
             (SELECT COUNT(*) FROM comment WHERE post_parent=post.id) AS comments_amount, 
             (SELECT username FROM users WHERE id=post.owner) as owner, 
             (SELECT SUM(vote) FROM vote_post WHERE post_id=id) AS votes, 
@@ -43,10 +43,12 @@ module.exports = (mode) => {
       await db.query(query, queryParams, (error, result) => {
         if (!error) {
           result.rows.map(post => {
-            if (!post.deleted) {
+            // override the post.hidden when the user wants to see the removed posts
+            if (!post.deleted && !post.hidden) {
               data.posts.push({
                 community: post.community,
-                owner: post.owner,
+                owner: post.throwaway ? "" : post.owner,
+                throwaway: post.throwaway,
                 created: post.created,
                 edited: post.edited,
                 deleted: post.deleted,

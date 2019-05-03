@@ -21,10 +21,10 @@ app.use(session({
   // should be more secret
   secret: "hey there",
   cookie: {
-    maxAge: 1000 * 60 * 60,
+    maxAge: 1000 * 60 * 60 * 60,
     sameSite: true,
-    secure: false ,
-    // httpOnly: true
+    secure: false,
+    httpOnly: true
   }
 }));
 
@@ -32,6 +32,7 @@ app.use((error, req, res, next) => {
   if (error) {
     res.status(400).json({error: "Invalid request data!"});
   } else {
+    // frankly idk if this is needed or not 
     next();
   }
 });

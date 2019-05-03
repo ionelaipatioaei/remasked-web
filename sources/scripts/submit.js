@@ -49,9 +49,11 @@ const submitPost = community => {
   }).then(res => res.json())
     .then(data => {
       if (data.success) {
+        notificationShow("success", data.success, 10000);
         window.location.href = `/c/${community}`;
+      } else {
+        notificationShow("error", data.error, 10000);
       }
-      console.log(data);
     })
     .catch(error => console.log(error));
 }

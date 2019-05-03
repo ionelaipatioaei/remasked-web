@@ -90,13 +90,19 @@ mixin Post(postData, options={type: "photo", view: "min", community: true})
             +Icon("/static/assets/icons/edit.svg", "comments", null, "width: 16px; height: 16px", false)
             p.post-info-text-actions(onclick="postEdit()") edit&nbsp;
 
+          //- stupid starts here
           if postData.owns && postData.throwaway
             +Icon("/static/assets/icons/reveal.svg", "comments", null, "width: 16px; height: 16px", false)
-            p.post-info-text-actions(onclick="postEdit()") reveal&nbsp;
+            p#throwaway.post-info-text-actions(onclick="postThrowaway()") reveal&nbsp;
+            p#throwaway-confirm.post-info-text-actions(style="display: none;", onclick=`postThrowawayConfirm('${postData.ref}')`) confirm&nbsp;
+            p#throwaway-cancel.post-info-text-actions(style="display: none;", onclick="postThrowawayCancel()") &nbsp;cancel
           
           if postData.owns && !postData.throwaway
             +Icon("/static/assets/icons/conceal.svg", "comments", null, "width: 16px; height: 16px", false)
-            p.post-info-text-actions(onclick="postEdit()") conceal&nbsp;
+            p#throwaway.post-info-text-actions(onclick="postThrowaway()") conceal&nbsp;
+            p#throwaway-confirm.post-info-text-actions(style="display: none;", onclick=`postThrowawayConfirm('${postData.ref}')`) confirm&nbsp;
+            p#throwaway-cancel.post-info-text-actions(style="display: none;", onclick="postThrowawayCancel()") &nbsp;cancel
+          //- stupid ends here
 
           if postData.owns
             +Icon("/static/assets/icons/delete.svg", "comments", null, "width: 16px; height: 16px", false)

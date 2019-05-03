@@ -207,3 +207,34 @@ const commentDeleteCancel = () => {
   main.querySelector("#delete-confirm").style.display = "none";
   main.querySelector("#delete-cancel").style.display = "none";
 }
+
+const commentThrowaway = () => {
+  const main = event.currentTarget.parentNode;
+  main.querySelector("#throwaway").style.display = "none";
+  main.querySelector("#throwaway-confirm").style.display = "block";
+  main.querySelector("#throwaway-cancel").style.display = "block";
+}
+
+const commentThrowawayConfirm = (refComment) => {
+  fetch("http://localhost:8081/api/throwaway", {
+    method: "POST",
+    body: JSON.stringify({
+      refComment: refComment
+    })
+  }).then(res => res.json())
+    .then(data => {
+      if (data.success) {
+        window.location.reload();
+      } else {
+        console.log(data);
+      }
+    })
+    .catch(error => console.log(error));
+}
+
+const commentThrowawayCancel = () => {
+  const main = event.currentTarget.parentNode;
+  main.querySelector("#throwaway").style.display = "block";
+  main.querySelector("#throwaway-confirm").style.display = "none";
+  main.querySelector("#throwaway-cancel").style.display = "none";
+}

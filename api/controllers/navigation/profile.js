@@ -115,42 +115,48 @@ module.exports = (mode) => {
           if (result.rows.length) {
             if (dataType === "posts" || dataType === "saved-posts") {
               result.rows.map(post => {
-                pcData.push({
-                  owner: post.owner,
-                  created: post.created,
-                  community: post.community,
-                  edited: post.edited,
-                  deleted: post.deleted,
-                  owns: post.owns ? post.owns : false,
-                  saved:  post.saved ? post.saved : false,
-                  type: post.type,
-                  flag: post.flag,
-                  title: post.title,
-                  link: post.link,
-                  contentRaw: post.content,
-                  content: post.content ? marked(post.content) : null,
-                  commentsAmount: post.comments_amount,
-                  votes: post.votes ? post.votes : 0,
-                  voted: post.voted ? post.voted : 0,
-                  ref: post.ref_string
-                });
+                if (!post.deleted && !post.hidden && !post.throwaway) {
+                  pcData.push({
+                    owner: post.throwaway ? "" : post.owner,
+                    throwaway: post.throwaway,
+                    created: post.created,
+                    community: post.community,
+                    edited: post.edited,
+                    deleted: post.deleted,
+                    owns: post.owns ? post.owns : false,
+                    saved:  post.saved ? post.saved : false,
+                    type: post.type,
+                    flag: post.flag,
+                    title: post.title,
+                    link: post.link,
+                    contentRaw: post.content,
+                    content: post.content ? marked(post.content) : null,
+                    commentsAmount: post.comments_amount,
+                    votes: post.votes ? post.votes : 0,
+                    voted: post.voted ? post.voted : 0,
+                    ref: post.ref_string
+                  });
+                }
               });
             } else {
               result.rows.map(comment => {
-                pcData.push({
-                  owner: comment.owner,
-                  owns: comment.owns ? comment.owns : false,
-                  saved: comment.saved ? comment.saved : false,
-                  created: comment.created,
-                  edited: comment.edited,
-                  deleted: comment.deleted,
-                  contentRaw: comment.content,
-                  content: comment.content ? marked(comment.content) : null,
-                  votes: comment.votes ? comment.votes : 0,
-                  voted: comment.voted ? comment.voted : 0,
-                  refPost: comment.parent,
-                  ref: comment.ref_string,
-                });
+                if (!comment.deleted && !comment.hidden && !comment.throwaway) {
+                  pcData.push({
+                    owner: comment.throwaway ? "" : comment.owner,
+                    throwaway: comment.throwaway,
+                    owns: comment.owns ? comment.owns : false,
+                    saved: comment.saved ? comment.saved : false,
+                    created: comment.created,
+                    edited: comment.edited,
+                    deleted: comment.deleted,
+                    contentRaw: comment.content,
+                    content: comment.content ? marked(comment.content) : null,
+                    votes: comment.votes ? comment.votes : 0,
+                    voted: comment.voted ? comment.voted : 0,
+                    refPost: comment.parent,
+                    ref: comment.ref_string,
+                  });
+                }
               });
             }
           } else {

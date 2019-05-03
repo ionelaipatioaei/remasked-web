@@ -49,7 +49,7 @@ module.exports = (mode) => {
               subscribed: result.rows[0].subscribed ? result.rows[0].subscribed : false,
               metaRaw: result.rows[0].meta,
               meta: marked(result.rows[0].meta),
-            }
+            };
 
             // this next is basically getCommunityPosts
             if (mode === "render") next(result.rows[0].id, () => res.status(200).render("navigation/gen/c", {logged: req.session.userId !== undefined, name: name, ...data}));
@@ -99,7 +99,8 @@ module.exports = (mode) => {
         if (!error) {
           let posts = [];
           result.rows.map(post => {
-            if (!post.deleted) {
+            // override the post.hidden when the user wants to see the removed posts
+            if (!post.deleted && !post.hidden) {
               posts.push({
                 community: name,
                 owner: post.throwaway ? "" : post.owner,

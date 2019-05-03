@@ -14,7 +14,7 @@ block title
 block content
   //- this one works ok
   //- TITLE, OWNER OWNS, SAVED, COMMUNITY, REF, CREATED, EDITED, DELETED, C_AMOUNT, LINK, C_RAW, CONTENT, VOTES, VOTED
-  +Post({title, owner, owns, saved, community, ref, created, edited, deleted, commentsAmount, link, contentRaw, content, votes, voted}, {type: type, flag: flag, view: "max", community: true})
+  +Post({title, owner, owns, saved, community, ref, created, edited, deleted, throwaway, commentsAmount, link, contentRaw, content, votes, voted}, {type: type, flag: flag, view: "max", community: true})
 
   +Reply(ref)
   each comment in comments
