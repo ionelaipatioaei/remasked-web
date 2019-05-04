@@ -19,7 +19,7 @@ block content
 
     div#settings-delete-account-container
       p#settings-delete-account-info(style="font-style: italic; font-size: 1.2em; color: red;") This action is permanent, irreversible and instant. Once you press the confirmation button everything about this account will be permanently deleted from our servers without any way to recover that information.
-      +InputText("Please confirm your password", "settings-delete-account-password", "password", "password")
+      +InputText("Please enter your password", "settings-delete-account-password", "password", "password")
       +Button("Confirm", "settingsDeleteAccountConfirm()", null, "settings-delete-account-confirm")
       +Button("Cancel", "settingsDeleteAccountCancel()", null, "settings-delete-account-cancel")
 

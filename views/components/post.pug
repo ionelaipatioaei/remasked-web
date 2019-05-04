@@ -7,9 +7,9 @@ mixin Post(postData, options={type: "photo", view: "min", community: true})
     div.post-main
       //- vote handling
       div.post-votes(vote="", style=`margin: ${options.view === "max" ? "0 0 auto" : "0"}`)
-        +Icon(postData.voted === 1 ? "/static/assets/icons/up-use.svg" : "/static/assets/icons/up.svg", "upvote post", `postUpdateVoteState(1, '${postData.ref}')`)
-        p.post-votes-amount(style=`color: ${postData.voted === 1 ? "green" : postData.voted === -1 ? "red" : "black"}`) #{postData.votes}
-        +Icon(postData.voted === -1 ? "/static/assets/icons/down-use.svg" : "/static/assets/icons/down.svg", "downvote post", `postUpdateVoteState(-1, '${postData.ref}')`)
+        +Icon(postData.voted === 1 ? "/static/assets/icons/up-use.svg" : "/static/assets/icons/up.svg", "upvote post", `postUpdateVoteState(1, '${postData.ref}')`, null, true, "post-upvote")
+        p.post-votes-amount(style=`color: ${postData.voted === 1 ? "#10bc10" : postData.voted === -1 ? "#f3453e" : "black"}`) #{postData.votes}
+        +Icon(postData.voted === -1 ? "/static/assets/icons/down-use.svg" : "/static/assets/icons/down.svg", "downvote post", `postUpdateVoteState(-1, '${postData.ref}')`, null, true, "post-downvote")
 
       //- small preview
       if !postData.deleted

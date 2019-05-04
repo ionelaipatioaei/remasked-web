@@ -1,2 +1,2 @@
-mixin Icon(source, alt, action, style, animate=true)
-  img(src=`${source}`, alt=`${alt}`, onclick=action, style=style, class=animate ? "icon" : null)
+mixin Icon(source, alt, action, style, animate=true, id)
+  img(src=`${source}`, alt=`${alt}`, onclick=action, style=style, class=animate ? "icon" : null, id=id)

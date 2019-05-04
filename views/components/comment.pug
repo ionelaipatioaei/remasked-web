@@ -8,9 +8,9 @@ mixin Comment(commentData)
 
       if !commentData.deleted
         div.comment-votes
-          +Icon("/static/assets/icons/up.svg", "upvote comment", `commentUpdateVoteState(1, '${commentData.ref}')`)
-          p.comment-votes-amount(style=`color: ${commentData.voted === 1 ? "green" : commentData.voted === -1 ? "red" : "black"}`) #{commentData.votes}
-          +Icon("/static/assets/icons/down.svg", "downvote comment", `commentUpdateVoteState(-1, '${commentData.ref}')`)
+          +Icon(commentData.voted === 1 ? "/static/assets/icons/up-use.svg" : "/static/assets/icons/up.svg", "upvote comment", `commentUpdateVoteState(1, '${commentData.ref}')`, null, true, "comment-upvote")
+          p.comment-votes-amount(style=`color: ${commentData.voted === 1 ? "#10bc10" : commentData.voted === -1 ? "#f3453e" : "black"}`) #{commentData.votes}
+          +Icon(commentData.voted === -1 ? "/static/assets/icons/down-use.svg" : "/static/assets/icons/down.svg", "downvote comment", `commentUpdateVoteState(-1, '${commentData.ref}')`, null, true, "comment-downvote")
 
       div.comment-main
         if !commentData.deleted

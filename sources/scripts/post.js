@@ -18,6 +18,8 @@ const postMinMax = () => {
 
 const postUpdateVoteState = (vote, ref) => {
   const votes = event.currentTarget.parentNode.querySelector(".post-votes-amount");
+  const upvote = votes.parentNode.querySelector("#post-upvote");
+  const downvote = votes.parentNode.querySelector("#post-downvote");
 
   fetch("http://localhost:8081/api/vote", {
     method: "POST",
@@ -28,13 +30,23 @@ const postUpdateVoteState = (vote, ref) => {
   }).then(res => res.json())
     .then(data => {
       if (data.remove && data.success) {
-        votes.innerHTML = parseInt(votes.innerHTML) - vote;
+        votes.innerHTML = parseInt(votes.innerHTML) + -(vote);
         votes.style.color = "black";
+        upvote.src = "/static/assets/icons/up.svg";
+        downvote.src = "/static/assets/icons/down.svg";
       } else if (data.success) {
         votes.innerHTML = parseInt(votes.innerHTML) + vote;
-        votes.style.color = vote === 1 ? "green" : "red";
+        votes.style.color = vote === 1 ? "#10bc10" : "#f3453e";
+        if (vote === 1) {
+          upvote.src = "/static/assets/icons/up-use.svg";
+          downvote.src = "/static/assets/icons/down.svg";
+        } else {
+          upvote.src = "/static/assets/icons/up.svg";
+          downvote.src = "/static/assets/icons/down-use.svg";
+        }
+      } else if (data.error) {
+        notificationShow("error", data.error, 3000);
       }
-      console.log(data);
     })
     .catch(error => console.log(error));
 }
