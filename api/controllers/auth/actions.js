@@ -73,7 +73,8 @@ exports.delete = (req, res) => {
   const deletePosts = async (next) => {
     const query = `UPDATE post 
                     SET owner=NULL, created=NULL, title=NULL, link=NULL, content=NULL, 
-                      flag=NULL, edited=NULL, deleted=TRUE, type='text' 
+                      community=NULL, type=NULL, flag=NULL, edited=NULL, throwaway=NULL,
+                      hidden=NULL, deleted=TRUE
                     WHERE owner=$1`;
 
     await db.query(query, [req.session.userId], (error, result) => {
@@ -88,7 +89,8 @@ exports.delete = (req, res) => {
 
   const deleteComments = async (next) => {
     const query = `UPDATE comment 
-                    SET owner=NULL, created=NULL, content=NULL, edited=NULL, deleted=TRUE 
+                    SET owner=NULL, created=NULL, content=NULL, edited=NULL, 
+                    throwaway=NULL, hidden=NULL, deleted=TRUE 
                     WHERE owner=$1`;
 
     await db.query(query, [req.session.userId], (error, result) => {

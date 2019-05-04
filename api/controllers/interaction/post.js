@@ -83,8 +83,8 @@ exports.delete = (req, res) => {
   if (req.session.userId) {
     const query = `UPDATE post 
                     SET owner=NULL, created=NULL, title=NULL, link=NULL, content=NULL, 
-                      flag=NULL, edited=NULL, 
-                      deleted=TRUE, type='text' 
+                      community=NULL, type=NULL, flag=NULL, edited=NULL, throwaway=NULL,
+                      hidden=NULL, deleted=TRUE
                     WHERE ref_string=$1 AND owner=$2`;
 
     const queryParams = [refPost, req.session.userId];

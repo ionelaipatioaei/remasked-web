@@ -70,7 +70,9 @@ module.exports = (mode) => {
       const ps = pageSort(page, sort);
 
       const query = req.session.userId ?
-        `SELECT id, ref_string, title, link, content, type, flag, deleted, throwaway, hidden,
+        // because when a post is deleted the community is set to null
+        // there is no reason to select the deleted column
+        `SELECT id, ref_string, title, link, content, type, flag, throwaway, hidden,
             (CASE WHEN owner=$1 THEN true ELSE false END) AS owns, 
             (SELECT vote FROM vote_post WHERE user_id=$1 AND post_id=post.id) as voted, 
             (SELECT EXISTS(SELECT 1 FROM save_post WHERE user_id=$1 AND post_id=post.id)) AS saved,
@@ -83,7 +85,7 @@ module.exports = (mode) => {
           WHERE community=$2 
           ORDER BY id LIMIT 32`
         :
-        `SELECT id, ref_string, title, link, content, type, flag, deleted, throwaway, hidden,
+        `SELECT id, ref_string, title, link, content, type, flag, throwaway, hidden,
             (SELECT COUNT(*) FROM comment WHERE post_parent=post.id) AS comments_amount, 
             (SELECT username FROM users WHERE id=post.owner) as owner, 
             (SELECT SUM(vote) FROM vote_post WHERE post_id=id) AS votes, 
@@ -100,14 +102,16 @@ module.exports = (mode) => {
           let posts = [];
           result.rows.map(post => {
             // override the post.hidden when the user wants to see the removed posts
-            if (!post.deleted && !post.hidden) {
+            // no need to check id deleted because a deleted post is not even selected
+            if (!post.hidden) {
               posts.push({
                 community: name,
                 owner: post.throwaway ? "" : post.owner,
                 throwaway: post.throwaway,
                 created: post.created,
                 edited: post.edited,
-                deleted: post.deleted,
+                // always false because that was true it wouldn't even be selected
+                deleted: false,
                 owns: post.owns ? post.owns : false,
                 saved:  post.saved ? post.saved : false,
                 type: post.type,
