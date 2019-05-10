@@ -22,7 +22,7 @@ block content
       h1 We couldn't find what you are looking for.
 
     if error == 502
-      +Button("Refresh", "window.location.reload()")
+      +Button("Refresh", "window.location.reload()", "success")
     else
       +Link("/")
         +Button("Go home")

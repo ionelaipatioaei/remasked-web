@@ -1,4 +1,4 @@
-@import "../constants/index.scss";
+@import "../shared/constants.scss";
 
 #meta-container {
   grid-column-start: 2;
@@ -7,9 +7,9 @@
 
   padding: 8px;
   // border: 1px solid black;
-  box-shadow: $light;
+  box-shadow: $shadow-normal;
   margin: 6px;
-  border-radius: $r-normal;
+  border-radius: $radius-normal;
 }
 
 .meta-text {

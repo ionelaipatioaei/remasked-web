@@ -1,22 +1,19 @@
-@import "../constants/index.scss";
+@import "../shared/constants.scss";
 
 .post-container {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  // background-color: $main;
-  padding: 2px;
-  // border: 1px solid black;
   grid-column: 1/2;
-  box-shadow: $light;
+  box-shadow: $shadow-normal;
+  border-radius: $radius-normal;
+  padding: 2px;
   margin: 6px;
-  border-radius: $r-normal;
 }
 
 .post-main {
   display: flex;
   flex-direction: row;
-  // background-color: $main;
   align-items: center;
 }
 
@@ -27,9 +24,7 @@
   align-items: center;
   justify-content: center;
   height: 64px;
-  // min-width: 32px;
   padding: 4px;
-  // margin: 0 0 auto;
 }
 
 .post-votes-amount {
@@ -47,7 +42,7 @@
 .post-small-preview-image {
   max-width: 96px;
   max-height: 64px;
-  border-radius: $r-normal;
+  border-radius: $radius-normal;
 }
 
 .post-large-preview {
@@ -70,7 +65,7 @@
 
 .post-deleted {
   font-style: italic;
-  color: red;
+  color: $error;
 }
 
 .post-edited {
@@ -85,17 +80,22 @@
 }
 
 .post-info-text-actions:hover {
-  color: #999;
+  color: $accent;
+}
+
+.post-throwaway-user {
+  color: $main;
 }
 
 .post-info-text-goto {
+  cursor: pointer;
   display: inline;
   margin: 0;
-  color: #7fe8f4;
+  color: $main;
 }
 
 .post-info-text-goto:hover {
-  color: #ff8644;
+  color: $accent;
 }
 
 .post-info-actions-container {
@@ -116,12 +116,12 @@
 }
 
 .post-info-link:hover {
-  color: #7fe8f4;
+  color: $accent;
   cursor: pointer;
 }
 
-.post-warning {
-  color: $warning;
+.post-flag {
+  color: $error;
 }
 
 .post-save {

@@ -1,3 +1,5 @@
+@import "../shared/constants.scss";
+
 .input-text-container {
 
 }
@@ -20,7 +22,7 @@
 
 .input-text:focus {
   outline: none;
-  border: 1px solid #FF7E38;
+  border: 1px solid $main;
 }
 
 .input-text:disabled {
@@ -42,7 +44,7 @@
 
 .input-textarea:focus {
   outline: none;
-  border: 1px solid #FF7E38;
+  border: 1px solid $main;
 }
 
 .input-textarea:disabled {

@@ -15,6 +15,7 @@ app.set("view engine", "pug");
 
 // SESSION
 app.use(session({
+  store: new (require("connect-pg-simple")(session))(),
   name: "sid",
   saveUninitialized: false,
   resave: false,

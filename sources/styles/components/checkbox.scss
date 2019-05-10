@@ -1,0 +1,32 @@
+@import "../shared/constants.scss";
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.checkbox-input {
+  display: none;
+  position: relative;
+  z-index: -999;
+}
+
+.checkbox-checkmark {
+  margin: 4px;
+  display: block;
+  border-radius: $radius-small;
+  height: 16px;
+  width: 16px;
+  background-color: #fff;
+  border: 1px #000 solid;
+  transition: all 0.1s ease-in;
+}
+
+.checkbox-label input:checked + span {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  // background-color: $main;
+  background-image: url("/static/assets/icons/checkbox-selected.svg");
+}

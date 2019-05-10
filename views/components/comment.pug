@@ -1,6 +1,7 @@
 include icon.pug
 include link.pug
 include button.pug
+include checkbox.pug
 
 mixin Comment(commentData)
   div.comment-container
@@ -21,7 +22,7 @@ mixin Comment(commentData)
                 +Link(`/profile/${commentData.owner}`)
                   p.comment-info-text-goto= commentData.owner
               else
-                p.comment-info-text-goto somebody
+                p.comment-info-text-goto.comment-throwaway-user somebody
               p.comment-info-text &nbsp;replied on #{commentData.created}
                 if commentData.edited
                   span.comment-edited &nbsp;(edited on #{commentData.edited})
@@ -69,8 +70,9 @@ mixin Comment(commentData)
         div.comment-reply
           textarea.input-textarea(rows="6" cols="64" placeholder="Type your reply here...")
           div.comment-textarea-buttons-container
-            +Button("Reply", `commentReply('${commentData.refPost}', '${commentData.ref}')`)
-            +Button("Cancel", "commentMinMax()")
+            +Button("Reply", `commentReply('${commentData.refPost}', '${commentData.ref}')`, "success")
+            +Button("Cancel", "commentMinMax()", "error")
+            +Checkbox("throwaway?", "comment-throwaway-checkbox")
 
     if commentData.children
       each child in commentData.children

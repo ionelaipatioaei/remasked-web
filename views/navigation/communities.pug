@@ -11,7 +11,7 @@ block title
 
 block content
   h1 Your communities
-  div(style="display: grid; grid-template-columns: repeat(5, 20%);")
+  div.communities-container
     if communities
       each community in communities
         +Community(community)

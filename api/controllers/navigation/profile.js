@@ -26,9 +26,9 @@ module.exports = (mode) => {
             (SELECT SUM(vote) FROM vote_comment WHERE user_id=users.id) AS comment_points,
             (SELECT COUNT(*) FROM post WHERE owner=users.id) AS posts_amount,
             (SELECT COUNT(*) FROM comment WHERE owner=users.id) AS comments_amount
-          FROM users WHERE id=(SELECT id FROM users WHERE username=$1)`;
+          FROM users WHERE id=(SELECT id FROM users WHERE unique_name=$1)`;
 
-      const queryParams = ownProfile ? [req.session.userId] : [username];
+      const queryParams = ownProfile ? [req.session.userId] : [username.toLowerCase()];
 
       await db.query(query, queryParams, (error, result) => {
         if (!error) {
@@ -44,6 +44,7 @@ module.exports = (mode) => {
               commentsAmount: result.rows[0].comments_amount,
             };
             // this next is basically getProfileData
+            // need to refactor this mess
             if (mode === "render") next(data.username, type, result.rows[0].user_id, () => res.status(200).render("navigation/profile", {logged: req.session.userId !== undefined, own: username ? (req.session.userId === result.rows[0].user_id) : ownProfile, ...data}));
             else next(data.username, type, result.rows[0].user_id, () => res.status(200).json(data));
           } else {
@@ -115,7 +116,7 @@ module.exports = (mode) => {
           if (result.rows.length) {
             if (dataType === "posts" || dataType === "saved-posts") {
               result.rows.map(post => {
-                if (!post.deleted && !post.hidden && !post.throwaway) {
+                if (!post.deleted && !post.hidden) {
                   pcData.push({
                     owner: post.throwaway ? "" : post.owner,
                     throwaway: post.throwaway,
@@ -140,7 +141,7 @@ module.exports = (mode) => {
               });
             } else {
               result.rows.map(comment => {
-                if (!comment.deleted && !comment.hidden && !comment.throwaway) {
+                if (!comment.deleted && !comment.hidden) {
                   pcData.push({
                     owner: comment.throwaway ? "" : comment.owner,
                     throwaway: comment.throwaway,

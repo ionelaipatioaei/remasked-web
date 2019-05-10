@@ -7,15 +7,15 @@ module.exports = (req, res) => {
   if (username && password) {
     const query = `SELECT id, password 
                     FROM users 
-                    WHERE username=$1`;
+                    WHERE unique_name=$1`;
 
-    const queryParams = [username];
+    const queryParams = [username.toLowerCase()];
 
     db.query(query, queryParams, (error, result) => {
       if (!error && result.rows.length) {
         bcrypt.compare(password, result.rows[0].password, (passwordError, passwordIsMatching) => {
           if (!passwordError && passwordIsMatching) {
-            //set the session id
+            // set the session id
             req.session.userId = result.rows[0].id;
             res.status(200).json({success: "You are now authenticated!"});
           } else {
@@ -23,6 +23,8 @@ module.exports = (req, res) => {
           }
         });
       } else {
+        // this doesn't handle a 502 error
+        // may fix it later
         res.status(401).json({error: "Incorrect username or password!"});
       }
     });

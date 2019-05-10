@@ -11,23 +11,25 @@ block header
 
 block title
   //- TODO: if another profile change the title
+  //- this is kinda stupid but whatever
   if (you)
-    title Remasked | Your profile
+    title Your profile | remasked
   else
-    title Remasked | #{name} profile
+    title #{username} | remasked
 
 block content
   if (!logged && own)
     h1 You need to login in order to view your profile!
   else
-    div.submit-box
-      h1.submit-title #{username}'s profile
-      h3 Member since #{created}.
-      h3 Post points: #{postPoints}
-      h3 Comment points: #{commentPoints}
-      h3 Total points: #{postPoints + commentPoints}
-      h3 Total posts: #{postsAmount}
-      h3 Total comments: #{commentsAmount}
+    div.profile-container
+      h1.profile-title #{username}'s profile
+      p.profile-info-text
+        <span class='profile-amount'> #{postPoints} </span> post points | 
+        <span class='profile-amount'> #{commentPoints} </span> comment points | 
+        <span class='profile-amount'> #{postPoints + commentPoints} </span> total points | 
+        <span class='profile-amount'> #{postsAmount} </span> posts | 
+        <span class='profile-amount'>  #{commentsAmount} </span> comments
+      p Member since #{created}.
 
     div.profile-buttons
       +Link(`/profile/${username}?type=posts`)
@@ -37,9 +39,9 @@ block content
 
       if (own)
         +Link(`/profile/${username}?type=saved-posts`)
-          +Button("Saved posts")
+          +Button("Saved posts", null, "accent")
         +Link(`/profile/${username}?type=saved-comments`)
-          +Button("Saved comments")
+          +Button("Saved comments", null, "accent")
     
     if error
       h1 #{error}

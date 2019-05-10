@@ -63,8 +63,8 @@ module.exports = (type, userId, currentId) => {
             TO_CHAR(created, 'DD/MM/YY at HH24:MI') AS created,
             TO_CHAR(edited, 'DD/MM/YY at HH24:MI') AS edited
           FROM post 
-          WHERE id=(SELECT post_id FROM save_post WHERE user_id=$1 AND post_id=id) AND owner=$1 
-          ORDER BY id DESC LIMIT 32`
+          WHERE id=(SELECT post_id FROM save_post WHERE user_id=$1 AND post_id=id) 
+          ORDER BY id DESC`
         :
         null;
 
@@ -80,7 +80,7 @@ module.exports = (type, userId, currentId) => {
             TO_CHAR(edited, 'DD/MM/YY at HH24:MI') AS edited, 
             (SELECT ref_string FROM post WHERE id=post_parent) AS parent 
           FROM comment 
-         WHERE id=(SELECT comment_id FROM save_comment WHERE user_id=$1 AND comment_id=id) AND owner=$1 
+          WHERE id=(SELECT comment_id FROM save_comment WHERE user_id=$1 AND comment_id=id)
           ORDER BY id DESC`
         :
         null;

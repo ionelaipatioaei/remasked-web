@@ -1,17 +1,18 @@
-@import "../constants/index.scss";
+@import "../shared/constants.scss";
 
 .comment-container {
   background-color: #fff;
+  border-radius: $radius-normal;
+  // the order for these things matters for some reason...
   padding: 4px;
   margin: 6px;
-  border-radius: $r-normal;
   transition: all 0.15s ease-out;
   padding-left: 24px;
-  box-shadow: $light;
+  box-shadow: $shadow-normal;
 }
 
 .comment-container:hover {
-  background-color: rgba(84, 216, 235, 0.05) !important;
+  background-color: rgba(127, 232, 244, 0.05) !important;
   transition: all 0.15s ease-in;
 }
 
@@ -50,7 +51,7 @@
 
 .comment-deleted {
   font-style: italic;
-  color: red;
+  color: $error;
 }
 
 .comment-edited {
@@ -63,17 +64,22 @@
 }
 
 .comment-info-text-goto {
+  cursor: pointer;
   display: inline;
   margin: 0;
   color: $main;
 }
 
 .comment-info-text-goto:hover {
-  color: #999;
+  color: $accent;
 }
 
 .comment-info-text {
 
+}
+
+.comment-throwaway-user {
+  color: $main;
 }
 
 .comment-text {
@@ -93,7 +99,7 @@
 }
 
 .comment-info-text-actions:hover {
-  color: #999;
+  color: $accent;
 }
 
 .comment-reply {
@@ -104,7 +110,7 @@
 .comment-textarea-buttons-container {
   display: flex;
   flex-direction: row;
-  margin: -8px -6px;
+  margin: -4px 0 2px -6px;
 }
 
 p > img {

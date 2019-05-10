@@ -19,12 +19,12 @@ block content
       p.auth-warning
       
       +InputText("Username", "username", "text", "username")
-      +InputText("Email(optional)", "email", "email", "email")
+      //- +InputText("Email(optional)", "email", "email", "email")
       +InputText("Password", "password", "password", "password")
       +InputText("Confirm Password", "confirm-password", "password", "confirmPassword")
     
       div.auth-actions
-        +Button("Register", "authRegister()")
+        +Button("Register", "authRegister()", "success")
 
         +Link("/login")
           +Button("Already have an account?")

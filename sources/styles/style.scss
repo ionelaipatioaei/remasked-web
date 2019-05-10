@@ -1,13 +1,16 @@
 // shared
 @import "shared/constants.scss";
 @import "shared/auth.scss";
+@import "shared/common.scss";
 
 // components
 @import "components/button.scss";
 @import "components/icon.scss";
 @import "components/input-text.scss";
+@import "components/checkbox.scss";
 
 @import "components/notification.scss";
+@import "components/options.scss";
 
 @import "components/post.scss";
 @import "components/comment.scss";
@@ -33,9 +36,10 @@ html, body {
 }
 
 .global-container {
-  padding-top: 64px;
+  padding-top: 56px;
   width: 90%;
   margin: 0 auto;
+  min-height: 70vh;
 }
 
 // Misc styles
@@ -51,46 +55,24 @@ html, body {
   justify-content: center;
 }
 
-a {
-  text-decoration: none;
-  color: #000;
+// both for posts and comments
+#delete-confirm:hover, #throwaway-confirm:hover {
+  color: $success;
 }
 
-p {
-  margin: 0;
+#delete-cancel:hover, #throwaway-cancel:hover {
+  color: $error;
 }
 
-h1 {
-  margin: 8px 0;
-}
-
-h2 {
-  margin: 4px 0;
-}
-
-h3, h4, h5, h6 {
-  margin: 2px 0;
-}
-
-blockquote {
-  border-left: 3px solid #999;
-  margin: 8px 0;
-  padding: 0 4px;
-  font-style: italic;
-}
-
-.test {
-  // width: 100%;
+// nav
+.pagination-container {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  // background-color: $main;
-  padding: 2px;
-  // border: 1px solid black;
-  grid-column: 1/2;
-  box-shadow: $light;
-  margin: 6px;
-  border-radius: $r-normal;
+  width: 100%;
+}
+
+.communities-container {
+  display: grid; 
+  grid-template-columns: repeat(5, 20%);
 }
 
 @media all and (min-width:1200px){
@@ -103,11 +85,19 @@ blockquote {
   .global-container {
     width: 90%;
   }
+
+  .communities-container {
+    grid-template-columns: repeat(4, 25%);
+  }
 }
 
 @media all and (min-width: 768px) and (max-width: 959px) {
   .global-container {
     width: 90%;
+  }
+
+  .communities-container {
+    grid-template-columns: repeat(3, 33.33%);
   }
 }
 
@@ -119,6 +109,10 @@ blockquote {
   .c-container {
     display: block;
   }
+
+  .communities-container {
+    grid-template-columns: repeat(2, 50%);
+  }
 }
 
 @media all and (max-width: 599px) {
@@ -129,6 +123,10 @@ blockquote {
   .c-container {
     display: block;
   }
+
+  .communities-container {
+    grid-template-columns: repeat(2, 50%);
+  }
 }
 
 @media all and (max-width: 479px) {
@@ -138,5 +136,9 @@ blockquote {
 
   .c-container {
     display: block;
+  }
+
+  .communities-container {
+    grid-template-columns: 100%;
   }
 }

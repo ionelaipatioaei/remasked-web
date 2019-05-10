@@ -9,7 +9,7 @@ const apiCommunities = require("../api/controllers/navigation/communities");
 const navigationController = require("../controllers/navigation");
 
 router.get("/c/:name", apiC("render"));
-router.get("/c/:name/post/:id", apiPost("render"));
+router.get("/post/:id", apiPost("render"));
 router.get("/profile/:name*?", apiProfile("render"));
 router.get("/communities", apiCommunities("render"));
 

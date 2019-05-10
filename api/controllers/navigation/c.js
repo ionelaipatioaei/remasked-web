@@ -8,7 +8,7 @@ marked.setOptions({
 
 module.exports = (mode) => {
   return (req, res) => {
-    const name = req.params.name;
+    const name = req.params.name.toLowerCase();
     const page = parseInt(req.query.page);
     const sort = req.query.sort ? req.query.sort.toLowerCase() : "";
     let data = {};
@@ -17,7 +17,7 @@ module.exports = (mode) => {
       // the way I select subscribers is stupid
       const query = req.session.userId ? 
         `SELECT 
-            id, 
+            id, name,
             TO_CHAR(created, 'DD/MM/YY at HH24:MI') AS created,
             (SELECT COUNT(*) FROM subscription WHERE community_id=(SELECT id FROM community WHERE name=$1)) AS subscribers, 
             (SELECT username FROM users WHERE id=createdby) AS createdby, 
@@ -25,15 +25,15 @@ module.exports = (mode) => {
             (SELECT EXISTS(SELECT 1 FROM subscription WHERE user_id=$2 AND community_id=id)) AS subscribed, 
             meta 
           FROM community 
-          WHERE name=$1`
+          WHERE unique_name=$1`
         :
         `SELECT 
-            id, TO_CHAR(created, 'DD/MM/YY at HH24:MI') AS created,
+            id, name, TO_CHAR(created, 'DD/MM/YY at HH24:MI') AS created,
             (SELECT COUNT(*) FROM subscription WHERE community_id=(SELECT id FROM community WHERE name=$1)) AS subscribers, 
             (SELECT username FROM users WHERE id=createdby) AS createdby, 
             meta 
           FROM community 
-          WHERE name=$1`;
+          WHERE unique_name=$1`;
 
       const queryParams = req.session.userId ? [name, req.session.userId] : [name];
 
@@ -41,9 +41,11 @@ module.exports = (mode) => {
         if (!error) {
           if (result.rows.length) {
             data = {
+              name: result.rows[0].name,
               subscribers: result.rows[0].subscribers,
               created: result.rows[0].created,
               createdby: result.rows[0].createdby,
+              // this is needed because idk
               noFounder: result.rows[0].createdby ? false : true,
               owns: result.rows[0].owns ? result.rows[0].owns : false,
               subscribed: result.rows[0].subscribed ? result.rows[0].subscribed : false,
@@ -52,8 +54,8 @@ module.exports = (mode) => {
             };
 
             // this next is basically getCommunityPosts
-            if (mode === "render") next(result.rows[0].id, () => res.status(200).render("navigation/gen/c", {logged: req.session.userId !== undefined, name: name, ...data}));
-            else next(result.rows[0].id, () => res.status(200).json(data));
+            if (mode === "render") next(result.rows[0].id, result.rows[0].name, () => res.status(200).render("navigation/gen/c", {logged: req.session.userId !== undefined, name: name, ...data}));
+            else next(result.rows[0].id, result.rows[0].name, () => res.status(200).json(data));
           } else {
             if (mode === "render") res.status(404).render("misc/error", {logged: req.session.userId !== undefined});
             else res.status(404).json({error: "We couldn't find what you are looking for!"});
@@ -66,36 +68,40 @@ module.exports = (mode) => {
       });
     }
 
-    const getCommunityPosts = async (communityId, next) => {
+    const getCommunityPosts = async (communityId, communityName, next) => {
       const ps = pageSort(page, sort);
 
       const query = req.session.userId ?
         // because when a post is deleted the community is set to null
         // there is no reason to select the deleted column
-        `SELECT id, ref_string, title, link, content, type, flag, throwaway, hidden,
-            (CASE WHEN owner=$1 THEN true ELSE false END) AS owns, 
+        `SELECT post.id, post.ref_string, post.title, post.link, post.content, post.type, post.flag, post.throwaway, post.hidden,
+            (CASE WHEN post.owner=$1 THEN true ELSE false END) AS owns, 
             (SELECT vote FROM vote_post WHERE user_id=$1 AND post_id=post.id) as voted, 
             (SELECT EXISTS(SELECT 1 FROM save_post WHERE user_id=$1 AND post_id=post.id)) AS saved,
-            (SELECT COUNT(*) FROM comment WHERE post_parent=post.id) AS comments_amount, 
+            COUNT(comment) AS comments_amount, 
             (SELECT username FROM users WHERE id=post.owner) as owner,
-            (SELECT SUM(vote) FROM vote_post WHERE post_id=id) AS votes,
-            TO_CHAR(created, 'DD/MM/YY at HH24:MI') AS created, 
-            TO_CHAR(edited, 'DD/MM/YY at HH24:MI') AS edited
-          FROM post 
-          WHERE community=$2 
-          ORDER BY id LIMIT 32`
+            (SELECT SUM(vote) FROM vote_post WHERE post_id=post.id) AS votes,
+            TO_CHAR(post.created, 'DD/MM/YY at HH24:MI') AS created, 
+            TO_CHAR(post.edited, 'DD/MM/YY at HH24:MI') AS edited
+          FROM post
+          LEFT JOIN comment ON comment.post_parent=post.id
+          WHERE community=$2
+          GROUP BY post.id
+          ORDER BY ${ps.sort} OFFSET $3 LIMIT $4`
         :
-        `SELECT id, ref_string, title, link, content, type, flag, throwaway, hidden,
-            (SELECT COUNT(*) FROM comment WHERE post_parent=post.id) AS comments_amount, 
+        `SELECT post.id, post.ref_string, post.title, post.link, post.content, post.type, post.flag, post.throwaway, post.hidden,
+            COUNT(comment) AS comments_amount, 
             (SELECT username FROM users WHERE id=post.owner) as owner, 
-            (SELECT SUM(vote) FROM vote_post WHERE post_id=id) AS votes, 
-            TO_CHAR(created, 'DD/MM/YY at HH24:MI') AS created, 
-            TO_CHAR(edited, 'DD/MM/YY at HH24:MI') AS edited
+            (SELECT SUM(vote) FROM vote_post WHERE post_id=post.id) AS votes, 
+            TO_CHAR(post.created, 'DD/MM/YY at HH24:MI') AS created, 
+            TO_CHAR(post.edited, 'DD/MM/YY at HH24:MI') AS edited
           FROM post 
+          LEFT JOIN comment ON comment.post_parent=post.id
           WHERE community=$1 
+          GROUP BY post.id
           ORDER BY ${ps.sort} OFFSET $2 LIMIT $3`;
 
-      const queryParams = req.session.userId ? [req.session.userId, communityId] : [communityId, ps.limits[0], ps.limits[1]];
+      const queryParams = req.session.userId ? [req.session.userId, communityId, ps.limits[0], ps.limits[1]] : [communityId, ps.limits[0], ps.limits[1]];
 
       await db.query(query, queryParams, (error, result) => {
         if (!error) {
@@ -105,7 +111,7 @@ module.exports = (mode) => {
             // no need to check id deleted because a deleted post is not even selected
             if (!post.hidden) {
               posts.push({
-                community: name,
+                community: communityName,
                 owner: post.throwaway ? "" : post.owner,
                 throwaway: post.throwaway,
                 created: post.created,

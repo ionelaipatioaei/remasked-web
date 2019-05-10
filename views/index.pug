@@ -14,41 +14,36 @@ block title
 
 block content
   div.profile-buttons
-    +Link(`/profile/${username}?type=comments`)
+    +Link(`/?sort=popular`)
       +Button("Popular")
-    +Link(`/profile/${username}?type=posts`)
-      +Button("Top")
-    +Link(`/profile/${username}?type=posts`)
+    //- +Link(`/?sort=top`)
+    //-   +Button("Top")
+    +Link(`/?sort=newest`)
       +Button("Newest")
-    +Link(`/profile/${username}?type=comments`)
+    +Link(`/?sort=oldest`)
       +Button("Oldest")
-    +Link(`/profile/${username}?type=posts`)
-      +Button("Most upvoted")
-    +Link(`/profile/${username}?type=comments`)
-      +Button("Most downvoted")
+    +Link(`/?sort=shuffle`)
+      +Button("Shuffle")
+    //- +Link(`/?sort=most-upvoted`)
+    //-   +Button("Most upvoted")
+    //- +Link(`/?sort=most-downvoted`)
+    //-   +Button("Most downvoted")
 
   if posts
     each post in posts
       +Post(post, {type: post.type, flag: post.flag, view: "min", community: true})
 
+  div.pagination-container
+    +Button("back", "back('')")
+    +Button("next", "next('')", "accent")
+
   h1 Explore new communities
-  div.profile-buttons
-    +Link(`/profile/${username}?type=comments`)
-      +Button("Popular")
-    +Link(`/profile/${username}?type=posts`)
-      +Button("Top")
-    +Link(`/profile/${username}?type=posts`)
-      +Button("Newest")
-    +Link(`/profile/${username}?type=comments`)
-      +Button("Oldest")
-    +Link(`/profile/${username}?type=posts`)
-      +Button("Most subscribed")
-    +Link(`/profile/${username}?type=comments`)
-      +Button("Most posts")
+  //- later add communities sorting and pagination
 
   if communities
-    each community in communities
-      +Community(community)
+    div.communities-container
+      each community in communities
+        +Community(community)
 
   div.index-create-container
     h1 Something is missing?

@@ -6,28 +6,19 @@ module.exports = (page, sortby, perPage = 16) => {
     limits = [0, perPage];
   }
 
-  // POPULAR, TOP, NEWEST, OLDEST, MOST UPVOTED, MOST DOWNVOTED 
-  const sortingMethods = ["id", "id", "id DESC", "id ASC", "votes DESC", "votes ASC"];
-  switch(sortby) {
-    case "top":
-      sort = sortingMethods[1];
-      break;
-    case "newest":
-      sort = sortingMethods[2];
-      break;
-    case "oldest":
-      sort = sortingMethods[3];
-      break;
-    case "most-upvoted":
-      sort = sortingMethods[4];
-      break;
-    case "most-downvoted":
-      sort = sortingMethods[5];
-      break;
-    default:
-      sort = sortingMethods[0];
-      break;
-  }
+  // POPULAR, NEWEST, OLDEST, SHUFFLE
+  const sortingMethods = [
+    "(COUNT(comment) + COALESCE((SELECT SUM(vote) FROM vote_post WHERE post_id=post.id), 0)) DESC", 
+    "id DESC", 
+    "id ASC", 
+    "random()"
+  ];
+
+  if (sortby === "newest") sort = sortingMethods[1];
+  else if (sortby === "oldest") sort = sortingMethods[2];
+  else if (sortby === "shuffle") sort = sortingMethods[3]
+  // is the sort is invalid make it popular, this is aslo the default
+  else sort = sortingMethods[0];
 
   return {limits, sort};
 }

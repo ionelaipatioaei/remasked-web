@@ -7,7 +7,7 @@ module.exports = (req, res) => {
     const query = `SELECT EXISTS(
                     SELECT 1 FROM subscription 
                     WHERE user_id=$1 
-                      AND community_id=(SELECT id FROM community WHERE name=$2)
+                      AND community_id=(SELECT id FROM community WHERE unique_name=$2)
                     )`;
 
     const queryParams = [id, name];
@@ -29,7 +29,7 @@ module.exports = (req, res) => {
     const query = `INSERT INTO subscription (user_id, community_id) 
                     VALUES (
                       $1, 
-                      (SELECT id FROM community WHERE name=$2)
+                      (SELECT id FROM community WHERE unique_name=$2)
                     )`;
 
     const queryParams = [id, name];
@@ -46,7 +46,7 @@ module.exports = (req, res) => {
   const removeSubscription = async (name, id) => {
     const query = `DELETE FROM subscription 
                     WHERE user_id=$1 
-                      AND community_id=(SELECT id FROM community WHERE name=$2)`;
+                      AND community_id=(SELECT id FROM community WHERE unique_name=$2)`;
 
     const queryParams = [id, name];
 
@@ -61,7 +61,7 @@ module.exports = (req, res) => {
 
   if (req.session.userId) {
     if (name) {
-      updateSubscriptionStatus(name, req.session.userId);
+      updateSubscriptionStatus(name.toLowerCase(), req.session.userId);
     } else {
       res.status(400).json({error: "The community name is invalid!"});
     }

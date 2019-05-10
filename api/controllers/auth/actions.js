@@ -1,3 +1,4 @@
+const bcrypt = require("bcrypt");
 const db = require("../../database/query");
 
 exports.addEmail = (req, res) => {
@@ -12,8 +13,10 @@ exports.changeEmail = (req, res) => {
   res.status(202).json({error: "Work in progress!"});
 }
 
+// TODO make the take into account result.rowCount when doing error checking
+
 exports.delete = (req, res) => {
-  const {keepUsername} = req.body;
+  const {password, keepUsername} = req.body;
 
   const deletePostVotes = async (next) => {
     await db.query("DELETE FROM vote_post WHERE user_id=$1", [req.session.userId], (error, result) => {
@@ -136,8 +139,27 @@ exports.delete = (req, res) => {
       });
   }
 
+  const confirmAction = async (next) => {
+    const query = "SELECT password FROM users WHERE id=$1"
+
+    await db.query(query, [req.session.userId], (error, result) => {
+      if (!error && result.rows.length) {
+        bcrypt.compare(password, result.rows[0].password, (passwordError, passwordIsMatching) => {
+          if (!passwordError && passwordIsMatching) {
+            next();
+          } else {
+            res.status(403).json({error: "Invalid password!"});
+          }
+        });
+      } else {
+        res.status(502).json({error: "Something went wrong!"});
+      }
+    });
+  }
+
   if (req.session.userId) {
-    deletePostVotes(deleteCommentVotes);
+    // check password and then delete
+    confirmAction(() => deletePostVotes(deleteCommentVotes));
   } else {
     res.status(401).json({error: "You need to be authenticated in order to delete an account!"});
   }

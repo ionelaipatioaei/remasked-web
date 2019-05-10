@@ -45,14 +45,15 @@ const commentCollapse = () => {
 }
 
 const commentReply = (refPost, refComment) => {
-  console.log(refPost, refComment);
   const text = event.currentTarget.parentNode.parentNode.querySelector("textarea");
+  const throwaway = event.currentTarget.parentNode.parentNode.querySelector("#comment-throwaway-checkbox");
   fetch("http://localhost:8081/api/comment", {
     method: "POST",
     body: JSON.stringify({
       refPost: refPost,
       refComment: refComment,
-      content: text.value
+      content: text.value,
+      throwaway: throwaway.checked
     })
   }).then(res => res.json())
     .then(data => console.log(data))
@@ -112,8 +113,19 @@ const commentUpdateVoteState = (vote, ref) => {
         upvote.src = "/static/assets/icons/up.svg";
         downvote.src = "/static/assets/icons/down.svg";
       } else if (data.success) {
-        votes.innerHTML = parseInt(votes.innerHTML) + vote;
+        // weird trick but it works so
+        // check if upvoted
+        // also for some reason it converts the hex color to rgb()
+        if (vote === -1 && votes.style.color == "rgb(16, 188, 16)") {
+          votes.innerHTML = parseInt(votes.innerHTML) - 2;
+          // check if downvoted
+        } else if (vote === 1 && votes.style.color == "rgb(243, 69, 62)") {
+          votes.innerHTML = parseInt(votes.innerHTML) + 2;
+        } else {
+          votes.innerHTML = parseInt(votes.innerHTML) + vote;
+        }
         votes.style.color = vote === 1 ? "#10bc10" : "#f3453e";
+        
         if (vote === 1) {
           upvote.src = "/static/assets/icons/up-use.svg";
           downvote.src = "/static/assets/icons/down.svg";
@@ -134,13 +146,14 @@ const commentReport = () => {
 
 const commentReplyMain = (refPost) => {
   const text = event.currentTarget.parentNode.parentNode.querySelector("textarea");
-  console.log(text.value);
+  const throwaway = event.currentTarget.parentNode.parentNode.querySelector("#comment-throwaway-checkbox");
   fetch("http://localhost:8081/api/comment", {
     method: "POST",
     body: JSON.stringify({
       refPost: refPost,
       refComment: null,
-      content: text.value
+      content: text.value,
+      throwaway: throwaway.checked
     })
   }).then(res => res.json())
     .then(data => console.log(data))

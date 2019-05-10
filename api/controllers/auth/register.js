@@ -11,15 +11,15 @@ module.exports = (req, res) => {
 
         bcrypt.hash(password, 10, (hashError, hash) => {
           if (!hashError) {
-            const query = `INSERT INTO users (username, password, email) 
-                          VALUES ($1, $2, $3)`;
-            const queryParams = [username, hash, email];
+            const query = `INSERT INTO users (username, password, email, unique_name) 
+                          VALUES ($1, $2, $3, $4)`;
+            const queryParams = [username, hash, email, username.toLowerCase()];
 
             db.query(query, queryParams, (error, result) => {
-              if (!error) {
+              if (!error && result.rowCount) {
                 res.status(200).json({success: "The account was registered successfully!"});
               } else {
-                if (error.constraint === "users_username_key") {
+                if (error.constraint === "users_unique_name_key") {
                   res.status(409).json({error: "Username is already used by somebody!"});
                 } else if (error.constraint === "users_email_key") {
                   res.status(409).json({error: "The email is already used by somebody!"});

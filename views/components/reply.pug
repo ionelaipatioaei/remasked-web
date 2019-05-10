@@ -1,8 +1,10 @@
 include icon.pug
 include button.pug
+include checkbox.pug
 
 mixin Reply(ref)
   div.reply-container
     textarea.input-textarea(placeholder="Type your reply here...")
     div.reply-textarea-buttons-container
-      +Button("Reply", `commentReplyMain('${ref}')`)
+      +Button("Reply", `commentReplyMain('${ref}')`, "accent")
+      +Checkbox("throwaway?", "comment-throwaway-checkbox")

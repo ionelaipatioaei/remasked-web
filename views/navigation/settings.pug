@@ -3,6 +3,7 @@ extends ../layout/layout.pug
 include ../layout/header.pug
 include ../components/button.pug
 include ../components/inputText.pug
+include ../components/checkbox.pug
 
 block header
   +Header(logged)
@@ -13,13 +14,22 @@ block title
 block content
   h1 Settings
   if logged
-    h2(style="color: red") Delete your account
-    div(style="width: 128px")
-      +Button("Delete", "settingsDeleteAccount()", null, "settings-delete-account")
+    h2.settings-danger Delete your account
+
+    p.settings-danger This action is irreversible and instant. Once you press the confirmation button your account and everything associated with it like posts, comments, votes, etc. will be permanently deleted from our servers without any way to recover that information.
+    div(style="display: flex")
+      +Button("Delete", "settingsDeleteAccount()", "error", "settings-delete-account")
+
 
     div#settings-delete-account-container
-      p#settings-delete-account-info(style="font-style: italic; font-size: 1.2em; color: red;") This action is permanent, irreversible and instant. Once you press the confirmation button everything about this account will be permanently deleted from our servers without any way to recover that information.
-      +InputText("Please enter your password", "settings-delete-account-password", "password", "password")
-      +Button("Confirm", "settingsDeleteAccountConfirm()", null, "settings-delete-account-confirm")
-      +Button("Cancel", "settingsDeleteAccountCancel()", null, "settings-delete-account-cancel")
+      p.settings-warning If you want your username to never be used again please check this box. Please note that if you leave this unchecked your username can be taken by another person.
+      div(style="display: flex")
+        +Checkbox("Keep username in the database?", "settings-keep-username")
+
+      div(style="display: flex")
+        +InputText("Please enter your password", "settings-delete-account-password", "password", "password")
+
+      div(style="display: flex")
+        +Button("Confirm", "settingsDeleteAccountConfirm()", "success", "settings-delete-account-confirm")
+        +Button("Cancel", "settingsDeleteAccountCancel()", "error", "settings-delete-account-cancel")
 

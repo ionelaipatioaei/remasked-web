@@ -1,26 +1,28 @@
 const db = require("../../database/query");
 
 exports.add = (req, res) => {
-  const {refPost, refComment, content} = req.body;
+  const {refPost, refComment, content, throwaway} = req.body;
   if (req.session.userId) {
     const query = refComment ?
       // comment to another comment
-      `INSERT INTO comment (owner, content, post_parent, comment_parent) 
+      `INSERT INTO comment (owner, content, post_parent, comment_parent, throwaway) 
         VALUES (
           $1, $2, 
           (SELECT id FROM post WHERE ref_string=$3), 
-          (SELECT id FROM comment WHERE ref_string=$4)
+          (SELECT id FROM comment WHERE ref_string=$4),
+          $5
         )`
       :
       // comment to a post
-      `INSERT INTO comment (owner, content, post_parent, comment_parent) 
+      `INSERT INTO comment (owner, content, post_parent, comment_parent, throwaway) 
         VALUES (
           $1, $2, 
           (SELECT id FROM post WHERE ref_string=$3), 
-          NULL
+          NULL,
+          $4
         )`;
 
-    const queryParams = refComment ? [req.session.userId, content, refPost, refComment] : [req.session.userId, content, refPost];
+    const queryParams = refComment ? [req.session.userId, content, refPost, refComment, throwaway] : [req.session.userId, content, refPost, throwaway];
 
     db.query(query, queryParams, (error, result) => {
       // you could also check the error and after that the rowCount so if 

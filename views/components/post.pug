@@ -44,10 +44,10 @@ mixin Post(postData, options={type: "photo", view: "min", community: true})
               h1.post-info-title.post-info-link= postData.title
           else if options.type == "link" && options.flag
             +Link(`${postData.link}`)
-              h1.post-info-title.post-info-link.post-warning #{postData.title} (#{options.flag})
+              h1.post-info-title.post-info-link.post-flag #{postData.title} (#{options.flag})
 
           else if options.flag
-            h1.post-info-title.post-warning #{postData.title} (#{options.flag})
+            h1.post-info-title.post-flag #{postData.title} (#{options.flag})
           else
             h1.post-info-title= postData.title
         else
@@ -60,14 +60,14 @@ mixin Post(postData, options={type: "photo", view: "min", community: true})
               +Link(`/profile/${postData.owner}`)
                 p.post-info-text-goto= postData.owner
             else
-              p.post-info-text-goto somebody 
+              p.post-info-text-goto.post-throwaway-user somebody 
 
             if options.community
-              p.post-info-text &nbsp;in&nbsp;
+              p.post-info-text &nbsp;to&nbsp;
               +Link(`/c/${postData.community}`)
                 p.post-info-text-goto= postData.community
             
-            p.post-info-text &nbsp; on #{postData.created}
+            p.post-info-text &nbsp;on #{postData.created}
               if postData.edited
                 span.post-edited &nbsp;(edited on #{postData.edited})
         
@@ -76,7 +76,7 @@ mixin Post(postData, options={type: "photo", view: "min", community: true})
             +Icon(options.view === "min" ? "/static/assets/icons/maximize.svg" : "/static/assets/icons/minimize.svg", "min or max post", "postMinMax()", "width: 20px; height: 20px; margin-right: 8px;")
 
           +Icon("/static/assets/icons/reply.svg", "comments", null, "width: 16px; height: 16px", false)
-          +Link(`/c/${postData.community}/post/${postData.ref}`)
+          +Link(`/post/${postData.ref}`)
             p.post-info-text-actions comments (#{postData.commentsAmount})
 
           +Icon("/static/assets/icons/x.svg", "comments", null, "width: 16px; height: 16px", false)

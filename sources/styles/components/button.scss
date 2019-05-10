@@ -1,31 +1,43 @@
-@import "../constants/index.scss";
+@import "../shared/constants.scss";
 
 .button {
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 12px 8px;
-  padding: 4px 16px;
+  margin: 6px;
+  padding: 2px 12px;
   border: none;
   border-radius: 8px;
   background: #fff;
   cursor: pointer;
   font-size: 0.9em;
-  box-shadow: $light;
+  box-shadow: $shadow-light;
   transition: all 0.2s ease-in;
   border: 1px solid white;
 }
 
 .button:hover {
-  border: 1px solid #FF7E38;
+  border: 1px solid $main;
 }
 
-.ok:hover {
-  border: 1px solid #54D8EB;
+.accent:hover {
+  border: 1px solid $accent !important;
+}
+
+.success:hover {
+  border: 1px solid $success !important;
+}
+
+.warning:hover {
+  border: 1px solid $warning !important;
+}
+
+.error:hover {
+  border: 1px solid $error !important;
 }
 
 .selected {
-  border: 1px solid #54D8EB !important;
+  border: 1px solid $main !important;
 }
 
 .button-label {

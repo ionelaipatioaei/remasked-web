@@ -1,13 +1,13 @@
 const db = require("../../database/query");
 
 exports.add = (req, res) => {
-  const {community, title, link, content, type, flag} = req.body;
+  const {community, title, link, content, type, flag, throwaway} = req.body;
 
   if (req.session.userId) {
-    const query = `INSERT INTO post (community, owner, title, link, content, type, flag) 
+    const query = `INSERT INTO post (community, owner, title, link, content, type, flag, throwaway) 
                     VALUES (
-                      (SELECT id FROM community WHERE name=$1), 
-                      $2, $3, $4, $5, $6, $7
+                      (SELECT id FROM community WHERE unique_name=$1), 
+                      $2, $3, $4, $5, $6, $7, $8
                     )`;
 
     // define the type of the post based on user input and link
@@ -37,7 +37,7 @@ exports.add = (req, res) => {
       }
       return "text";
     }
-    const queryParams = [community, req.session.userId, title, link, content, defineType(link, type), flag];
+    const queryParams = [community.toLowerCase(), req.session.userId, title, link ? link : null, content ? content : null, defineType(link, type), flag ? flag : null, throwaway];
 
     db.query(query, queryParams, (error, result) => {
       if (!error && result.rowCount) {

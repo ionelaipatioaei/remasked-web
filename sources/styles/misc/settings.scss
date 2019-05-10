@@ -1,4 +1,15 @@
+@import "../shared/constants.scss";
+
+.settings-warning {
+  color: $warning;
+}
+
+.settings-danger {
+  color: $error;
+}
+
 #settings-delete-account-container {
   display: none;
   flex-direction: column;
+  align-content: center;
 }

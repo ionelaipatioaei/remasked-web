@@ -1,12 +1,12 @@
-@import "../constants/index.scss";
+@import "../shared/constants.scss";
 
 .community-container {
   background-color: #fff;
   // width: 100%;
   padding: 10px;
   margin: 6px;
-  border-radius: $r-normal;
-  box-shadow: $light;
+  border-radius: $radius-normal;
+  box-shadow: $shadow-normal;
   cursor: pointer;
 }
 

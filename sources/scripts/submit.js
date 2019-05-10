@@ -36,6 +36,7 @@ const submitPost = community => {
   const link = document.querySelector("#link");
   const content = document.querySelector("#content");
   const flag = document.querySelector("#flag");
+  const throwaway = document.querySelector("#post-throwaway-checkbox");
   fetch("http://localhost:8081/api/post", {
     method: "POST",
     body: JSON.stringify({
@@ -44,7 +45,8 @@ const submitPost = community => {
       link: link.value,
       content: content.value,
       type: type,
-      flag: flag.value
+      flag: flag.value,
+      throwaway: throwaway.checked
     })
   }).then(res => res.json())
     .then(data => {

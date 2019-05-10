@@ -1,3 +1,5 @@
+@import "../shared/constants.scss";
+
 .reply-container {
   display: flex;
   flex-direction: column;
@@ -6,12 +8,13 @@
   padding: 0 6px 6px 6px;
   // border: 1px solid black;
   grid-column: 1/2;
-  box-shadow: $light;
+  box-shadow: $shadow-normal;
   margin: 6px;
-  border-radius: $r-normal;
+  border-radius: $radius-normal;
 }
 
 .reply-textarea-buttons-container {
   display: flex;
-  margin: -8px -6px;
+  align-items: center;
+  margin: -6px;
 }

@@ -2,6 +2,7 @@ extends ../layout/layout.pug
 
 include ../components/button.pug
 include ../components/inputText.pug
+include ../components/checkbox.pug
 include ../layout/header.pug
 
 block header
@@ -33,4 +34,5 @@ block content
       textarea#content.input-textarea(placeholder="Your text here...", disabled="disabled")
 
       div.submit-textarea-buttons-container
-        +Button("Submit", `submitPost('${community}')`)
+        +Button("Submit", `submitPost('${community}')`, "success")
+        +Checkbox("throwaway?", "post-throwaway-checkbox")

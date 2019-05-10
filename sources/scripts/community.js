@@ -13,8 +13,10 @@ const communityCreate = () => {
     .then(data => {
       if (data.success) {
         window.location.href = `/c/${name}`;
+        notificationShow("success", data.success, 10000);  
+      } else {
+        notificationShow("error", data.error, 10000);  
       }
-      console.log(data);
     })
     .catch(error => console.log(error));
 }

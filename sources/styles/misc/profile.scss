@@ -1,4 +1,26 @@
+@import "../shared/constants.scss";
+
+.profile-container {
+  background-color: #fff;
+  padding: 10px;
+  margin: 6px;
+  border-radius: $radius-normal;
+  box-shadow: $shadow-light;
+}
+
+.profile-title {
+  margin: 0;
+}
+
 .profile-buttons {
   display: flex;
   align-items: center;
+}
+
+.profile-info-text {
+  font-size: 1.2em;
+}
+
+.profile-amount {
+  color: $main;
 }

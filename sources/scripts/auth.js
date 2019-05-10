@@ -2,7 +2,6 @@
 const authLogin = () => {
   const username = document.querySelector("#username").value;
   const password = document.querySelector("#password").value;
-  const warning = document.querySelector(".auth-warning");
 
   fetch("/api/auth/login", {
     method: "POST",
@@ -25,14 +24,13 @@ const authLogin = () => {
 
 const authRegister = () => {
   const username = document.querySelector("#username").value;
-  const email = document.querySelector("#email").value;
+  // const email = document.querySelector("#email").value;
   const password = document.querySelector("#password").value;
   const confirmPassword = document.querySelector("#confirm-password").value;
-  const warning = document.querySelector(".auth-warning");
 
   fetch("/api/auth/register", {
     method: "POST",
-    body: JSON.stringify({username, email: email === "" ? null : email, password, confirmPassword})
+    body: JSON.stringify({username, password, confirmPassword})
   })
   .then(res => res.json())
   .then(data => {
@@ -64,3 +62,13 @@ const authLogout = () => {
   .then(data => console.log(data))
   .catch(error => console.log(error));
 }
+
+// checks to see if enter is pressed when the user enters a password
+const passwordInput = document.querySelector("#password");
+if (passwordInput) {
+  passwordInput.addEventListener("keydown", (e) => {
+    if (e.keyCode === 13) authLogin();
+  });
+}
+// this one line also looks cool
+// if (passwordInput) passwordInput.addEventListener("keydown", e => e.keyCode === 13 ? authLogin() : null);

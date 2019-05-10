@@ -35,8 +35,19 @@ const postUpdateVoteState = (vote, ref) => {
         upvote.src = "/static/assets/icons/up.svg";
         downvote.src = "/static/assets/icons/down.svg";
       } else if (data.success) {
-        votes.innerHTML = parseInt(votes.innerHTML) + vote;
+        // weird trick but it works so
+        // check if upvoted
+        // also for some reason it converts the hex color to rgb()
+        if (vote === -1 && votes.style.color == "rgb(16, 188, 16)") {
+          votes.innerHTML = parseInt(votes.innerHTML) - 2;
+          // check if downvoted
+        } else if (vote === 1 && votes.style.color == "rgb(243, 69, 62)") {
+          votes.innerHTML = parseInt(votes.innerHTML) + 2;
+        } else {
+          votes.innerHTML = parseInt(votes.innerHTML) + vote;
+        }
         votes.style.color = vote === 1 ? "#10bc10" : "#f3453e";
+
         if (vote === 1) {
           upvote.src = "/static/assets/icons/up-use.svg";
           downvote.src = "/static/assets/icons/down.svg";

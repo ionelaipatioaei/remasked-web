@@ -1,4 +1,4 @@
-@import "../constants/index.scss";
+@import "../shared/constants.scss";
 
 .auth-container {
   min-height: 70vh;
@@ -16,8 +16,8 @@
   background-color: #fff;
   padding: 10px;
   margin: 6px;
-  border-radius: $r-normal;
-  box-shadow: $light;
+  border-radius: $radius-normal;
+  box-shadow: $shadow-normal;
   width: 50%;
 }
 

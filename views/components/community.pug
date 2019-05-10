@@ -4,4 +4,7 @@ mixin Community(communityData)
   a(href=`/c/${communityData.name}`)
     div.community-container
       h2.community-title= communityData.name
-      p.community-details Subscribed since #{communityData.subscribed}
+      if communityData.subscribed
+        p.community-details Subscribed since #{communityData.subscribed}
+      else
+        p.community-details Created on #{communityData.created}

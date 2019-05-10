@@ -16,30 +16,28 @@ block content
   div.profile-buttons
     +Link(`/c/${name}?sort=popular`)
       +Button("Popular")
-    +Link(`/c/${name}?sort=top`)
-      +Button("Top")
+    //- +Link(`/c/${name}?sort=top`)
+    //-   +Button("Top")
     +Link(`/c/${name}?sort=newest`)
       +Button("Newest")
     +Link(`/c/${name}?sort=oldest`)
       +Button("Oldest")
-    +Link(`/c/${name}?sort=most-upvoted`)
-      +Button("Most upvoted")
-    +Link(`/c/${name}?sort=most-downvoted`)
-      +Button("Most downvoted")
+    +Link(`/c/${name}?sort=shuffle`)
+      +Button("Shuffle")
+    //- +Link(`/c/${name}?sort=most-upvoted`)
+    //-   +Button("Most upvoted")
+    //- +Link(`/c/${name}?sort=most-downvoted`)
+    //-   +Button("Most downvoted")
 
   div.c-container
     +Meta(name, subscribers, created, createdby, noFounder, owns, subscribed, metaRaw, meta)
 
     each post in posts
-      //- I need a better way to do this!
-      //- TITLE, OWNER OWNS, SAVED, COMMUNITY, REF, CREATED, EDITED, DELETED, C_AMOUNT, LINK, C_RAW, CONTENT, VOTES, VOTED
       +Post(post, {type: post.type, flag: post.flag, view: "min", community: true})
-  
-  div(style="display: flex; width: 100%;")
-    div.test(style="display: flex; width: 100%;")
-      p(onclick=`back("c/${name}")`) back
-    div.test(style="display: flex; width: 100%;")
-      p(onclick=`next("c/${name}")`) next
+
+  div.pagination-container
+    +Button("back", `back("c/${name}")`)
+    +Button("next", `next("c/${name}")`, "accent")
 
   script.
     var meta = document.getElementById("meta-container");

@@ -7,22 +7,22 @@ mixin Meta(community, subscribers, created, createdby, noFounder, owns, subscrib
     p.meta-text #{subscribers} subscribers
     div
       if subscribed
-        +Button("Unsubscribe", `communitySubscribe('${community}')`)
+        +Button("Unsubscribe", `communitySubscribe('${community}')`, "error")
       else
-        +Button("Subscribe", `communitySubscribe('${community}')`)
+        +Button("Subscribe", `communitySubscribe('${community}')`, "success")
 
     +Link(`/submit/${community}`)
-      +Button("Submit new post")
+      +Button("Submit new post", "", "success")
     if owns
       +Button("Edit description", "communityEdit()")
     div.meta-description!= meta
     div.meta-edit(style="display: none;")
       textarea.input-textarea(style="height: 256px;")= metaRaw
       div.meta-textarea-buttons-container
-        +Button("Save", `communitySaveEdit('${community}')`)
-        +Button("Cancel", "communityCancelEdit()")
+        +Button("Save", `communitySaveEdit('${community}')`, "success")
+        +Button("Cancel", "communityCancelEdit()", "error")
     
     if !noFounder
-      p!= `Created by <a href="/profile/${createdby}">${createdby}</a> on ${created}.`
+      p!= `Created by <a href="/profile/${createdby}" class="post-info-text-goto">${createdby}</a> on ${created}.`
     else
       p!= `Created by (deleted user) on ${created}.`
