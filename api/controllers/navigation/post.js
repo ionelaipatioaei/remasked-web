@@ -19,8 +19,8 @@ module.exports = (mode) => {
             (SELECT COUNT(*) FROM comment WHERE post_parent=post.id) AS comments_amount, 
             (SELECT username FROM users WHERE id=owner) AS owner, 
             (SELECT SUM(vote) FROM vote_post WHERE post_id=id) AS votes,
-            TO_CHAR(created, 'DD/MM/YY at HH24:MI') AS created, 
-            TO_CHAR(edited, 'DD/MM/YY at HH24:MI') AS edited,
+            TO_CHAR(created, 'DD Mon YY at HH24:MI') AS created, 
+            TO_CHAR(edited, 'DD Mon YY at HH24:MI') AS edited,
             (SELECT name FROM community WHERE id=community) AS community
           FROM post 
           WHERE ref_string=$2`
@@ -29,8 +29,8 @@ module.exports = (mode) => {
             (SELECT COUNT(*) FROM comment WHERE post_parent=post.id) AS comments_amount, 
             (SELECT username FROM users WHERE id=owner) AS owner, 
             (SELECT SUM(vote) FROM vote_post WHERE post_id=id) AS votes, 
-            TO_CHAR(created, 'DD/MM/YY at HH24:MI') AS created, 
-            TO_CHAR(edited, 'DD/MM/YY at HH24:MI') AS edited,
+            TO_CHAR(created, 'DD Mon YY at HH24:MI') AS created, 
+            TO_CHAR(edited, 'DD Mon YY at HH24:MI') AS edited,
             (SELECT name FROM community WHERE id=community) AS community
           FROM post 
           WHERE ref_string=$1`;
@@ -87,8 +87,8 @@ module.exports = (mode) => {
             (SELECT EXISTS(SELECT 1 FROM save_comment WHERE user_id=$1 AND comment_id=comment.id)) AS saved,
             (SELECT username FROM users WHERE id=owner) AS owner, 
             (SELECT SUM(vote) FROM vote_comment WHERE comment_id=id) AS votes, 
-            TO_CHAR(created, 'DD/MM/YY at HH24:MI') AS created, 
-            TO_CHAR(edited, 'DD/MM/YY at HH24:MI') AS edited, 
+            TO_CHAR(created, 'DD Mon YY at HH24:MI') AS created, 
+            TO_CHAR(edited, 'DD Mon YY at HH24:MI') AS edited, 
             comment_parent AS parent
           FROM comment 
           WHERE post_parent=(SELECT id FROM post WHERE ref_string=$2) 
@@ -97,8 +97,8 @@ module.exports = (mode) => {
         `SELECT id, ref_string, content, deleted, throwaway, hidden,
             (SELECT username FROM users WHERE id=owner) AS owner, 
             (SELECT SUM(vote) FROM vote_comment WHERE comment_id=id) AS votes, 
-            TO_CHAR(created, 'DD/MM/YY at HH24:MI') AS created, 
-            TO_CHAR(edited, 'DD/MM/YY at HH24:MI') AS edited,
+            TO_CHAR(created, 'DD Mon YY at HH24:MI') AS created, 
+            TO_CHAR(edited, 'DD Mon YY at HH24:MI') AS edited,
             comment_parent AS parent
           FROM comment 
           WHERE post_parent=(SELECT id FROM post WHERE ref_string=$1) 

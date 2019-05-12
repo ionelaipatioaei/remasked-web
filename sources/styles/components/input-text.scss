@@ -18,6 +18,7 @@
   padding: 2px;
   margin: 8px 0;
   box-sizing: border-box;
+  transition: all 0.2s ease-in;
 }
 
 .input-text:focus {
@@ -40,6 +41,7 @@
   margin: 6px 0;
   box-sizing: border-box;
   transition: all 0.12s ease-in;
+  transition: all 0.2s ease-in;
 }
 
 .input-textarea:focus {

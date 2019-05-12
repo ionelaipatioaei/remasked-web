@@ -14,14 +14,14 @@ module.exports = (mode) => {
 
     const getProfileInfo = async (ownProfile, username, type, next) => {
       const query = ownProfile ? 
-        `SELECT username, TO_CHAR(created, 'DD/MM/YY') AS created, 
+        `SELECT username, TO_CHAR(created, 'DD Mon YY') AS created, 
             (SELECT SUM(vote) FROM vote_post WHERE user_id=$1) AS post_points,
             (SELECT SUM(vote) FROM vote_comment WHERE user_id=$1) AS comment_points,
             (SELECT COUNT(*) FROM post WHERE owner=$1) AS posts_amount,
             (SELECT COUNT(*) FROM comment WHERE owner=$1) AS comments_amount
           FROM users WHERE id=$1`
         :
-        `SELECT username, TO_CHAR(created, 'DD/MM/YY') AS created, users.id AS user_id,
+        `SELECT username, TO_CHAR(created, 'DD Mon YY') AS created, users.id AS user_id,
             (SELECT SUM(vote) FROM vote_post WHERE user_id=users.id) AS post_points,
             (SELECT SUM(vote) FROM vote_comment WHERE user_id=users.id) AS comment_points,
             (SELECT COUNT(*) FROM post WHERE owner=users.id) AS posts_amount,
@@ -49,7 +49,7 @@ module.exports = (mode) => {
             else next(data.username, type, result.rows[0].user_id, () => res.status(200).json(data));
           } else {
             if (mode === "render") res.status(404).render("misc/error", {logged: req.session.userId !== undefined});
-            else res.status(404).json({error: "Something went wrong1"});
+            else res.status(404).json({error: "We couldn't find the profile!"});
           }
         } else {
           if (mode === "render") res.status(502).render("misc/error", {logged: req.session.userId !== undefined, error: 502});
@@ -147,7 +147,7 @@ module.exports = (mode) => {
             votes: data.votes ? data.votes : 0,
             voted: data.voted ? data.voted : 0,
             refPost: data.parent,
-            ref: data.ref_string,
+            ref: data.ref_string
           });
         }
       }

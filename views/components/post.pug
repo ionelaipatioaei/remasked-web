@@ -60,7 +60,7 @@ mixin Post(postData, options={type: "photo", view: "min", community: true})
               +Link(`/profile/${postData.owner}`)
                 p.post-info-text-goto= postData.owner
             else
-              p.post-info-text-goto.post-throwaway-user somebody 
+              p.post-info-text-goto.post-throwaway-user somebody
 
             if options.community
               p.post-info-text &nbsp;to&nbsp;

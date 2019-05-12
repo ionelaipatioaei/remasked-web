@@ -18,7 +18,7 @@ module.exports = (mode) => {
       const query = req.session.userId ? 
         `SELECT 
             id, name,
-            TO_CHAR(created, 'DD/MM/YY at HH24:MI') AS created,
+            TO_CHAR(created, 'DD Mon YY at HH24:MI') AS created,
             (SELECT COUNT(*) FROM subscription WHERE community_id=(SELECT id FROM community WHERE name=$1)) AS subscribers, 
             (SELECT username FROM users WHERE id=createdby) AS createdby, 
             (CASE WHEN createdby=$2 THEN true ELSE false END) AS owns, 
@@ -28,7 +28,7 @@ module.exports = (mode) => {
           WHERE unique_name=$1`
         :
         `SELECT 
-            id, name, TO_CHAR(created, 'DD/MM/YY at HH24:MI') AS created,
+            id, name, TO_CHAR(created, 'DD Mon YY at HH24:MI') AS created,
             (SELECT COUNT(*) FROM subscription WHERE community_id=(SELECT id FROM community WHERE name=$1)) AS subscribers, 
             (SELECT username FROM users WHERE id=createdby) AS createdby, 
             meta 
@@ -81,8 +81,8 @@ module.exports = (mode) => {
             COUNT(comment) AS comments_amount, 
             (SELECT username FROM users WHERE id=post.owner) as owner,
             (SELECT SUM(vote) FROM vote_post WHERE post_id=post.id) AS votes,
-            TO_CHAR(post.created, 'DD/MM/YY at HH24:MI') AS created, 
-            TO_CHAR(post.edited, 'DD/MM/YY at HH24:MI') AS edited
+            TO_CHAR(post.created, 'DD Mon YY at HH24:MI') AS created, 
+            TO_CHAR(post.edited, 'DD Mon YY at HH24:MI') AS edited
           FROM post
           LEFT JOIN comment ON comment.post_parent=post.id
           WHERE community=$2
@@ -93,8 +93,8 @@ module.exports = (mode) => {
             COUNT(comment) AS comments_amount, 
             (SELECT username FROM users WHERE id=post.owner) as owner, 
             (SELECT SUM(vote) FROM vote_post WHERE post_id=post.id) AS votes, 
-            TO_CHAR(post.created, 'DD/MM/YY at HH24:MI') AS created, 
-            TO_CHAR(post.edited, 'DD/MM/YY at HH24:MI') AS edited
+            TO_CHAR(post.created, 'DD Mon YY at HH24:MI') AS created, 
+            TO_CHAR(post.edited, 'DD Mon YY at HH24:MI') AS edited
           FROM post 
           LEFT JOIN comment ON comment.post_parent=post.id
           WHERE community=$1 

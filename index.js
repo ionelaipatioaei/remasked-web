@@ -1,6 +1,7 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const session = require("express-session");
+const RedisStore = require("connect-redis")(session);
 const app = express();
 
 // NEEDS PRODUCTION CONFIGS
@@ -15,7 +16,7 @@ app.set("view engine", "pug");
 
 // SESSION
 app.use(session({
-  store: new (require("connect-pg-simple")(session))(),
+  store: new RedisStore({host: "localhost", port: 6379}),
   name: "sid",
   saveUninitialized: false,
   resave: false,

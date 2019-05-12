@@ -9,7 +9,10 @@ block header
   +Header(logged)
 
 block title
-  title Remasked | Not found
+  if error == 502
+    title Error | remasked
+  else
+    title Not found | remasked
 
 block content
   div(style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 75vh;")

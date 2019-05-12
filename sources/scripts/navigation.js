@@ -29,7 +29,7 @@ const getRandomCommunity = () => {
   fetch("/api/random")
     .then(res => res.json())
     .then(data => {
-      if (data.success) {
+      if (data.community) {
         window.location.href = `/c/${data.community}`;
       } else if (data.error) {
         notificationShow("error", data.error, 5000);

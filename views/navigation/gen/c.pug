@@ -10,7 +10,7 @@ block header
   +Header(logged, null, null, name)
 
 block title
-  title Remasked | #{name}
+  title #{name} | remasked
 
 block content
   div.profile-buttons
@@ -33,7 +33,7 @@ block content
     +Meta(name, subscribers, created, createdby, noFounder, owns, subscribed, metaRaw, meta)
 
     each post in posts
-      +Post(post, {type: post.type, flag: post.flag, view: "min", community: true})
+      +Post(post, {type: post.type, flag: post.flag, view: "min", community: false})
 
   div.pagination-container
     +Button("back", `back("c/${name}")`)

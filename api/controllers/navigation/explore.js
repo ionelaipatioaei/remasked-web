@@ -26,8 +26,8 @@ module.exports = (mode) => {
             COUNT(comment) AS comments_amount, 
             (SELECT username FROM users WHERE id=post.owner) as owner,
             (SELECT SUM(vote) FROM vote_post WHERE post_id=post.id) AS votes,
-            TO_CHAR(post.created, 'DD/MM/YY at HH24:MI') AS created, 
-            TO_CHAR(post.edited, 'DD/MM/YY at HH24:MI') AS edited,
+            TO_CHAR(post.created, 'DD Mon YY at HH24:MI') AS created, 
+            TO_CHAR(post.edited, 'DD Mon YY at HH24:MI') AS edited,
             (SELECT name FROM community WHERE id=post.community) AS community
           FROM post 
           LEFT JOIN comment ON comment.post_parent=post.id
@@ -38,8 +38,8 @@ module.exports = (mode) => {
             COUNT(comment) AS comments_amount, 
             (SELECT username FROM users WHERE id=post.owner) as owner, 
             (SELECT SUM(vote) FROM vote_post WHERE post_id=post.id) AS votes, 
-            TO_CHAR(post.created, 'DD/MM/YY at HH24:MI') AS created, 
-            TO_CHAR(post.edited, 'DD/MM/YY at HH24:MI') AS edited,
+            TO_CHAR(post.created, 'DD Mon YY at HH24:MI') AS created, 
+            TO_CHAR(post.edited, 'DD Mon YY at HH24:MI') AS edited,
             (SELECT name FROM community WHERE id=post.community) AS community
           FROM post 
           LEFT JOIN comment ON comment.post_parent=post.id
@@ -88,10 +88,10 @@ module.exports = (mode) => {
 
     const getRelevantCommunities = async (next) => {
       const query = req.session.userId ?
-        `SELECT id, name, TO_CHAR(created, 'DD/MM/YY at HH24:MI') AS created 
+        `SELECT id, name, TO_CHAR(created, 'DD Mon YY at HH24:MI') AS created 
           FROM community ORDER BY random() LIMIT 10`
         :
-        `SELECT id, name, TO_CHAR(created, 'DD/MM/YY at HH24:MI') AS created 
+        `SELECT id, name, TO_CHAR(created, 'DD Mon YY at HH24:MI') AS created 
           FROM community ORDER BY random() LIMIT 10`;
 
       const queryParams = req.session.userId ? [] : [];

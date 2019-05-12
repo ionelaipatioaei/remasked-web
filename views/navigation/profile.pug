@@ -24,9 +24,9 @@ block content
     div.profile-container
       h1.profile-title #{username}'s profile
       p.profile-info-text
-        <span class='profile-amount'> #{postPoints} </span> post points | 
-        <span class='profile-amount'> #{commentPoints} </span> comment points | 
-        <span class='profile-amount'> #{postPoints + commentPoints} </span> total points | 
+        <span class='profile-amount'> #{postPoints ? postPoints : 0} </span> post points | 
+        <span class='profile-amount'> #{commentPoints ? commentPoints : 0} </span> comment points | 
+        <span class='profile-amount'> #{(postPoints + commentPoints) ? (postPoints + commentPoints) : 0} </span> total points | 
         <span class='profile-amount'> #{postsAmount} </span> posts | 
         <span class='profile-amount'>  #{commentsAmount} </span> comments
       p Member since #{created}.

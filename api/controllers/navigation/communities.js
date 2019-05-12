@@ -7,7 +7,7 @@ module.exports = (mode) => {
       const query = `SELECT 
                         community_id, 
                         (SELECT name FROM community WHERE id=community_id) AS name, 
-                        TO_CHAR(subscribed, 'DD/MM/YY') AS subscribed 
+                        TO_CHAR(subscribed, 'DD Mon YY') AS subscribed 
                       FROM subscription 
                       WHERE user_id=$1 ORDER BY name`;
 
