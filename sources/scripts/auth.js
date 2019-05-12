@@ -9,14 +9,12 @@ const authLogin = () => {
   })
   .then(res => res.json())
   .then(data => {
-    console.log(data);
-    if (data.error) {
-      document.querySelector("#password").value = "";
-      // warning.innerHTML = data.error;
-      notificationShow("error", data.error, 10000);
-    } else if (data.success) {
+    if (data.success) {
       notificationShow("success", data.success, 10000);
       window.location.href = "/";
+    } else if (data.error) {
+      document.querySelector("#password").value = "";
+      notificationShow("error", data.error, 10000);
     }
   })
   .catch(error => console.log(error));
@@ -34,11 +32,10 @@ const authRegister = () => {
   })
   .then(res => res.json())
   .then(data => {
-    console.log(data);
     if (data.success) {
       notificationShow("success", data.success, 10000);
       window.location.href = "/login";
-    } else if(data.error) {
+    } else if (data.error) {
       notificationShow("warning", data.error, 10000);
     }
   })
@@ -47,9 +44,7 @@ const authRegister = () => {
 
 const authRecover = () => {
   const email = document.querySelector("#email").value;
-  const success = document.querySelector(".auth-success");
-
-  success.innerHTML = "If the email is in the database we'll send a recover email!"
+  notificationShow("error", "This function isn't implemented.", 5000);
   setTimeout(() => window.location.href = "/login", 1500);
 }
 

@@ -40,7 +40,7 @@ app.use((error, req, res, next) => {
 
 // this is for debug only
 app.use((req, res, next) => {
-  console.log(req.session.userId);
+  console.log(req.session.userId, req.session.username);
   next();
 });
 

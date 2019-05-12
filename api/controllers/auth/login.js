@@ -5,7 +5,7 @@ module.exports = (req, res) => {
   const {username, password} = req.body;
 
   if (username && password) {
-    const query = `SELECT id, password 
+    const query = `SELECT id, username, password 
                     FROM users 
                     WHERE unique_name=$1`;
 
@@ -17,6 +17,7 @@ module.exports = (req, res) => {
           if (!passwordError && passwordIsMatching) {
             // set the session id
             req.session.userId = result.rows[0].id;
+            // req.session.username = result.rows[0].username;
             res.status(200).json({success: "You are now authenticated!"});
           } else {
             res.status(401).json({error: "Incorrect username or password!"});

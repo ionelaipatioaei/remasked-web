@@ -78,8 +78,8 @@ const postUpdateSaveState = (refPost) => {
         } else {
           postSave.src = "/static/assets/icons/starFill.svg";
         }
-      } else {
-        console.log("Something went wrong");
+      } else if (data.error) {
+        notificationShow("error", data.error, 5000);
       }
     })
     .catch(error => console.log(error));
@@ -88,7 +88,6 @@ const postUpdateSaveState = (refPost) => {
 const postHide = () => {
   const post = event.currentTarget.parentNode.parentNode.parentNode.parentNode;
   post.style.display = "none";
-  console.log(post);
 }
 
 const postEdit = () => {
@@ -99,7 +98,6 @@ const postEdit = () => {
 
   content.style.display = "none";
   edit.style.display = "block";
-  console.log(main);
 }
 
 const postCancelEdit = () => {
@@ -114,6 +112,7 @@ const postCancelEdit = () => {
 const postSaveEdit = (refPost) => {
   const main = event.currentTarget.parentNode.parentNode;
   const editedText = main.querySelector("textarea").value;
+  
   fetch("http://localhost:8081/api/post", {
     method: "PUT",
     body: JSON.stringify({
@@ -124,8 +123,8 @@ const postSaveEdit = (refPost) => {
     .then(data => {
       if (data.success) {
         window.location.reload();
-      } else {
-        console.log(data);
+      } else if (data.error) {
+        notificationShow("error", data.error, 5000);
       }
     })
     .catch(error => console.log(error));
@@ -148,8 +147,8 @@ const postDeleteConfirm = (refPost) => {
     .then(data => {
       if (data.success) {
         window.location.reload();
-      } else {
-        console.log(data);
+      } else if (data.error) {
+        notificationShow("error", data.error, 5000);
       }
     })
     .catch(error => console.log(error));
@@ -179,8 +178,8 @@ const postThrowawayConfirm = (refPost) => {
     .then(data => {
       if (data.success) {
         window.location.reload();
-      } else {
-        console.log(data);
+      } else if (data.error) {
+        notificationShow("error", data.error, 5000);
       }
     })
     .catch(error => console.log(error));

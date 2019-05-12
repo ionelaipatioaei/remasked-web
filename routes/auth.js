@@ -5,7 +5,7 @@ const authController = require("../controllers/auth");
 
 const redirectHome = (req, res, next) => {
   if (req.session.userId) {
-    res.redirect("/");
+    res.status(303).redirect("/");
   } else {
     next();
   }

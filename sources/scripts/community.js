@@ -53,8 +53,8 @@ const communitySaveEdit = (name) => {
     .then(data => {
       if (data.success) {
         window.location.reload();
-      } else {
-        console.log(data);
+      } else if (data.error) {
+        notificationShow("error", data.error, 5000);
       }
     })
     .catch(error => console.log(error));
@@ -70,8 +70,8 @@ const communitySubscribe = (name) => {
     .then(data => {
       if (data.success) {
         window.location.reload();
-      } else {
-        notificationShow("error", data.error, 10000);
+      } else if (data.error) {
+        notificationShow("error", data.error, 5000);
       }
     })
     .catch(error => console.log(error));

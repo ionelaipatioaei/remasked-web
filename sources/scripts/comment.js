@@ -47,6 +47,7 @@ const commentCollapse = () => {
 const commentReply = (refPost, refComment) => {
   const text = event.currentTarget.parentNode.parentNode.querySelector("textarea");
   const throwaway = event.currentTarget.parentNode.parentNode.querySelector("#comment-throwaway-checkbox");
+
   fetch("http://localhost:8081/api/comment", {
     method: "POST",
     body: JSON.stringify({
@@ -56,15 +57,14 @@ const commentReply = (refPost, refComment) => {
       throwaway: throwaway.checked
     })
   }).then(res => res.json())
-    .then(data => console.log(data))
+    .then(data => {
+      if (data.success) {
+        window.location.reload();
+      } else if (data.error) {
+        notificationShow("error", data.error, 5000);
+      }
+    })
     .catch(error => console.log(error));
-
-  const append = event.currentTarget.parentNode.parentNode.parentNode.parentNode;
-  // append.insertAdjacentHTML("afterend", createCommentText(text.value));
-  text.value = "";
-  const reply = append.querySelector(".comment-reply");
-  reply.style.display = "none";
-  window.location.reload();
 }
 
 const commentUpdateSaveState = (refComment) => {
@@ -86,8 +86,8 @@ const commentUpdateSaveState = (refComment) => {
           star.src = "/static/assets/icons/starFill.svg";
           commentSave.innerHTML = "unsave";
         }
-      } else {
-        console.log("Something went wrong");
+      } else if (data.error) {
+        notificationShow("error", data.error, 5000);
       }
     })
     .catch(error => console.log(error));
@@ -134,19 +134,20 @@ const commentUpdateVoteState = (vote, ref) => {
           downvote.src = "/static/assets/icons/down-use.svg";
         }
       } else if (data.error) {
-        notificationShow("error", data.error, 3000);
+        notificationShow("error", data.error, 5000);
       }
     })
     .catch(error => console.log(error));
 }
 
 const commentReport = () => {
-  console.log("haha");
+  console.log("work in progress...");
 }
 
 const commentReplyMain = (refPost) => {
   const text = event.currentTarget.parentNode.parentNode.querySelector("textarea");
   const throwaway = event.currentTarget.parentNode.parentNode.querySelector("#comment-throwaway-checkbox");
+
   fetch("http://localhost:8081/api/comment", {
     method: "POST",
     body: JSON.stringify({
@@ -156,13 +157,14 @@ const commentReplyMain = (refPost) => {
       throwaway: throwaway.checked
     })
   }).then(res => res.json())
-    .then(data => console.log(data))
+    .then(data => {
+      if (data.success) {
+        window.location.reload();
+      } else if (data.error) {
+        notificationShow("error", data.error, 5000);
+      }
+    })
     .catch(error => console.log(error));
-  // const append = document.querySelector(".reply-container");
-  // append.insertAdjacentHTML("afterend", createCommentText(text.value));
-  text.value = "";
-  // THIS IS STUPID
-  window.location.reload();
 }
 
 const commentEdit = () => {
@@ -186,6 +188,7 @@ const commentCancelEdit = () => {
 const commentSaveEdit = (refComment) => {
   const main = event.currentTarget.parentNode.parentNode;
   const editedText = main.querySelector("textarea").value;
+
   fetch("http://localhost:8081/api/comment", {
     method: "PUT",
     body: JSON.stringify({
@@ -196,8 +199,8 @@ const commentSaveEdit = (refComment) => {
     .then(data => {
       if (data.success) {
         window.location.reload();
-      } else {
-        console.log(data);
+      } else if (data.error) {
+        notificationShow("error", data.error, 5000);
       }
     })
     .catch(error => console.log(error));
@@ -211,6 +214,7 @@ const commentDelete = () => {
 }
 
 const commentDeleteConfirm = (refComment) => {
+
   fetch("http://localhost:8081/api/comment", {
     method: "DELETE",
     body: JSON.stringify({
@@ -220,8 +224,8 @@ const commentDeleteConfirm = (refComment) => {
     .then(data => {
       if (data.success) {
         window.location.reload();
-      } else {
-        console.log(data);
+      } else if (data.error) {
+        notificationShow("error", data.error, 5000);
       }
     })
     .catch(error => console.log(error));
@@ -251,8 +255,8 @@ const commentThrowawayConfirm = (refComment) => {
     .then(data => {
       if (data.success) {
         window.location.reload();
-      } else {
-        console.log(data);
+      } else if (data.error) {
+        notificationShow("error", data.error, 5000);
       }
     })
     .catch(error => console.log(error));

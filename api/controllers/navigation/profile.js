@@ -38,10 +38,10 @@ module.exports = (mode) => {
             data = {
               username: result.rows[0].username,
               created: result.rows[0].created,
-              postPoints: result.rows[0].post_points,
-              commentPoints: result.rows[0].comment_points,
-              postsAmount: result.rows[0].posts_amount,
-              commentsAmount: result.rows[0].comments_amount,
+              postPoints: parseInt(result.rows[0].post_points),
+              commentPoints: parseInt(result.rows[0].comment_points),
+              postsAmount: parseInt(result.rows[0].posts_amount),
+              commentsAmount: parseInt(result.rows[0].comments_amount)
             };
             // this next is basically getProfileData
             // need to refactor this mess
@@ -61,7 +61,7 @@ module.exports = (mode) => {
     // like posts, comments and for logged users also saved posts and saved comments
     const getProfileData = async (username, type, currentId, next) => {
       let query = "";
-      let queryParams = [username];
+      let queryParams = [username.toLowerCase()];
       // pc stands for p - posts or c - comments
       let pcData = [];
       // this is the default option
@@ -72,11 +72,13 @@ module.exports = (mode) => {
       switch (type) {
         case "posts":
           query = getProfileQuery("posts", req.session.userId);
+          queryParams.push(req.session.userId);
           dataType = "posts";
           break;
-
-        case "comments":
+          
+          case "comments":
           query = getProfileQuery("comments", req.session.userId);
+          queryParams.push(req.session.userId);
           dataType = "comments";
           break;
 
@@ -109,57 +111,61 @@ module.exports = (mode) => {
           // no need for break; because of the above returns
       }
 
+      const pushPostOrComment = (data, type) => {
+        if (type === "posts" || type === "saved-posts") {
+          pcData.push({
+            owner: data.throwaway ? "" : data.owner,
+            throwaway: data.throwaway,
+            created: data.created,
+            community: data.community,
+            edited: data.edited,
+            deleted: data.deleted,
+            owns: data.owns ? data.owns : false,
+            saved:  data.saved ? data.saved : false,
+            type: data.type,
+            flag: data.flag,
+            title: data.title,
+            link: data.link,
+            contentRaw: data.content,
+            content: data.content ? marked(data.content) : null,
+            commentsAmount: data.comments_amount,
+            votes: data.votes ? data.votes : 0,
+            voted: data.voted ? data.voted : 0,
+            ref: data.ref_string
+          });
+        } else {
+          pcData.push({
+            owner: data.throwaway ? "" : data.owner,
+            throwaway: data.throwaway,
+            owns: data.owns ? data.owns : false,
+            saved: data.saved ? data.saved : false,
+            created: data.created,
+            edited: data.edited,
+            deleted: data.deleted,
+            contentRaw: data.content,
+            content: data.content ? marked(data.content) : null,
+            votes: data.votes ? data.votes : 0,
+            voted: data.voted ? data.voted : 0,
+            refPost: data.parent,
+            ref: data.ref_string,
+          });
+        }
+      }
+
       await db.query(query, queryParams, (error, result) => {
         if (!error) {
           // check to see if there are any results
           // btw this is another piece of crap which should be refactored but oh well...
           if (result.rows.length) {
-            if (dataType === "posts" || dataType === "saved-posts") {
-              result.rows.map(post => {
-                if (!post.deleted && !post.hidden) {
-                  pcData.push({
-                    owner: post.throwaway ? "" : post.owner,
-                    throwaway: post.throwaway,
-                    created: post.created,
-                    community: post.community,
-                    edited: post.edited,
-                    deleted: post.deleted,
-                    owns: post.owns ? post.owns : false,
-                    saved:  post.saved ? post.saved : false,
-                    type: post.type,
-                    flag: post.flag,
-                    title: post.title,
-                    link: post.link,
-                    contentRaw: post.content,
-                    content: post.content ? marked(post.content) : null,
-                    commentsAmount: post.comments_amount,
-                    votes: post.votes ? post.votes : 0,
-                    voted: post.voted ? post.voted : 0,
-                    ref: post.ref_string
-                  });
-                }
-              });
-            } else {
-              result.rows.map(comment => {
-                if (!comment.deleted && !comment.hidden) {
-                  pcData.push({
-                    owner: comment.throwaway ? "" : comment.owner,
-                    throwaway: comment.throwaway,
-                    owns: comment.owns ? comment.owns : false,
-                    saved: comment.saved ? comment.saved : false,
-                    created: comment.created,
-                    edited: comment.edited,
-                    deleted: comment.deleted,
-                    contentRaw: comment.content,
-                    content: comment.content ? marked(comment.content) : null,
-                    votes: comment.votes ? comment.votes : 0,
-                    voted: comment.voted ? comment.voted : 0,
-                    refPost: comment.parent,
-                    ref: comment.ref_string,
-                  });
-                }
-              });
+
+            for (let i = 0; i < result.rows.length; i++) {
+              if (!result.rows[i].deleted && !result.rows[i].hidden && !result.rows[i].throwaway) {
+                pushPostOrComment(result.rows[i], dataType);
+              } else if (result.rows[i].throwaway && result.rows[i].owns) {
+                pushPostOrComment(result.rows[i], dataType);
+              }
             }
+
           } else {
             pcData = [];
           }

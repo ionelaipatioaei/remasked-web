@@ -37,6 +37,7 @@ const submitPost = community => {
   const content = document.querySelector("#content");
   const flag = document.querySelector("#flag");
   const throwaway = document.querySelector("#post-throwaway-checkbox");
+
   fetch("http://localhost:8081/api/post", {
     method: "POST",
     body: JSON.stringify({
@@ -51,10 +52,10 @@ const submitPost = community => {
   }).then(res => res.json())
     .then(data => {
       if (data.success) {
-        notificationShow("success", data.success, 10000);
+        notificationShow("success", data.success, 5000);
         window.location.href = `/c/${community}`;
-      } else {
-        notificationShow("error", data.error, 10000);
+      } else if (data.error) {
+        notificationShow("error", data.error, 5000);
       }
     })
     .catch(error => console.log(error));
