@@ -56,9 +56,9 @@ block content
 
     if comments
       each comment in comments
-        +Comment(comment)
+        +Comment(comment, {context: true, reply: false})
 
     if savedComments
       each comment in savedComments
-        +Comment(comment)
+        +Comment(comment, {context: true, reply: false})
     

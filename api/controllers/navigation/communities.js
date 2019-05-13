@@ -1,33 +1,53 @@
 const db = require("../../database/query");
+const cache = require("../../cache/query");
+
+// store the communities for ~1 month
+const COMMUNITIES_CACHE_TTL = 2500000;
 
 module.exports = (mode) => {
-  return async (req, res) => {
+  return (req, res) => {
     if (req.session.userId) {
+      const cacheKey = `communities:user:${req.session.userId}`;
+      let communities = [];
 
-      const query = `SELECT 
-                        community_id, 
-                        (SELECT name FROM community WHERE id=community_id) AS name, 
-                        TO_CHAR(subscribed, 'DD Mon YY') AS subscribed 
-                      FROM subscription 
-                      WHERE user_id=$1 ORDER BY name`;
-
-      const queryParams = [req.session.userId];
-
-      await db.query(query, queryParams, (error, result) => {
+      cache.get(cacheKey, (error, cachedData) => {
         if (!error) {
-          let communities = [];
-          result.rows.map(community => {
-            communities.push({
-              name: community.name,
-              subscribed: community.subscribed
-            });
-          });
+          if (cachedData) {
+            if (mode === "render") return res.status(200).render("navigation/communities", {logged: req.session.userId !== undefined, communities: JSON.parse(cachedData)});
+            else return res.status(200).json({communities: JSON.parse(cachedData)});
+          } else {
+            
+            const query = `SELECT 
+                            community_id, 
+                            (SELECT name FROM community WHERE id=community_id) AS name, 
+                            TO_CHAR(subscribed, 'DD Mon YY') AS subscribed 
+                          FROM subscription 
+                          WHERE user_id=$1 ORDER BY name`;
 
-          if (mode === "render") res.status(200).render("navigation/communities", {logged: req.session.userId !== undefined, communities});
-          else res.status(200).json({communities});
+            const queryParams = [req.session.userId];
+
+            db.query(query, queryParams, (error, result) => {
+              if (!error) {
+                result.rows.map(community => {
+                  communities.push({
+                    name: community.name,
+                    subscribed: community.subscribed
+                  });
+                });
+                cache.setex(cacheKey, COMMUNITIES_CACHE_TTL, JSON.stringify(communities));
+
+                if (mode === "render") res.status(200).render("navigation/communities", {logged: req.session.userId !== undefined, communities});
+                else res.status(200).json(communities);
+              } else {
+                if (mode === "render") res.status(502).render("navigation/communities", {logged: req.session.userId !== undefined});
+                else res.status(502).json({error: "Something went wrong!"});
+              }
+            });
+
+          }
         } else {
-          if (mode === "render") res.status(502).render("navigation/communities", {logged: req.session.userId !== undefined});
-          else res.status(502).json({error: "Something went wrong!"});
+          if (mode === "render") return res.status(502).render("misc/error", {logged: req.session.userId !== undefined, error: 502});
+          else return res.status(502).json({error: "Something went wrong!"});
         }
       });
 

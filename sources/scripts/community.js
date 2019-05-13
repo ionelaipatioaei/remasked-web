@@ -40,9 +40,10 @@ const communityCancelEdit = () => {
 }
 
 const communitySaveEdit = (name) => {
-  const main = event.currentTarget.parentNode.parentNode;
+  const main = event.currentTarget.parentNode.parentNode.parentNode;
   const editedText = main.querySelector("textarea").value;
-
+  const edit = main.querySelector(".meta-edit");
+  const description = main.querySelector(".meta-description");
   fetch("http://localhost:8081/api/community", {
     method: "PUT",
     body: JSON.stringify({
@@ -52,7 +53,10 @@ const communitySaveEdit = (name) => {
   }).then(res => res.json())
     .then(data => {
       if (data.success) {
-        window.location.reload();
+        description.innerHTML = editedText;
+
+        description.style.display = "block";
+        edit.style.display = "none";
       } else if (data.error) {
         notificationShow("error", data.error, 5000);
       }
@@ -61,6 +65,13 @@ const communitySaveEdit = (name) => {
 }
 
 const communitySubscribe = (name) => {
+  const main = event.currentTarget.parentNode.parentNode;
+  const button = main.querySelector("#meta-subscribe");
+  const label = button.querySelector(".button-label");
+  const subscribers = main.querySelector("#meta-subscribers-count");
+
+  console.log(button, subscribers);
+
   fetch("http://localhost:8081/api/subscribe", {
     method: "POST",
     body: JSON.stringify({
@@ -68,8 +79,15 @@ const communitySubscribe = (name) => {
     })
   }).then(res => res.json())
     .then(data => {
+      console.log(data);
       if (data.success) {
-        window.location.reload();
+        if (!data.remove) {
+          label.innerHTML = "Unsubscribe";
+          subscribers.innerHTML = parseInt(subscribers.innerHTML) + 1;
+        } else {
+          label.innerHTML = "Subscribe";
+          subscribers.innerHTML = parseInt(subscribers.innerHTML) - 1;
+        }
       } else if (data.error) {
         notificationShow("error", data.error, 5000);
       }

@@ -3,7 +3,7 @@ include link.pug
 include button.pug
 include checkbox.pug
 
-mixin Comment(commentData)
+mixin Comment(commentData, options={context: false, reply: true})
   div.comment-container
     div.comment-content
 
@@ -33,7 +33,7 @@ mixin Comment(commentData)
         div.comment-edit(style="display: none;")
           textarea.input-textarea(rows="6", cols="64")= commentData.contentRaw
           div.comment-textarea-buttons-container
-            +Button("Save", `commentSaveEdit('${commentData.ref}')`)
+            +Button("Save", `commentSaveEdit('${commentData.ref}', '${commentData.refPost}')`)
             +Button("Cancel", "commentCancelEdit()")
 
         div.comment-info-actions-container
@@ -44,8 +44,9 @@ mixin Comment(commentData)
             +Icon("/static/assets/icons/flag.svg", "comments", null, "width: 16px; height: 16px", false)
             p.comment-info-text-actions(onclick="commentReport()") report&nbsp;
 
-            +Icon("/static/assets/icons/reply.svg", "comments", null, "width: 16px; height: 16px", false)
-            p.comment-info-text-actions(onclick="commentMinMax()") reply&nbsp;
+            if options.reply
+              +Icon("/static/assets/icons/reply.svg", "comments", null, "width: 16px; height: 16px", false)
+              p.comment-info-text-actions(onclick="commentMinMax()") reply&nbsp;
 
           if commentData.owns
             +Icon("/static/assets/icons/edit.svg", "comments", null, "width: 16px; height: 16px", false)
@@ -64,8 +65,13 @@ mixin Comment(commentData)
 
             +Icon("/static/assets/icons/delete.svg", "comments", null, "width: 16px; height: 16px", false)
             p#delete.comment-info-text-actions(onclick="commentDelete()") delete&nbsp;
-            p#delete-confirm.comment-info-text-actions(style="display: none;", onclick=`commentDeleteConfirm('${commentData.ref}')`) confirm&nbsp;
+            p#delete-confirm.comment-info-text-actions(style="display: none;", onclick=`commentDeleteConfirm('${commentData.ref}', '${commentData.refPost}')`) confirm&nbsp;
             p#delete-cancel.comment-info-text-actions(style="display: none;", onclick="commentDeleteCancel()") &nbsp;cancel
+
+          if options.context
+            //- +Link(`/post/${commentData.refPost}`)
+            +Icon("/static/assets/icons/external.svg", "comments", null, "width: 16px; height: 16px", false)
+            p.comment-info-text-actions(onclick=`window.location.href = '/post/${commentData.refPost}'`) context&nbsp;
 
         div.comment-reply
           textarea.input-textarea(rows="6" cols="64" placeholder="Type your reply here...")

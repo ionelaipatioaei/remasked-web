@@ -185,7 +185,7 @@ const commentCancelEdit = () => {
   edit.style.display = "none";
 }
 
-const commentSaveEdit = (refComment) => {
+const commentSaveEdit = (refComment, refPost) => {
   const main = event.currentTarget.parentNode.parentNode;
   const editedText = main.querySelector("textarea").value;
 
@@ -193,7 +193,8 @@ const commentSaveEdit = (refComment) => {
     method: "PUT",
     body: JSON.stringify({
       refComment: refComment,
-      editedText: editedText     
+      refPost: refPost,
+      editedText: editedText
     })
   }).then(res => res.json())
     .then(data => {
@@ -213,12 +214,13 @@ const commentDelete = () => {
   main.querySelector("#delete-cancel").style.display = "block";
 }
 
-const commentDeleteConfirm = (refComment) => {
+const commentDeleteConfirm = (refComment, refPost) => {
 
   fetch("http://localhost:8081/api/comment", {
     method: "DELETE",
     body: JSON.stringify({
-      refComment: refComment
+      refComment: refComment,
+      refPost: refPost
     })
   }).then(res => res.json())
     .then(data => {

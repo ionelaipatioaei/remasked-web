@@ -1,16 +1,20 @@
 const db = require("../../database/query");
+const cache = require("../../cache/query");
 const marked = require("marked");
 marked.setOptions({
   breaks: true,
   sanitize: true
 });
 
+const POST_CACHE_TTL = 20;
+
 module.exports = (mode) => {
   return (req, res) => {
     const id = req.params.id;
+    const cacheKey = `post:${id}:user:${req.session.userId}`;
     let data = {};
 
-    const getPostInfo = async (ref, next) => {
+    const getPostInfo = async (ref, next) => {  
       const query = req.session.userId ?
         `SELECT id, ref_string, title, link, content, type, flag, deleted, throwaway, hidden,
             (CASE WHEN owner=$1 THEN true ELSE false END) AS owns,
@@ -158,11 +162,24 @@ module.exports = (mode) => {
           if (mode === "render") res.status(502).render("misc/error", {logged: req.session.userId !== undefined, error: 502});
           else res.status(502).json({error: "Something went wrong!"});
         }
-        data.comments = comments;    
+        data.comments = comments;
+        cache.setex(cacheKey, POST_CACHE_TTL, JSON.stringify(data));
         next();
       });
     }
 
-    getPostInfo(id, getPostComments);
+    cache.get(cacheKey, (error, cachedData) => {
+      if (!error) {
+        if (cachedData) {
+          if (mode === "render") return res.status(200).render("navigation/gen/post", {logged: req.session.userId !== undefined, ...JSON.parse(cachedData)});
+          else return res.status(200).json(JSON.parse(cachedData));
+        } else {
+          getPostInfo(id, getPostComments);
+        }
+      } else {
+        if (mode === "render") return res.status(502).render("misc/error", {logged: req.session.userId !== undefined, error: 502});
+        else return res.status(502).json({error: "Something went wrong!"});
+      }
+    });
   }
 }

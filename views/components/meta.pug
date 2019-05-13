@@ -4,12 +4,12 @@ include link.pug
 mixin Meta(community, subscribers, created, createdby, noFounder, owns, subscribed, metaRaw, description)
   div#meta-container
     h1= community
-    p.meta-text #{subscribers} subscribers
+    p.meta-text <span id="meta-subscribers-count">#{subscribers}</span> subscribers
     div
       if subscribed
-        +Button("Unsubscribe", `communitySubscribe('${community}')`, "error")
+        +Button("Unsubscribe", `communitySubscribe('${community}')`, "accent", "meta-subscribe")
       else
-        +Button("Subscribe", `communitySubscribe('${community}')`, "success")
+        +Button("Subscribe", `communitySubscribe('${community}')`, "accent", "meta-subscribe")
 
     +Link(`/submit/${community}`)
       +Button("Submit new post", "", "success")

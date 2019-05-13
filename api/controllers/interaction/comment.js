@@ -1,8 +1,12 @@
 const db = require("../../database/query");
+const cache = require("../../cache/query");
 
 exports.add = (req, res) => {
   const {refPost, refComment, content, throwaway} = req.body;
   if (req.session.userId) {
+    const cacheKey = `post:${refPost}:user:${req.session.userId}`;
+    
+    // if you have a top comment the refComment will be null
     const query = refComment ?
       // comment to another comment
       `INSERT INTO comment (owner, content, post_parent, comment_parent, throwaway) 
@@ -28,7 +32,8 @@ exports.add = (req, res) => {
       // you could also check the error and after that the rowCount so if 
       // nothing was inserted you could send a different error but eh, good enough for now
       if (!error && result.rowCount) {
-        res.status(200).json({success: "Your comment was added!"});
+        cache.del(cacheKey);
+        res.status(200).json({success: "Your comment was added!", r: result});
       } else {
         res.status(502).json({error: "Something went wrong!"})
       }
@@ -40,9 +45,11 @@ exports.add = (req, res) => {
 }
 
 exports.edit = (req, res) => {
-  const {refComment, editedText} = req.body;
+  const {refComment, refPost, editedText} = req.body;
 
   if (req.session.userId) {
+    const cacheKey = `post:${refPost}:user:${req.session.userId}`;
+
     const query = `UPDATE comment 
                     SET content=$1, edited=NOW() 
                     WHERE ref_string=$2 AND owner=$3`;
@@ -55,6 +62,7 @@ exports.edit = (req, res) => {
         // tried to update a comment which it doesn't own
         // idk if there can be other cases when the rowCount=0 tho
         if (result.rowCount) {
+          cache.del(cacheKey);
           res.status(200).json({success: "Your comment was edited!"});
         } else {
           res.status(403).json({error: "Unauthorized to edit this comment!"});
@@ -69,7 +77,7 @@ exports.edit = (req, res) => {
 }
 
 exports.delete = (req, res) => {
-  const {refComment} = req.body;
+  const {refComment, refPost} = req.body;
 
   const deleteVotes = async (refComment, id, next) => {
     const query = `DELETE FROM vote_comment 
@@ -89,6 +97,8 @@ exports.delete = (req, res) => {
   }
 
   const updateCommentToNull = async (refComment, id) => {
+    const cacheKey = `post:${refPost}:user:${id}`;
+
     const query = `UPDATE comment 
                     SET owner=NULL, created=NULL, content=NULL, edited=NULL, 
                       throwaway=NULL, hidden=NULL, deleted=TRUE 
@@ -99,6 +109,8 @@ exports.delete = (req, res) => {
     await db.query(query, queryParams, (error, result) => {
       if (!error) {
         if (result.rowCount) {
+          console.log(cacheKey);
+          cache.del(cacheKey);
           res.status(200).json({success: "Your comment was deleted!"});
         } else {
           res.status(403).json({error: "Unauthorized to delete this comment!"});

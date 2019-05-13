@@ -1,4 +1,5 @@
 const db = require("../../database/query");
+const cache = require("../../cache/query");
 
 module.exports = (req, res) => {
   const {name} = req.body;
@@ -26,6 +27,8 @@ module.exports = (req, res) => {
   }
 
   const addSubscription = async (name, id) => {
+    const cacheKey = `communities:user:${id}`;
+
     const query = `INSERT INTO subscription (user_id, community_id) 
                     VALUES (
                       $1, 
@@ -36,6 +39,7 @@ module.exports = (req, res) => {
 
     await db.query(query, queryParams, (error, result) => {
       if (!error && result.rowCount) {
+        cache.del(cacheKey);
         res.status(200).json({success: `You subscribed to ${name}!`});
       } else {
         res.status(502).json({error: "Something went wrong!"});
@@ -44,6 +48,8 @@ module.exports = (req, res) => {
   }
 
   const removeSubscription = async (name, id) => {
+    const cacheKey = `communities:user:${id}`;
+
     const query = `DELETE FROM subscription 
                     WHERE user_id=$1 
                       AND community_id=(SELECT id FROM community WHERE unique_name=$2)`;
@@ -52,7 +58,8 @@ module.exports = (req, res) => {
 
     await db.query(query, queryParams, (error, result) => {
       if (!error && result.rowCount) {
-        res.status(200).json({success: `You unsubscribed from ${name}!`});
+        cache.del(cacheKey);
+        res.status(200).json({success: `You unsubscribed from ${name}!`, remove: true});
       } else {
         res.status(502).json({error: "Something went wrong!"});
       }

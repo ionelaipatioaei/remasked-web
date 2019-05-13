@@ -1,4 +1,5 @@
 const db = require("../../database/query");
+const cache = require("../../cache/query");
 
 exports.add = (req, res) => {
   const {community, title, link, content, type, flag, throwaway} = req.body;
@@ -55,6 +56,8 @@ exports.edit = (req, res) => {
   const {refPost, editedText} = req.body;
 
   if (req.session.userId) {
+    const cacheKey = `post:${refPost}:user:${req.session.userId}`;
+
     const query = `UPDATE post 
                     SET content=$1, edited=NOW() 
                     WHERE ref_string=$2 AND owner=$3`;
@@ -64,6 +67,7 @@ exports.edit = (req, res) => {
     db.query(query, queryParams, (error, result) => {
       if (!error) {
         if (result.rowCount) {
+          cache.del(cacheKey);
           res.status(200).json({success: "Your post was edited!"});
         } else {
           res.status(403).json({error: "Unauthorized to edit this post!"});
@@ -81,6 +85,8 @@ exports.delete = (req, res) => {
   const {refPost} = req.body;
 
   if (req.session.userId) {
+    const cacheKey = `post:${refPost}:user:${req.session.userId}`;
+
     const query = `UPDATE post 
                     SET owner=NULL, created=NULL, title=NULL, link=NULL, content=NULL, 
                       community=NULL, type=NULL, flag=NULL, edited=NULL, throwaway=NULL,
@@ -92,6 +98,7 @@ exports.delete = (req, res) => {
     db.query(query, queryParams, (error, result) => {
       if (!error) {
         if (result.rowCount) {
+          cache.del(cacheKey);
           res.status(200).json({success: "Your post was deleted!"});
         } else {
           res.status(403).json({error: "Unauthorized to delete this post!"});

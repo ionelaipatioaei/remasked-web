@@ -19,4 +19,13 @@ router.get("/explore", explore());
 router.get("/random", random);
 router.get("/search", search);
 
+const cache = require("../cache/query");
+
+router.get("/cache", (req, res) => {
+
+  // cache.setex("c:pretty_earth:0:popular:user:undefined", 100, JSON.stringify({hey: 123}));
+  cache.del(["c:pretty_earth:0:popular:user:undefined", "c:pretty_earth2:0:popular:user:undefined"]);
+  // res.json({c: 123});
+});
+
 module.exports = router;

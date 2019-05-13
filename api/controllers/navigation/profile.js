@@ -72,13 +72,13 @@ module.exports = (mode) => {
       switch (type) {
         case "posts":
           query = getProfileQuery("posts", req.session.userId);
-          queryParams.push(req.session.userId);
+          if (req.session.userId) queryParams.push(req.session.userId);
           dataType = "posts";
           break;
           
           case "comments":
           query = getProfileQuery("comments", req.session.userId);
-          queryParams.push(req.session.userId);
+          if (req.session.userId) queryParams.push(req.session.userId);
           dataType = "comments";
           break;
 

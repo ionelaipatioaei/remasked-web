@@ -19,10 +19,10 @@ module.exports = (type, userId, currentId) => {
         `SELECT id, ref_string, title, link, content, type, flag, deleted, throwaway, hidden,
             (SELECT COUNT(*) FROM comment WHERE post_parent=post.id) AS comments_amount, 
             (SELECT username FROM users WHERE id=post.owner) as owner,
-            (SELECT SUM(vote) FROM vote_post WHERE post_id=id) AS votes, 
+            (SELECT SUM(vote) FROM vote_post WHERE post_id=post.id) AS votes, 
             TO_CHAR(created, 'DD Mon YY at HH24:MI') AS created,
             TO_CHAR(edited, 'DD Mon YY at HH24:MI') AS edited,
-            (SELECT name FROM community WHERE id=community) AS community
+            (SELECT name FROM community WHERE id=post.community) AS community
           FROM post 
           WHERE owner=(SELECT id FROM users WHERE unique_name=$1)
           ORDER BY id DESC LIMIT 32`;
@@ -43,11 +43,11 @@ module.exports = (type, userId, currentId) => {
           ORDER BY id DESC`
         :
         `SELECT id, ref_string, content, deleted, throwaway, hidden, 
-            (SELECT username FROM users WHERE id=owner) AS owner, 
-            (SELECT SUM(vote) FROM vote_comment WHERE comment_id=id) AS votes, 
+            (SELECT username FROM users WHERE id=comment.owner) AS owner, 
+            (SELECT SUM(vote) FROM vote_comment WHERE comment_id=comment.id) AS votes, 
             TO_CHAR(created, 'DD Mon YY at HH24:MI') AS created,
             TO_CHAR(edited, 'DD Mon YY at HH24:MI') AS edited,
-            (SELECT ref_string FROM post WHERE id=post_parent) AS parent 
+            (SELECT ref_string FROM post WHERE id=comment.post_parent) AS parent 
           FROM comment 
           WHERE owner=(SELECT id FROM users WHERE unique_name=$1) 
           ORDER BY id DESC`;

@@ -1,4 +1,5 @@
 const db = require("../../database/query");
+const cache = require("../../cache/query");
 const pageSort = require("../../shared/pageSort");
 const marked = require("marked");
 marked.setOptions({
@@ -6,10 +7,13 @@ marked.setOptions({
   sanitize: true
 });
 
+const EXPLORE_CACHE_TTL = 20;
+
 module.exports = (mode) => {
   return (req, res) => {
-    const page = parseInt(req.query.page);
-    const sort = req.query.sort ? req.query.sort.toLowerCase() : "";
+    const page = req.query.page ? parseInt(req.query.page) : 0;
+    const sort = req.query.sort ? req.query.sort.toLowerCase() : "popular";
+    const cacheKey = `explore:${page}:${sort}:user:${req.session.userId}`;
     let data = {
       posts: [],
       communities: []
@@ -104,7 +108,7 @@ module.exports = (mode) => {
               created: community.created
             });
           });
-
+          cache.setex(cacheKey, EXPLORE_CACHE_TTL, JSON.stringify(data));
           next();
         } else {
           if (mode === "render") return res.status(502).render("misc/error", {logged: req.session.userId !== undefined, error: 502});
@@ -113,6 +117,18 @@ module.exports = (mode) => {
       });
     }
 
-    getRelevantPosts(getRelevantCommunities);
+    cache.get(cacheKey, (error, cachedData) => {
+      if (!error) {
+        if (cachedData) {
+          if (mode === "render") return res.status(200).render("index", {logged: req.session.userId !== undefined, ...JSON.parse(cachedData)});
+          else return res.status(200).json({...JSON.parse(cachedData)});
+        } else {
+          getRelevantPosts(getRelevantCommunities);
+        }
+      } else {
+        if (mode === "render") return res.status(502).render("misc/error", {logged: req.session.userId !== undefined, error: 502});
+        else return res.status(502).json({error: "Something went wrong!"});
+      }
+    });
   }
 }
