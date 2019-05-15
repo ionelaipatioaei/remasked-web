@@ -10,20 +10,15 @@ footer
       +Link("/contact")
         +Button("contact")
 
-      +Link("/apps")
-        +Button("apps")
+      //- +Link("/apps")
+      //-   +Button("apps")
 
       +Link("/donate")
         +Button("donate")
 
     div.footer-info
-      div.footer-info-item 
-        p By using this website you agree to our&nbsp;
-        +Link("/terms-of-use", "Terms of Use", null, "post-info-text-goto")
-        p &nbsp;and&nbsp;
-        +Link("/privacy-policy", "Privacy Policy", null, "post-info-text-goto")
-        p .
-
+      p By using this website you agree to our <span><a class="auth-agree" href="/terms-of-use">Terms of Use</a></span> and <span><a class="auth-agree" href="/privacy-policy">Privacy Policy</a></span>.
+  
     div.footer-info
       p.footer-info-item &copy; 2019 remasked.com All rights reserved.
 

@@ -25,21 +25,26 @@ const authRegister = () => {
   // const email = document.querySelector("#email").value;
   const password = document.querySelector("#password").value;
   const confirmPassword = document.querySelector("#confirm-password").value;
+  const userAgrees = document.querySelector("#auth-user-agrees");
 
-  fetch("/api/auth/register", {
-    method: "POST",
-    body: JSON.stringify({username, password, confirmPassword})
-  })
-  .then(res => res.json())
-  .then(data => {
-    if (data.success) {
-      notificationShow("success", data.success, 10000);
-      window.location.href = "/login";
-    } else if (data.error) {
-      notificationShow("warning", data.error, 10000);
-    }
-  })
-  .catch(error => console.log(error));
+  if (!userAgrees.checked) {
+    notificationShow("error", "Please read and agree with our Terms of Use and Privacy Policy.", 10000);
+  } else {
+    fetch("/api/auth/register", {
+      method: "POST",
+      body: JSON.stringify({username, password, confirmPassword})
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (data.success) {
+        notificationShow("success", data.success, 10000);
+        window.location.href = "/login";
+      } else if (data.error) {
+        notificationShow("warning", data.error, 10000);
+      }
+    })
+    .catch(error => console.log(error));
+  }
 }
 
 const authRecover = () => {

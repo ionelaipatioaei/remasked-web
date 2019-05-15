@@ -6,7 +6,7 @@ marked.setOptions({
   sanitize: true
 });
 
-const POST_CACHE_TTL = 20;
+const POST_CACHE_TTL = 30;
 
 module.exports = (mode) => {
   return (req, res) => {

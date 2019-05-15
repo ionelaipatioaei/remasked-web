@@ -3,6 +3,7 @@ extends ../layout/layout.pug
 include ../components/button.pug
 include ../components/link.pug
 include ../components/inputText.pug
+include ../components/checkbox.pug
 include ../layout/header.pug
 
 block header
@@ -22,6 +23,11 @@ block content
       //- +InputText("Email(optional)", "email", "email", "email")
       +InputText("Password", "password", "password", "password")
       +InputText("Confirm Password", "confirm-password", "password", "confirmPassword")
+      
+      div.footer-info
+        div.footer-info-item 
+          +Checkbox("", "auth-user-agrees")
+          p I agree read and agreed to <span><a class="auth-agree" href="/terms-of-use">Terms of Use</a></span> and <span><a class="auth-agree" href="/privacy-policy">Privacy Policy</a></span>.
     
       div.auth-actions
         +Button("Register", "authRegister()", "success")
