@@ -1,5 +1,11 @@
 const {Pool} = require("pg");
-const pool = new Pool();
+
+// edit this when in production
+const CON_STR = "postgresql://dbuser:secretpassword@database.server.com:3211/mydb";
+
+const pool = new Pool({
+  connectionString: CON_STRl
+});
 
 module.exports = {
   query: (text, params, callback) => {
