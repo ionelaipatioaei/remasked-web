@@ -55,11 +55,12 @@ const authRecover = () => {
 
 const authLogout = () => {
   fetch("/api/auth/logout", {
-    method: "POST",
-    credentials: "include"
+    method: "POST"
   })
   .then(res => res.json())
-  .then(data => console.log(data))
+  .then(data => {
+    console.log(data);
+  })
   .catch(error => console.log(error));
 }
 

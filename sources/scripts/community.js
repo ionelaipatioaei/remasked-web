@@ -3,7 +3,7 @@ const communityCreate = () => {
   const name = main.querySelector("#name").value;
   const description = main.querySelector("#description").value;
   
-  fetch("http://localhost:8081/api/community", {
+  fetch("/api/community", {
     method: "POST",
     body: JSON.stringify({
       name: name,
@@ -44,7 +44,7 @@ const communitySaveEdit = (name) => {
   const editedText = main.querySelector("textarea").value;
   const edit = main.querySelector(".meta-edit");
   const description = main.querySelector(".meta-description");
-  fetch("http://localhost:8081/api/community", {
+  fetch("/api/community", {
     method: "PUT",
     body: JSON.stringify({
       name: name,
@@ -72,7 +72,7 @@ const communitySubscribe = (name) => {
 
   console.log(button, subscribers);
 
-  fetch("http://localhost:8081/api/subscribe", {
+  fetch("/api/subscribe", {
     method: "POST",
     body: JSON.stringify({
       name: name   

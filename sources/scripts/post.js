@@ -21,7 +21,7 @@ const postUpdateVoteState = (vote, ref) => {
   const upvote = votes.parentNode.querySelector("#post-upvote");
   const downvote = votes.parentNode.querySelector("#post-downvote");
 
-  fetch("http://localhost:8081/api/vote", {
+  fetch("/api/vote", {
     method: "POST",
     body: JSON.stringify({
       refPost: ref,
@@ -65,7 +65,7 @@ const postUpdateVoteState = (vote, ref) => {
 const postUpdateSaveState = (refPost) => {
   const postSave = event.currentTarget;
 
-  fetch("http://localhost:8081/api/save", {
+  fetch("/api/save", {
     method: "POST",
     body: JSON.stringify({
       refPost: refPost
@@ -113,7 +113,7 @@ const postSaveEdit = (refPost) => {
   const main = event.currentTarget.parentNode.parentNode;
   const editedText = main.querySelector("textarea").value;
   
-  fetch("http://localhost:8081/api/post", {
+  fetch("/api/post", {
     method: "PUT",
     body: JSON.stringify({
       refPost: refPost,
@@ -138,7 +138,7 @@ const postDelete = () => {
 }
 
 const postDeleteConfirm = (refPost) => {
-  fetch("http://localhost:8081/api/post", {
+  fetch("/api/post", {
     method: "DELETE",
     body: JSON.stringify({
       refPost: refPost
@@ -169,7 +169,7 @@ const postThrowaway = () => {
 }
 
 const postThrowawayConfirm = (refPost) => {
-  fetch("http://localhost:8081/api/throwaway", {
+  fetch("/api/throwaway", {
     method: "POST",
     body: JSON.stringify({
       refPost: refPost

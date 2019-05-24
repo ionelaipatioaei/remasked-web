@@ -48,7 +48,7 @@ const commentReply = (refPost, refComment) => {
   const text = event.currentTarget.parentNode.parentNode.querySelector("textarea");
   const throwaway = event.currentTarget.parentNode.parentNode.querySelector("#comment-throwaway-checkbox");
 
-  fetch("http://localhost:8081/api/comment", {
+  fetch("/api/comment", {
     method: "POST",
     body: JSON.stringify({
       refPost: refPost,
@@ -71,7 +71,7 @@ const commentUpdateSaveState = (refComment) => {
   const commentSave = event.currentTarget;
   const star = commentSave.parentNode.querySelector("img");
 
-  fetch("http://localhost:8081/api/save", {
+  fetch("/api/save", {
     method: "POST",
     body: JSON.stringify({
       refComment: refComment
@@ -99,7 +99,7 @@ const commentUpdateVoteState = (vote, ref) => {
   const downvote = votes.parentNode.querySelector("#comment-downvote");
 
   console.log(vote, ref);
-  fetch("http://localhost:8081/api/vote", {
+  fetch("/api/vote", {
     method: "POST",
     body: JSON.stringify({
       refComment: ref,
@@ -148,7 +148,7 @@ const commentReplyMain = (refPost) => {
   const text = event.currentTarget.parentNode.parentNode.querySelector("textarea");
   const throwaway = event.currentTarget.parentNode.parentNode.querySelector("#comment-throwaway-checkbox");
 
-  fetch("http://localhost:8081/api/comment", {
+  fetch("/api/comment", {
     method: "POST",
     body: JSON.stringify({
       refPost: refPost,
@@ -189,7 +189,7 @@ const commentSaveEdit = (refComment, refPost) => {
   const main = event.currentTarget.parentNode.parentNode;
   const editedText = main.querySelector("textarea").value;
 
-  fetch("http://localhost:8081/api/comment", {
+  fetch("/api/comment", {
     method: "PUT",
     body: JSON.stringify({
       refComment: refComment,
@@ -216,7 +216,7 @@ const commentDelete = () => {
 
 const commentDeleteConfirm = (refComment, refPost) => {
 
-  fetch("http://localhost:8081/api/comment", {
+  fetch("/api/comment", {
     method: "DELETE",
     body: JSON.stringify({
       refComment: refComment,
@@ -248,7 +248,7 @@ const commentThrowaway = () => {
 }
 
 const commentThrowawayConfirm = (refComment) => {
-  fetch("http://localhost:8081/api/throwaway", {
+  fetch("/api/throwaway", {
     method: "POST",
     body: JSON.stringify({
       refComment: refComment

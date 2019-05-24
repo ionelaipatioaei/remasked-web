@@ -10,7 +10,7 @@ const settingsDeleteAccountConfirm = () => {
   const password = document.querySelector("#settings-delete-account-password");
   const keep = document.querySelector("#settings-keep-username");
 
-  fetch("http://localhost:8081/api/auth/delete", {
+  fetch("/api/auth/delete", {
     method: "POST",
     body: JSON.stringify({
       password: password.value,

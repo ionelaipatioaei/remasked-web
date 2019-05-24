@@ -13,7 +13,7 @@ CREATE TABLE community (
   name VARCHAR(24) NOT NULL,
   unique_name VARCHAR(24) NOT NULL UNIQUE,
   meta VARCHAR(8192),
-  createby INT REFERENCES users(id) ON DELETE SET NULL,
+  createdby INT REFERENCES users(id) ON DELETE SET NULL,
   created TIMESTAMP WITHOUT TIME ZONE DEFAULT NOW()
 );
 
@@ -38,8 +38,8 @@ CREATE TABLE comment (
   id SERIAL PRIMARY KEY,
   owner INT REFERENCES users(id) ON DELETE SET NULL,
   ref_string VARCHAR(16) NOT NULL DEFAULT md5(random()::text)::varchar(16) UNIQUE,
-  post_parent REFERENCES post(id),
-  comment_parent REFERENCES comment(id),
+  post_parent INT REFERENCES post(id),
+  comment_parent INT REFERENCES comment(id),
   content VARCHAR(8192),
   throwaway BOOLEAN,
   hidden BOOLEAN,
