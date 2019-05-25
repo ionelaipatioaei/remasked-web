@@ -1,4 +1,6 @@
 // auth functions
+const authGoToLogin = () => window.location.href = "/login";
+
 const authLogin = () => {
   const username = document.querySelector("#username").value;
   const password = document.querySelector("#password").value;
@@ -59,7 +61,11 @@ const authLogout = () => {
   })
   .then(res => res.json())
   .then(data => {
-    console.log(data);
+    if (data.success) {
+      window.location.reload();
+    } else if (data.error) {
+      notificationShow("error", data.error, 10000);
+    }
   })
   .catch(error => console.log(error));
 }

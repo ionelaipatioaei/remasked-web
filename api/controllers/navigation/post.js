@@ -170,7 +170,8 @@ module.exports = (mode) => {
 
     cache.get(cacheKey, (error, cachedData) => {
       if (!error) {
-        if (cachedData) {
+        // cache only unauthenticated requests
+        if (cachedData && cacheKey === `post:${id}:user:${undefined}`) {
           if (mode === "render") return res.status(200).render("navigation/gen/post", {logged: req.session.userId !== undefined, ...JSON.parse(cachedData)});
           else return res.status(200).json(JSON.parse(cachedData));
         } else {

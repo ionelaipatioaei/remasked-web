@@ -7,7 +7,7 @@ marked.setOptions({
   sanitize: true
 });
 
-const C_CACHE_TTL = 20;
+const C_CACHE_TTL = 30;
 
 module.exports = (mode) => {
   return (req, res) => {
@@ -149,7 +149,8 @@ module.exports = (mode) => {
 
     cache.get(cacheKey, (error, cachedData) => {
       if (!error) {
-        if (cachedData) {
+        // cache only unauthenticated requests
+        if (cachedData && cacheKey === `c:${name}:${page}:${sort}:user:${undefined}`) {
           if (mode === "render") return res.status(200).render("navigation/gen/c", {logged: req.session.userId !== undefined, name: name, ...JSON.parse(cachedData)});
           else return res.status(200).json(JSON.parse(cachedData));
         } else {

@@ -14,25 +14,19 @@ mixin Header(logged, newMessages, newNotifications, displayCommunity)
       ul.nav-items
         if logged
           li.nav-item
-            +Link("/profile")
-              +Icon("/static/assets/icons/user.svg", "profile", null, "margin-left: 8px")
+            +Icon("/static/assets/icons/user.svg", "profile", "window.location.href = '/profile'", "margin-left: 8px; cursor: pointer;")
 
           li.nav-item
-            +Link("/communities")
-              +Icon("/static/assets/icons/list.svg", "communities", null, "margin-left: 8px")
+            +Icon("/static/assets/icons/list.svg", "communities", "window.location.href = '/communities'", "margin-left: 8px; cursor: pointer;")
 
           li.nav-item
-            +Link("#")
-              +Icon("/static/assets/icons/bell.svg", "notifications", null, "margin-left: 8px; cursor: not-allowed;", false)
+            +Icon("/static/assets/icons/bell.svg", "notifications", null, "margin-left: 8px; cursor: not-allowed;", false)
               
           li.nav-item
-            +Link("#")
-              +Icon("/static/assets/icons/mail.svg", "messages", null, "margin-left: 8px; cursor: not-allowed;", false)
+            +Icon("/static/assets/icons/mail.svg", "messages", null, "margin-left: 8px; cursor: not-allowed;", false)
 
         li.nav-item
-          //- whatever if this link is present the style is ok if not you see the icon lower
-          +Link("")
-            +Icon("/static/assets/icons/random.svg", "random", "getRandomCommunity()", "margin-left: 8px")
+            +Icon("/static/assets/icons/random.svg", "random", "getRandomCommunity()", "margin-left: 8px; cursor: pointer;")
 
         //- GOOD SYSTEM!
         //- li.nav-item(style=`margin-left: ${newMessages ? "-16px" : 0}`)
@@ -50,9 +44,7 @@ mixin Header(logged, newMessages, newNotifications, displayCommunity)
         //-     +Icon("/static/assets/icons/bell.svg", "notifications", null, "margin-left: 8px")
 
         li.nav-item
-          +Link("/settings")
-            +Icon("/static/assets/icons/settings.svg", "settings", null, "margin-left: 8px")
+          +Icon("/static/assets/icons/settings.svg", "settings", "window.location.href = '/settings'", "margin-left: 8px; cursor: pointer;")
 
         li.nav-item
-          +Link(logged ? "/logout" : "/login")
-            +Icon(logged ? "/static/assets/icons/log-out.svg" : "/static/assets/icons/log-in.svg", "logout", "authLogout()", "margin-left: 8px")
+          +Icon(logged ? "/static/assets/icons/log-out.svg" : "/static/assets/icons/log-in.svg", "logout", logged ? "authLogout()" : "authGoToLogin()", "margin-left: 8px; cursor: pointer;")
