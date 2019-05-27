@@ -98,7 +98,6 @@ const commentUpdateVoteState = (vote, ref) => {
   const upvote = votes.parentNode.querySelector("#comment-upvote");
   const downvote = votes.parentNode.querySelector("#comment-downvote");
 
-  console.log(vote, ref);
   fetch("/api/vote", {
     method: "POST",
     body: JSON.stringify({

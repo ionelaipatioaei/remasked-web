@@ -70,7 +70,6 @@ const communitySubscribe = (name) => {
   const label = button.querySelector(".button-label");
   const subscribers = main.querySelector("#meta-subscribers-count");
 
-  console.log(button, subscribers);
 
   fetch("/api/subscribe", {
     method: "POST",
@@ -79,7 +78,6 @@ const communitySubscribe = (name) => {
     })
   }).then(res => res.json())
     .then(data => {
-      console.log(data);
       if (data.success) {
         if (!data.remove) {
           label.innerHTML = "Unsubscribe";

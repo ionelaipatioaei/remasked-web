@@ -40,10 +40,10 @@ app.use((error, req, res, next) => {
 });
 
 // this is for debug only
-app.use((req, res, next) => {
-  console.log(req.session.userId, req.session.username);
-  next();
-});
+// app.use((req, res, next) => {
+//   console.log(req.session.userId, req.session.username);
+//   next();
+// });
 
 // API ROUTES
 const apiAuth = require("./api/routes/auth");
